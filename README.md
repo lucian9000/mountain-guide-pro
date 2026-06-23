@@ -130,6 +130,26 @@ Sign-in is Google-only via Supabase Auth, fully client-side (PKCE flow). Routes 
 Only `VITE_`-prefixed values are exposed to the browser. **Never** put the `service_role`
 key or any server secret in a `VITE_` variable.
 
+## Admin CRM (Phase 2)
+
+Signed-in admins get a CRM at `/admin` (sidebar layout, mobile drawer):
+
+- **Dashboard** — client / booking / specials stat cards + recent activity
+- **Clients** — searchable table, slide-out detail with marketing opt-in toggle and
+  tags, CSV export for email marketing
+- **Pricing** — inline-editable tour table (price, duration, order, active)
+- **Specials** — promo cards with a single-active rule (atomic `set_single_active_special` RPC)
+- **Bookings** — Upcoming / Past / Pending / Cancelled tabs with status control
+- **Guides** — guide profiles with specialties
+
+Admin access uses an `is_admin()` Postgres helper + RLS, so the browser client performs
+cross-user reads/writes **without** the `service_role` key. Apply the Phase 2 section of
+`supabase/schema.sql` (it also seeds the `pricing` table from the routes above).
+
+Some actions are intentionally stubbed until a backend (Supabase Edge Functions) is added
+in Phase 3: Mailchimp/Loops sync, Google Calendar, and confirmation emails
+(`src/lib/marketing-sync.ts`, `src/lib/email.ts`, `src/lib/google-calendar.ts`).
+
 ### Deployment note
 
 This is an SPA using `BrowserRouter`. On a static host, add a catch-all rewrite to

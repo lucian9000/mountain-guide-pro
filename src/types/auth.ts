@@ -8,6 +8,7 @@ export interface Profile {
   avatar_url: string | null;
   role: UserRole;
   marketing_opt_in: boolean;
+  tags: string[];
   created_at: string;
   updated_at: string;
 }
