@@ -15,6 +15,29 @@ SummitFit Adventures is a single-page marketing website for Ernest Carrick — a
 - **Social Feed** — Facebook page embed + Instagram follow link
 - **Fully responsive** — mobile-first design with smooth scroll navigation
 
+## Feature status
+
+The **public marketing site works with zero configuration.** Supabase is only needed for
+the sign-in, booking, and admin features — and if it isn't configured, those degrade
+gracefully (the site still loads; sign-in shows a "not available yet" notice).
+
+| Area | Status | Requires |
+|------|--------|----------|
+| Marketing site (hero, routes, training, gallery, chat widget, social embeds) | ✅ Works out of the box | nothing |
+| Mobile navigation + premium polish | ✅ Works | nothing |
+| Google sign-in (SSO) | ⚙️ Built | Supabase + Google OAuth + env vars |
+| Client dashboard (`/dashboard` — bookings, account) | ⚙️ Built | Supabase + sign-in |
+| Public booking flow (`/booking`) | ⚙️ Built | Supabase (`pricing`/`guides`/`bookings`) |
+| Admin CRM (`/admin` — clients, pricing, specials, bookings, guides) | ⚙️ Built | Supabase + `admin` role |
+| "Add to Google Calendar" link on confirmation | ✅ Works (no API key) | a saved booking only |
+| Live guide availability + calendar sync | 🚧 Stub | Edge Function + Google Calendar API |
+| Confirmation / transactional emails | 🚧 Stub | Edge Function + email provider |
+| Mailchimp / Loops contact sync | 🚧 Stub | Edge Function + DB webhook |
+| Image uploads for specials & guides | 🚧 Stub (paste a URL for now) | Supabase Storage |
+
+**Legend:** ✅ works now · ⚙️ code complete, needs a one-time Supabase setup · 🚧 stubbed,
+needs a backend (Supabase Edge Functions). See [Roadmap / next steps](#roadmap--next-steps).
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -173,12 +196,62 @@ Server-only secrets (`SUPABASE_SERVICE_ROLE_KEY`, `GOOGLE_CLIENT_*`, `WEBHOOK_SE
 `MAILCHIMP_API_KEY` / `LOOPS_API_KEY`, `RESEND_API_KEY`) belong in Edge Function config —
 **never** in a `VITE_` variable.
 
-### Deployment note
+## Deployment (Vercel)
 
-This is an SPA using `BrowserRouter`. On a static host, add a catch-all rewrite to
-`/index.html` (Netlify `/* /index.html 200`, Vercel `rewrites`, Nginx `try_files`) or
-deep links like `/auth/callback` will 404. Add `VITE_*` vars to your host, and add the
-production `/auth/callback` URL to both Google and Supabase redirect settings.
+The repo ships a `vercel.json` with the SPA catch-all rewrite, so direct hits and refreshes
+on `/booking`, `/login`, `/auth/callback`, `/dashboard`, and `/admin` resolve to the app
+instead of returning a 404 (the OAuth callback in particular must resolve).
+
+1. **Import the repo** into Vercel. Framework preset **Vite**; build command `npm run build`;
+   output directory `dist` (Vercel detects these automatically).
+2. **Add environment variables** → Project → Settings → Environment Variables. Without these
+   the site still loads, but sign-in / booking / admin are disabled by design:
+
+   | Variable | Value |
+   |----------|-------|
+   | `VITE_SUPABASE_URL` | your Supabase project URL |
+   | `VITE_SUPABASE_ANON_KEY` | the anon **public** key (never the `service_role` key) |
+   | `VITE_SITE_URL` | your deployed origin, e.g. `https://summitfit.vercel.app` |
+   | `VITE_ADMIN_EMAIL` | the email to promote to `admin` |
+
+3. **Redeploy after adding the vars.** Vite inlines `VITE_*` at **build time**, so they only
+   take effect on a fresh build — saving them is not enough; trigger a new deployment.
+4. **Point OAuth at the production domain:**
+   - **Supabase → Auth → URL Configuration:** set **Site URL** to your domain and add
+     `https://YOUR-DOMAIN/auth/callback` to **Additional Redirect URLs**.
+   - **Google Cloud Console:** add `https://YOUR-DOMAIN` as an **Authorized JavaScript origin**.
+     The **Authorized redirect URI** stays the *Supabase* one
+     (`https://YOUR-REF.supabase.co/auth/v1/callback`) — it does not change per deployment.
+
+> **Note on the blank-screen fix:** the app no longer crashes when the `VITE_SUPABASE_*` vars
+> are missing — it degrades to the public site only. The earlier blue screen on Vercel was
+> `createClient` throwing `"supabaseUrl is required."` on an empty URL at module load (before
+> React renders, so the error boundary couldn't catch it). That is now resolved.
+
+**Other hosts:** any static host works with an equivalent catch-all rewrite to `/index.html`
+(Netlify `/* /index.html 200`, Nginx `try_files $uri /index.html`), plus the same `VITE_*` vars.
+
+## Roadmap / next steps
+
+In rough priority order:
+
+1. **Go live with auth + data — no code required.** Create the Supabase project, run
+   `supabase/schema.sql` (both the Phase 1 and Phase 2 sections), enable Google OAuth, fill the
+   env vars, and run the admin-promotion `UPDATE` after your first sign-in. This single setup
+   lights up Google sign-in, the client dashboard, the public booking flow, **and** the full
+   admin CRM. See [Authentication](#authentication-supabase--google-oauth) for the step-by-step.
+2. **Phase 4 — backend (Supabase Edge Functions, Deno)** to finish the stubs:
+   - **Confirmation emails** — wire `src/lib/email.ts` to an Edge Function calling Resend (or similar).
+   - **Mailchimp / Loops sync** — deploy `supabase/functions/new-client/` and attach it as a
+     Supabase Database Webhook on `profiles` insert (it already verifies `WEBHOOK_SECRET`).
+   - **Google Calendar** — implement real availability + event create/delete in
+     `src/lib/google-calendar.ts`, backed by an Edge Function holding the OAuth refresh token
+     (a server-only secret — never a `VITE_` var).
+   - **Image uploads** — create the Storage buckets per `docs/supabase-storage-setup.md`, then
+     swap the image-URL text fields in the admin forms for file uploads.
+3. **Nice-to-haves** — let clients cancel a booking from `/dashboard`, add email/WhatsApp
+   reminders, collect a deposit/payment at booking, and opt into the React Router v7 future
+   flags to clear the console warnings.
 
 ## Contact
 
