@@ -25,6 +25,8 @@ export default defineConfig(({ mode }) => ({
       "sonner":                `${nm}/sonner/dist/index.js`,
       "react-hook-form":       `${nm}/react-hook-form/dist/index.cjs.js`,
       "@radix-ui/react-select":`${nm}/@radix-ui/react-select/dist/index.js`,
+      "@radix-ui/react-menu":  `${nm}/@radix-ui/react-menu/dist/index.js`,
+      "@radix-ui/react-navigation-menu": `${nm}/@radix-ui/react-navigation-menu/dist/index.js`,
     },
   },
   optimizeDeps: {
@@ -38,6 +40,8 @@ export default defineConfig(({ mode }) => ({
       "sonner",
       "react-hook-form",
       "@radix-ui/react-select",
+      "@radix-ui/react-menu",
+      "@radix-ui/react-navigation-menu",
     ],
     // ESM-aliased packages — already valid ESM, skip the optimizer
     exclude: [

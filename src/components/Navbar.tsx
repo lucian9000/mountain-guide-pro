@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Menu, X, MessageCircle, LogOut, LayoutDashboard, LogIn } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
+import { useAuth } from "@/contexts/AuthContext";
+import UserMenu from "@/components/auth/UserMenu";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface NavbarProps {
   onOpenChat: () => void;
@@ -16,6 +20,7 @@ const NAV_ITEMS: [string, string][] = [
 const Navbar = ({ onOpenChat }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 50);
@@ -100,6 +105,19 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             >
               Book Now
             </button>
+
+            {loading ? (
+              <Skeleton className="w-9 h-9 rounded-full" />
+            ) : user ? (
+              <UserMenu />
+            ) : (
+              <Link
+                to="/login"
+                className="text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -173,6 +191,36 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             >
               WhatsApp Ernest
             </a>
+
+            {!loading &&
+              (user ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsMobileOpen(false)}
+                    className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+                  >
+                    <LayoutDashboard className="w-4 h-4" /> My Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsMobileOpen(false);
+                      void signOut();
+                    }}
+                    className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-destructive px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" /> Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileOpen(false)}
+                  className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+                >
+                  <LogIn className="w-4 h-4" /> Sign In
+                </Link>
+              ))}
           </div>
         </div>
       </div>
