@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 // Code-split everything behind auth so the public marketing page stays lean.
 const Login = lazy(() => import("./pages/Login"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const Booking = lazy(() => import("./pages/Booking"));
 const DashboardLayout = lazy(() => import("./pages/dashboard/DashboardLayout"));
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
 const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
@@ -39,6 +40,7 @@ const App = () => (
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/booking" element={<Booking />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>

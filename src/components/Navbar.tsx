@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, MessageCircle, LogOut, LayoutDashboard, LogIn } from "lucide-react";
+import { Menu, X, MessageCircle, LogOut, LayoutDashboard, LogIn, CalendarRange } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 import { useAuth } from "@/contexts/AuthContext";
 import UserMenu from "@/components/auth/UserMenu";
@@ -99,12 +99,12 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
                 {label}
               </button>
             ))}
-            <button
-              onClick={onOpenChat}
+            <Link
+              to="/booking"
               className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all hover:scale-105"
             >
               Book Now
-            </button>
+            </Link>
 
             {loading ? (
               <Skeleton className="w-9 h-9 rounded-full" />
@@ -175,14 +175,22 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
               isMobileOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
+            <Link
+              to="/booking"
+              onClick={() => setIsMobileOpen(false)}
+              className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all flex items-center justify-center gap-2"
+            >
+              <CalendarRange className="w-4 h-4" /> Book Now
+            </Link>
+
             <button
               onClick={() => {
                 onOpenChat();
                 setIsMobileOpen(false);
               }}
-              className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all flex items-center justify-center gap-2"
+              className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
             >
-              <MessageCircle className="w-4 h-4" /> Book Now
+              <MessageCircle className="w-4 h-4" /> Ask a Question
             </button>
             <a
               href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures."

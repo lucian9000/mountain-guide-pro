@@ -17,15 +17,15 @@ const DashboardHome = () => (
     </Link>
 
     <Link
-      to="/#expeditions"
+      to="/booking"
       className="glass-card glow-border glow-border-hover p-6 transition-all hover:-translate-y-1"
     >
       <Mountain className="w-7 h-7 text-gold mb-4" />
       <h2 className="font-heading text-lg font-bold text-foreground mb-1 tracking-wider uppercase">
-        Explore Routes
+        Book a Tour
       </h2>
       <p className="text-muted-foreground text-sm">
-        Browse featured routes and plan your next summit.
+        Choose a route, pick a date, and reserve your next summit.
       </p>
     </Link>
   </div>

@@ -146,9 +146,32 @@ Admin access uses an `is_admin()` Postgres helper + RLS, so the browser client p
 cross-user reads/writes **without** the `service_role` key. Apply the Phase 2 section of
 `supabase/schema.sql` (it also seeds the `pricing` table from the routes above).
 
-Some actions are intentionally stubbed until a backend (Supabase Edge Functions) is added
-in Phase 3: Mailchimp/Loops sync, Google Calendar, and confirmation emails
+Some actions are intentionally stubbed until a backend (Supabase Edge Functions) is added:
+Mailchimp/Loops sync, Google Calendar, and confirmation emails
 (`src/lib/marketing-sync.ts`, `src/lib/email.ts`, `src/lib/google-calendar.ts`).
+
+## Public booking (Phase 3)
+
+`/booking` is a public page (linked from the navbar "Book Now"): pick a tour and guide
+(from the live `pricing` / `guides` tables), choose a date, set participant count, and see
+a running total. "Book Now" requires sign-in (redirects to `/login?redirect=/booking`),
+then inserts a `bookings` row via owner RLS. The confirmation screen shows a booking
+reference and an **"Add to Google Calendar"** link (a plain calendar URL — works with no
+API key). The booked tour then appears under `/dashboard/bookings`.
+
+### Phase 3 scaffolding (needs a backend to finish)
+
+- `src/lib/google-calendar.ts` — live availability + event create/delete are **stubs**
+  (time slots are mocked); real sync needs an Edge Function holding the OAuth refresh token.
+- `supabase/functions/new-client/index.ts` — Deno Edge Function **stub** for the
+  new-client → Mailchimp/Loops webhook (verifies `WEBHOOK_SECRET`); deploy + wire the
+  Supabase Database Webhook to enable.
+- `docs/supabase-storage-setup.md` — buckets + RLS for swapping the admin image-URL
+  fields for real uploads.
+
+Server-only secrets (`SUPABASE_SERVICE_ROLE_KEY`, `GOOGLE_CLIENT_*`, `WEBHOOK_SECRET`,
+`MAILCHIMP_API_KEY` / `LOOPS_API_KEY`, `RESEND_API_KEY`) belong in Edge Function config —
+**never** in a `VITE_` variable.
 
 ### Deployment note
 
