@@ -3,6 +3,7 @@ import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
 import AuthLoading from "@/components/auth/AuthLoading";
 import logo from "@/assets/logo.jpeg";
 
@@ -86,10 +87,17 @@ const Login = () => {
           Sign in to book a guided tour or access your account.
         </p>
 
+        {!isSupabaseConfigured && (
+          <p className="mb-6 rounded-lg border border-gold/30 bg-gold/10 px-4 py-3 text-xs text-gold leading-relaxed">
+            Sign-in isn&rsquo;t available yet — authentication hasn&rsquo;t been
+            configured for this site. Everything else works.
+          </p>
+        )}
+
         <button
           onClick={handleSignIn}
-          disabled={submitting}
-          className="w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100 inline-flex items-center justify-center gap-3"
+          disabled={submitting || !isSupabaseConfigured}
+          className="w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-3"
         >
           {submitting ? (
             <>

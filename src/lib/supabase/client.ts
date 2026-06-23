@@ -14,22 +14,43 @@ import { createClient } from "@supabase/supabase-js";
 const url = import.meta.env.VITE_SUPABASE_URL;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!url || !anonKey) {
-  // Fail loud in dev so a missing .env.local doesn't surface as a cryptic
-  // "Invalid API key" later in the OAuth flow.
-  console.error(
-    "[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. " +
-      "Copy .env.example to .env.local and fill in your project values."
+/**
+ * Whether real Supabase credentials are present. When false, the public
+ * marketing site still loads — only auth/account features are unavailable.
+ * Consumers (e.g. the Login page) can read this to show a clear notice
+ * instead of a dead button.
+ */
+export const isSupabaseConfigured = Boolean(url && anonKey);
+
+if (!isSupabaseConfigured) {
+  // Warn (not error) so it's visible in the console without implying a crash.
+  // Locally: copy .env.example → .env.local. On a host (Vercel/Netlify): set
+  // the VITE_* env vars in the project settings and redeploy.
+  console.warn(
+    "[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY — " +
+      "auth/account features are disabled. The rest of the site works. " +
+      "Set these env vars (locally in .env.local, or in your host's settings)."
   );
 }
 
-export const supabase = createClient(url ?? "", anonKey ?? "", {
-  auth: {
-    flowType: "pkce",
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storage: window.localStorage,
-    storageKey: "summitfit.auth",
-  },
-});
+/**
+ * createClient() throws "supabaseUrl is required." if given an empty string,
+ * which would crash the entire app at module load — before React renders, so
+ * the ErrorBoundary can't catch it (you'd see a blank screen). Fall back to a
+ * syntactically valid placeholder so the bundle always evaluates; any auth
+ * call against it simply fails gracefully (and is gated by isSupabaseConfigured).
+ */
+export const supabase = createClient(
+  url || "https://placeholder.supabase.co",
+  anonKey || "placeholder-anon-key",
+  {
+    auth: {
+      flowType: "pkce",
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage,
+      storageKey: "summitfit.auth",
+    },
+  }
+);
