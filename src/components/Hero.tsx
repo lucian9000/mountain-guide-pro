@@ -1,11 +1,28 @@
+import { useEffect, useState } from "react";
 import { ArrowRight, Mountain, ChevronDown } from "lucide-react";
 import heroImage from "@/assets/hero-mountain.jpg";
+
+// Served statically from /public — streamed via range requests, NOT bundled
+// into the JS. The static image above is always the poster (instant paint /
+// LCP), so the page never waits on the video.
+const HERO_VIDEO = "/hero-section.mp4";
 
 interface HeroProps {
   onOpenChat: () => void;
 }
 
 const Hero = ({ onOpenChat }: HeroProps) => {
+  // Only load the (large) background video on bigger screens with motion
+  // allowed. Mobile / reduced-motion visitors keep the lightweight static
+  // image and download zero video bytes — keeps the site fast on cellular.
+  const [useVideo, setUseVideo] = useState(false);
+
+  useEffect(() => {
+    const motionOk = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const bigScreen = window.matchMedia("(min-width: 768px)").matches;
+    if (motionOk && bigScreen) setUseVideo(true);
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -13,11 +30,26 @@ const Hero = ({ onOpenChat }: HeroProps) => {
   return (
     <section className="relative h-[100svh] min-h-[560px] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
-        <img
-          src={heroImage}
-          alt="Cape Town mountains at golden hour"
-          className="w-full h-full object-cover animate-cinematic-pan"
-        />
+        {useVideo ? (
+          <video
+            className="w-full h-full object-cover"
+            poster={heroImage}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          >
+            <source src={HERO_VIDEO} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={heroImage}
+            alt="Cape Town mountains at golden hour"
+            className="w-full h-full object-cover animate-cinematic-pan"
+          />
+        )}
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/60 to-background/95" />
 
