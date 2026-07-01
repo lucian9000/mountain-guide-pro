@@ -321,12 +321,18 @@ create trigger bookings_touch_updated_at
 insert into public.pricing
   (tour_slug, name, description, price, price_group, duration, difficulty, max_participants, display_order, active)
 values
-  ('lions-head',   'Lion''s Head Sunrise Summit',            'Beginner-friendly sunrise scramble up Lion''s Head with ladders and chains.', 1200, 1000, '2–3 hours', 2, 10, 1, true),
-  ('platteklip',   'Platteklip Gorge (The Stairmaster)',     'Steep, direct ascent of Table Mountain via the iconic stone staircase.',       1500, 1000, '1–3 hours', 3, 8,  2, true),
-  ('kasteelspoort','Kasteelspoort to Diving Board',          'Rocky track to the famous Diving Board viewpoint above Camps Bay.',            1500, 1000, '4–5 hours', 3, 8,  3, true),
-  ('waterworks',   'The Waterworks Hike (Skeleton Gorge)',   'Full-day traverse through forest, ladders and dams from Kirstenbosch.',         2000, 1000, '7–8 hours', 4, 6,  4, true),
-  ('india-venster','India Venster (The Adventure Route)',    'Exposed scramble up Table Mountain''s face — for confident adventurers.',       1500, 1000, '3–4 hours', 5, 4,  5, true)
+  ('lions-head',   'Lion''s Head Sunrise Summit',            'Beginner-friendly sunrise scramble up Lion''s Head with ladders and chains.', 1200, 1000, '2–4 hours', 3, 10, 1, true),
+  ('platteklip',   'Platteklip Gorge (The Stairmaster)',     'Steep, direct ascent of Table Mountain via the iconic stone staircase.',       1500, 1200, '1–3 hours', 3, 8,  2, true),
+  ('kasteelspoort','Kasteelspoort to Diving Board',          'Rocky track to the famous Diving Board viewpoint above Camps Bay.',            1500, 1200, '4–6 hours', 3, 8,  3, true),
+  ('waterworks',   'Skeleton Gorge / Nursery Ravine Loop',   'Full-day traverse through forest, ladders and dams from Kirstenbosch.',         2000, 1300, '7–8 hours', 3, 6,  4, true),
+  ('india-venster','India Venster (The Adventure Route)',    'Exposed scramble up Table Mountain''s face — for confident adventurers.',       1500, 1200, '3–5 hours', 5, 4,  5, true),
+  ('west-peak',    'West Peak, Helderberg Reserve',          'Scenic climb up Helderberg Reserve''s iconic peak above Somerset West.',        1200, 1000, '5–7 hours', 4, 8,  6, true)
 on conflict (tour_slug) do nothing;
+
+-- NOTE: `on conflict do nothing` means re-running this file will NOT update
+-- prices/names on an already-seeded Supabase project. If you've already run
+-- this seed against a live database, apply the corrected values with a
+-- manual UPDATE (or change this clause to `do update`) to push them live.
 
 -- =====================================================================
 -- PHASE 2 ENDS

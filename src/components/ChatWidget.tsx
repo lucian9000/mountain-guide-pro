@@ -13,8 +13,7 @@ type Stage =
   | "initial"
   | "routes-level"
   | "routes-results"
-  | "training"
-  | "corporate";
+  | "training";
 
 interface Message {
   type: "bot" | "user";
@@ -87,19 +86,6 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
       }
     );
     setStage("training");
-  };
-
-  /* ── Path: Corporate Events ── */
-  const chooseCorporate = () => {
-    push(
-      { type: "user", text: "Corporate / Team Events" },
-      {
-        type: "bot",
-        text:
-          "We run bespoke team-building experiences that combine mountain guiding with fitness challenges — perfect for energising your team.\n\n✅ Half-day or full-day formats\n✅ All fitness levels catered for\n✅ Safety-briefed & CATHSSETA accredited guide\n✅ Custom route & challenge design\n\nTell Ernest your team size and preferred date on WhatsApp and he'll put together a quote.",
-      }
-    );
-    setStage("corporate");
   };
 
   const reset = () => {
@@ -208,7 +194,6 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                 {[
                   { label: "🏔 Mountain Routes", action: chooseRoutes, color: "border-accent text-accent" },
                   { label: "💪 Personal Training", action: chooseTraining, color: "border-gold text-gold" },
-                  { label: "🏢 Corporate / Team Events", action: chooseCorporate, color: "border-[hsl(var(--success))] text-[hsl(var(--success))]" },
                 ].map(({ label, action, color }) => (
                   <button
                     key={label}
@@ -251,23 +236,6 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                   className="w-full bg-gold hover:opacity-90 text-background text-xs font-heading font-bold py-2 rounded-lg transition-opacity tracking-wider uppercase"
                 >
                   📱 Chat to Ernest on WhatsApp
-                </button>
-                <button
-                  onClick={reset}
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-xs transition-colors mx-auto"
-                >
-                  <ArrowLeft className="w-3 h-3" /> Back to menu
-                </button>
-              </div>
-            )}
-
-            {stage === "corporate" && (
-              <div className="space-y-2">
-                <button
-                  onClick={() => wa("Hi Ernest, I'm interested in a Corporate / Team Event. Can you send me more details?")}
-                  className="w-full bg-[hsl(var(--success))] hover:opacity-90 text-background text-xs font-heading font-bold py-2 rounded-lg transition-opacity tracking-wider uppercase"
-                >
-                  📱 Get a Corporate Quote
                 </button>
                 <button
                   onClick={reset}

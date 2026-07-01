@@ -42,8 +42,11 @@ const Footer = () => {
               <a href="tel:+27671301536" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
                 <Phone className="w-4 h-4" /> +27 67 130 1536
               </a>
-              <a href="mailto:ernest@summitfit.co.za" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Mail className="w-4 h-4" /> ernest@summitfit.co.za
+              <a href="mailto:info@summitfitadventures.com" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
+                <Mail className="w-4 h-4" /> info@summitfitadventures.com
+              </a>
+              <a href="mailto:bookings@summitfitadventures.com" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
+                <Mail className="w-4 h-4" /> bookings@summitfitadventures.com
               </a>
               <a href="https://www.instagram.com/summitfit_adventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
                 <Instagram className="w-4 h-4" /> @summitfit_adventures

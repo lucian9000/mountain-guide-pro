@@ -27,11 +27,11 @@ const expeditions = [
   },
   {
     image: expedition3,
-    title: "Overnight Cederberg Wilderness",
-    duration: "2 Days",
-    difficulty: "Multi-day",
-    badgeClass: "bg-accent/20 text-accent border border-accent/30",
-    description: "Immerse yourself in rugged beauty with full catering and stargazing.",
+    title: "West Peak, Hottentots Holland",
+    duration: "5–7 Hours",
+    difficulty: "Moderate",
+    badgeClass: "bg-gold/20 text-gold border border-gold/30",
+    description: "A scenic climb up Helderberg Reserve's iconic peak above Somerset West.",
   },
 ];
 

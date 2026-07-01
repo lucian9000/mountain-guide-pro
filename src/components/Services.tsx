@@ -1,11 +1,12 @@
 import { Mountain, Dumbbell, Users } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { Badge } from "@/components/ui/badge";
 
 const services = [
   {
     icon: Mountain,
     title: "Mountain Guiding",
-    description: "Safety-first route planning, peak summits, and guided expeditions across South Africa's most iconic ranges. CATHSSETA accredited with full risk assessment on every route.",
+    description: "Safety-first route planning, peak summits, and guided expeditions across the Western Cape's most iconic ranges. CATHSSETA & AQN accredited with full risk assessment on every route.",
     features: ["Route Planning", "Peak Summits", "Safety Protocols", "Weather Monitoring"],
   },
   {
@@ -19,6 +20,7 @@ const services = [
     title: "Corporate Events",
     description: "Bespoke team-building experiences that fuse mountain guiding with fitness challenges. Half-day or full-day formats for all fitness levels — energise your team in the mountains.",
     features: ["Team Building", "Custom Challenges", "All Fitness Levels", "Full-Day Options"],
+    comingSoon: true,
   },
 ];
 
@@ -33,7 +35,7 @@ const Services = () => (
       </Reveal>
 
       <Reveal className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-        {services.map(({ icon: Icon, title, description, features }) => (
+        {services.map(({ icon: Icon, title, description, features, comingSoon }) => (
           <div
             key={title}
             className="glass-card glow-border glow-border-hover p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 group"
@@ -41,7 +43,10 @@ const Services = () => (
             <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-colors">
               <Icon className="w-7 h-7 text-accent" />
             </div>
-            <h3 className="font-heading text-xl font-bold text-foreground mb-4 tracking-wider uppercase">{title}</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="font-heading text-xl font-bold text-foreground tracking-wider uppercase">{title}</h3>
+              {comingSoon && <Badge variant="secondary">Coming Soon</Badge>}
+            </div>
             <p className="text-muted-foreground leading-relaxed mb-6">{description}</p>
             <div className="flex flex-wrap gap-2">
               {features.map((f) => (

@@ -7,7 +7,7 @@ interface AboutProps {
 }
 
 const features = [
-  { icon: Shield, title: "Safety First, Always", desc: "CATHSSETA accredited with First Aid Level 3. Every route is risk-assessed and weather-monitored." },
+  { icon: Shield, title: "Safety First, Always", desc: "CATHSSETA & AQN accredited with First Aid Level 3 (Wilderness First Responder). Every route is risk-assessed and weather-monitored." },
   { icon: Leaf, title: "Fynbos Expert", desc: "Deep knowledge of the Cape Floristic Kingdom, a UNESCO World Heritage Site." },
   { icon: Camera, title: "Storytelling & Memories", desc: "Every peak has a story. Ernest weaves narrative into nature." },
 ];
@@ -36,7 +36,7 @@ const About = ({ onOpenChat }: AboutProps) => (
             Meet Ernest Carrick
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            With over 10 years guiding across South Africa's most iconic peaks, Ernest brings technical expertise, safety consciousness, and storytelling.
+            With over 5 years guiding across the Western Cape's most iconic peaks, Ernest brings technical expertise, safety consciousness, and storytelling.
           </p>
 
           <div className="space-y-6 mb-8">
