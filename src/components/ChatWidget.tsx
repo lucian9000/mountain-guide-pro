@@ -19,6 +19,7 @@ interface Message {
   type: "bot" | "user";
   text: string;
   routes?: Route[];
+  showWhatsApp?: boolean;
 }
 
 const difficultyColor = (d: number) =>
@@ -58,22 +59,38 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
 
   const selectLevel = (level: number, label: string) => {
     const recommendations = findRoutes(level);
-    push(
-      { type: "user", text: label },
-      {
-        type: "bot",
-        text:
-          recommendations.length > 0
-            ? `Perfect. Based on your fitness level, here ${recommendations.length === 1 ? "is" : "are"} the best ${recommendations.length === 1 ? "route" : "routes"} for you:`
-            : "That level doesn't match our current routes — drop us a WhatsApp and we'll build something custom!",
-        routes: recommendations,
-      }
-    );
+    if (recommendations.length > 0) {
+      push(
+        { type: "user", text: label },
+        {
+          type: "bot",
+          text: `Perfect. Based on your fitness level, here ${recommendations.length === 1 ? "is" : "are"} the best ${recommendations.length === 1 ? "route" : "routes"} for you:`,
+          routes: recommendations,
+        },
+        {
+          type: "bot",
+          text: "These are our main routes currently but not our only routes. If there is any trail you are looking to do that is not on this list please let us know and we will tailor a package for you.",
+          showWhatsApp: true,
+        }
+      );
+    } else {
+      push(
+        { type: "user", text: label },
+        {
+          type: "bot",
+          text: "No routes found😱 Not too worry, we got you! Chat with us on Whatsapp so we can get your shoes dirty!🥾⛰️",
+          showWhatsApp: true,
+        }
+      );
+    }
     setStage("routes-results");
   };
 
   const bookRoute = (route: Route) =>
     wa(`Hi Ernest, I'm interested in booking the ${route.name}.`);
+
+  const requestCustomRoute = () =>
+    wa("Hi Ernest, I'm looking for a trail that's not currently listed on the site. Can we chat about a custom package?");
 
   /* ── Path: Personal Training ── */
   const chooseTraining = () => {
@@ -142,6 +159,15 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                     {msg.text}
                   </div>
                 </div>
+
+                {msg.showWhatsApp && (
+                  <button
+                    onClick={requestCustomRoute}
+                    className="mt-2 w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-2 rounded-lg transition-colors tracking-wider uppercase"
+                  >
+                    📱 Chat to us on WhatsApp
+                  </button>
+                )}
 
                 {msg.routes?.map((route) => (
                   <div
