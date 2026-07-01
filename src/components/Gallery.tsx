@@ -1,7 +1,8 @@
 import challengeImage from "@/assets/gallery-challenge.jpg";
-import expedition1 from "@/assets/expedition-1.jpg";
-import expedition2 from "@/assets/expedition-2.jpg";
-import guideImage from "@/assets/guide-portrait.jpg";
+import galleryPeak1 from "@/assets/gallery-13peaks-1.jpg";
+import galleryPeak2 from "@/assets/gallery-13peaks-2.jpg";
+import galleryPeak3 from "@/assets/gallery-13peaks-3.jpg";
+import galleryPeak4 from "@/assets/gallery-13peaks-4.jpg";
 import Reveal from "@/components/Reveal";
 
 const Gallery = () => (
@@ -35,7 +36,7 @@ const Gallery = () => (
       </Reveal>
 
       <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        {[expedition1, expedition2, guideImage, challengeImage].map((img, i) => (
+        {[galleryPeak1, galleryPeak2, galleryPeak3, galleryPeak4].map((img, i) => (
           <div key={i} className="rounded-xl overflow-hidden aspect-square group glow-border glow-border-hover">
             <img
               src={img}
