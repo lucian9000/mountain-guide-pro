@@ -45,7 +45,7 @@ const Services = () => (
             </div>
             <div className="flex items-center gap-2 mb-4">
               <h3 className="font-heading text-xl font-bold text-foreground tracking-wider uppercase">{title}</h3>
-              {comingSoon && <Badge variant="secondary">Coming Soon</Badge>}
+              {comingSoon && <Badge variant="secondary" className="whitespace-nowrap">Coming Soon</Badge>}
             </div>
             <p className="text-muted-foreground leading-relaxed mb-6">{description}</p>
             <div className="flex flex-wrap gap-2">
