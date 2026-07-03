@@ -27,7 +27,7 @@ const Index = () => {
       <Expeditions onOpenChat={openChat} />
       <About onOpenChat={openChat} />
       <Fitness onOpenChat={openChat} />
-      <Gallery />
+      <Gallery onOpenChat={openChat} />
       <Values />
       <CTASection onOpenChat={openChat} />
       <SocialFeed />

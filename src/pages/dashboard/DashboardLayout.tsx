@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import UserMenu from "@/components/auth/UserMenu";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.webp";
 
 const navItems = [
   ["/dashboard", "Overview"],

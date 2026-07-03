@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MessageCircle, X, ArrowLeft } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.webp";
 import { findRoutes, type Route } from "@/data/routes";
 
 interface ChatWidgetProps {
@@ -196,13 +196,15 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                       ⛅ {route.weather.policy}
                     </div>
                     <div className="text-accent font-heading font-bold text-sm mb-2">
-                      R{route.logistics.price} (Private) / R{route.logistics.priceGroup} (Group)
+                      {route.logistics.contactForPricing
+                        ? "Contact for Pricing"
+                        : `R${route.logistics.price} (Private) / R${route.logistics.priceGroup} (Group)`}
                     </div>
                     <button
                       onClick={() => bookRoute(route)}
                       className="w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-2 rounded-lg transition-colors tracking-wider uppercase"
                     >
-                      📱 Book via WhatsApp
+                      {route.logistics.contactForPricing ? "📱 Enquire via WhatsApp" : "📱 Book via WhatsApp"}
                     </button>
                   </div>
                 ))}

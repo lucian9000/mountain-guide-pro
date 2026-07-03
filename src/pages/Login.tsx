@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import AuthLoading from "@/components/auth/AuthLoading";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.webp";
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">

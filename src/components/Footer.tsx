@@ -1,5 +1,5 @@
 import { Phone, Mail, Instagram, MessageCircle } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.webp";
 
 const Footer = () => {
   const scrollTo = (id: string) => {

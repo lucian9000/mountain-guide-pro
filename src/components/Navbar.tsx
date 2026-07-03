@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, MessageCircle, LogOut, LayoutDashboard, LogIn, CalendarRange } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.webp";
 import { useAuth } from "@/contexts/AuthContext";
 import UserMenu from "@/components/auth/UserMenu";
 import { Skeleton } from "@/components/ui/skeleton";

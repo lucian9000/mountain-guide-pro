@@ -1,6 +1,6 @@
-import expedition1 from "@/assets/expedition-1.jpg";
-import expedition2 from "@/assets/expedition-2.jpg";
-import expedition3 from "@/assets/expedition-3.jpg";
+import expedition1 from "@/assets/expedition-1.webp";
+import expedition2 from "@/assets/expedition-2.webp";
+import expedition3 from "@/assets/expedition-3.webp";
 import { Clock, TrendingUp } from "lucide-react";
 import Reveal from "@/components/Reveal";
 

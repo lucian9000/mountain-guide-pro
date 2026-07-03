@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Mountain, ChevronDown } from "lucide-react";
-import heroImage from "@/assets/hero-mountain.jpg";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import heroImage from "@/assets/hero-mountain.webp";
 
 // Served statically from /public — streamed via range requests, NOT bundled
 // into the JS. The static image above is always the poster (instant paint /
@@ -58,10 +58,6 @@ const Hero = ({ onOpenChat }: HeroProps) => {
       <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gold/5 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: "1.5s" }} />
 
       <div className="relative z-10 container mx-auto px-4 text-center animate-fade-in-up">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent/30 bg-accent/5 mb-6 md:mb-8 backdrop-blur-sm">
-          <Mountain className="w-4 h-4 text-accent" />
-          <span className="text-accent text-xs sm:text-sm font-medium tracking-wider uppercase">Professional Mountain Guiding</span>
-        </div>
 
         <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-foreground mb-5 md:mb-6 leading-none tracking-wider uppercase">
           Ascend Your

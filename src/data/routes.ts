@@ -18,6 +18,7 @@ export interface Route {
     priceGroup: number;
     included: string[];
     excluded: string[];
+    contactForPricing?: boolean;
   };
   gear: {
     mandatory: string[];
@@ -83,6 +84,24 @@ export const routes: Route[] = [
     logistics: { meetingPoint: "Helderberg Reserve Main, Verster Avenue, Somerset West", startTime: "TBC", ratio: "1:8", price: 1200, priceGroup: 1000, included: ["Guide", "Safety Briefing"], excluded: ["Transport"] },
     gear: { mandatory: ["Headlamp (when necessary)", "Proper shoes", "Water", "Windbreaker", "Waterproof Jacket", "Snacks"], recommended: ["Trekking Poles", "Gloves", "Buff"], provided: ["First Aid Kit"] },
     weather: { policy: "All hikes are weather dependent and will be cancelled if safety becomes an issue. Lives are more important than summits." },
+  },
+  {
+    id: "13-peaks-48hr",
+    name: "13 Peaks Challenge — The 48-Hour Purge",
+    location: "Cape Peninsula — Table Mountain National Park (Signal Hill to Devil's Peak)",
+    specs: { distance: "106km", duration: "48 Hours (Non-Stop Clock)", elevation: "6,300m gain (Kilimanjaro from sea level)", difficulty: 4, fitness: "Extreme / Elite", terrain: "Full peninsula spine traverse — technical, exposed, relentless vertical gain" },
+    logistics: { meetingPoint: "Signal Hill (Start Point)", startTime: "TBC", ratio: "1:4", price: 0, priceGroup: 0, contactForPricing: true, included: ["Route Briefing", "Checkpoint Tracking", "Safety Support"], excluded: ["Personal Gear", "Nutrition", "Transport"] },
+    gear: { mandatory: ["Headlamp + Spare Batteries", "Trail Shoes", "3L+ Water Capacity", "Waterproof Jacket", "Nutrition for Full Duration", "Emergency Blanket"], recommended: ["Trekking Poles", "GPS Watch", "Blister Kit"], provided: ["First Aid Kit", "Tracking Support"] },
+    weather: { policy: "This is an extreme, multi-day exposure challenge — routes and checkpoints may be adjusted for safety in severe weather. Lives are more important than summits." },
+  },
+  {
+    id: "13-peaks-multiday",
+    name: "13 Peaks Challenge — The Multi-Day Mission",
+    location: "Cape Peninsula — Table Mountain National Park (Signal Hill to Devil's Peak)",
+    specs: { distance: "106km", duration: "Multi-Day (Self-Paced)", elevation: "6,300m gain (Kilimanjaro from sea level)", difficulty: 4, fitness: "Extreme / Elite", terrain: "Full peninsula spine traverse, broken into stages — technical, exposed, relentless vertical gain" },
+    logistics: { meetingPoint: "Signal Hill (Start Point)", startTime: "TBC", ratio: "1:4", price: 0, priceGroup: 0, contactForPricing: true, included: ["Stage-by-Stage Route Planning", "Guiding", "Tracking"], excluded: ["Accommodation", "Personal Gear", "Transport"] },
+    gear: { mandatory: ["Headlamp + Spare Batteries", "Trail Shoes", "3L+ Water Capacity", "Waterproof Jacket", "Nutrition per Stage", "Emergency Blanket"], recommended: ["Trekking Poles", "GPS Watch", "Blister Kit"], provided: ["First Aid Kit", "Tracking Support"] },
+    weather: { policy: "This is an extreme, multi-day exposure challenge — stages may be rescheduled for safety in severe weather. Lives are more important than summits." },
   },
 ];
 

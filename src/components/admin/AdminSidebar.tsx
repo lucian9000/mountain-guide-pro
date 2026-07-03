@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.webp";
 
 export const ADMIN_NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
