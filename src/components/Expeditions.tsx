@@ -13,8 +13,8 @@ const expeditions = [
     image: expedition1,
     title: "Table Mountain India Venster",
     duration: "4 Hours",
-    difficulty: "Moderate",
-    badgeClass: "bg-gold/20 text-gold border border-gold/30",
+    difficulty: "Hard",
+    badgeClass: "bg-destructive/20 text-destructive border border-destructive/30",
     description: "A thrilling scramble up Table Mountain's iconic face with exposed ledges.",
   },
   {
@@ -29,8 +29,8 @@ const expeditions = [
     image: expedition3,
     title: "West Peak, Hottentots Holland",
     duration: "5–7 Hours",
-    difficulty: "Moderate",
-    badgeClass: "bg-gold/20 text-gold border border-gold/30",
+    difficulty: "Hard",
+    badgeClass: "bg-destructive/20 text-destructive border border-destructive/30",
     description: "A scenic climb up Helderberg Reserve's iconic peak above Somerset West.",
   },
 ];
