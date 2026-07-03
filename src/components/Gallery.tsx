@@ -3,6 +3,7 @@ import galleryPeak1 from "@/assets/gallery-13peaks-1.webp";
 import galleryPeak2 from "@/assets/gallery-13peaks-2.webp";
 import galleryPeak3 from "@/assets/gallery-13peaks-3.webp";
 import galleryPeak4 from "@/assets/gallery-13peaks-4.webp";
+import { Mountain } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface GalleryProps {
@@ -68,82 +69,98 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
         ))}
       </Reveal>
 
-      <Reveal className="glass-card glow-border rounded-2xl p-6 sm:p-8 md:p-10 mt-6 md:mt-8 text-center">
-        <span className="inline-block bg-destructive/20 text-destructive border border-destructive/30 text-xs font-heading font-bold px-3 py-1 rounded-full tracking-wider uppercase mb-4">
-          Extreme Challenge
-        </span>
-        <h3 className="font-heading text-2xl md:text-4xl font-black text-foreground mb-2 tracking-wider uppercase">
-          The 13 Peaks Challenge
-        </h3>
-        <p className="text-gradient-gold font-heading font-bold text-base md:text-lg mb-6">
-          Born from a miscalculation. Fueled by pure grit.
-        </p>
+      <div className="mt-10 md:mt-16">
+        {/* Intro + stats split */}
+        <Reveal className="grid md:grid-cols-3 gap-8 md:gap-10 items-start mb-10 md:mb-14">
+          <div className="md:col-span-2 text-left">
+            <span className="inline-block bg-destructive/20 text-destructive border border-destructive/30 text-xs font-heading font-bold px-3 py-1 rounded-full tracking-wider uppercase mb-3">
+              Extreme Challenge
+            </span>
+            <h3 className="font-heading text-3xl md:text-4xl font-black text-foreground mb-2 tracking-wider uppercase">
+              The 13 Peaks Challenge
+            </h3>
+            <p className="text-gradient-gold font-heading font-bold text-lg md:text-xl mb-4">
+              Born from a miscalculation. Fueled by pure grit.
+            </p>
 
-        <div className="space-y-4 text-muted-foreground mb-8 max-w-2xl mx-auto">
-          <p>
-            When ultra-trail legend Ryan Sandes first sketched a route linking his favorite Cape Peninsula summits in a notepad, he guessed it would be a breezy 55km day out. 19 hours later, with dead headlamps and shattered legs, he realized the truth.
-          </p>
-          <p className="text-foreground font-heading font-bold tracking-wide">
-            The 13 Peaks Challenge was born.
-          </p>
-          <p>
-            This isn't just a trail; it's an absolute monster of a loop that forces you to respect the mountain. You'll tag 13 of the most brutal, beautiful, and prominent peaks across the Table Mountain National Park spine.
-          </p>
-        </div>
-
-        <div className="mb-8">
-          <h4 className="font-heading text-sm font-bold text-foreground mb-3 tracking-[0.2em] uppercase">The Tale of the Tape</h4>
-          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-md mx-auto">
-            <div className="bg-secondary rounded-xl p-4 text-center">
-              <div className="text-2xl md:text-3xl font-heading font-black text-foreground">106km</div>
-              <div className="text-muted-foreground text-xs uppercase tracking-wider">Relentless, Technical Terrain</div>
-            </div>
-            <div className="bg-secondary rounded-xl p-4 text-center">
-              <div className="text-2xl md:text-3xl font-heading font-black text-foreground">6,300m</div>
-              <div className="text-muted-foreground text-xs uppercase tracking-wider">Vertical Gain (Kilimanjaro from sea level)</div>
+            <div className="space-y-4 text-muted-foreground text-base md:text-lg max-w-2xl">
+              <p>
+                When ultra-trail legend Ryan Sandes first sketched a route linking his favorite Cape Peninsula summits in a notepad, he guessed it would be a breezy 55km day out. 19 hours later, with dead headlamps and shattered legs, he realized the truth.
+              </p>
+              <p className="text-foreground font-heading font-bold tracking-wide">
+                The 13 Peaks Challenge was born.
+              </p>
+              <p>
+                This isn't just a trail; it's an absolute monster of a loop that forces you to respect the mountain. You'll tag 13 of the most brutal, beautiful, and prominent peaks across the Table Mountain National Park spine.
+              </p>
             </div>
           </div>
-        </div>
 
-        <div className="mb-8">
-          <h4 className="font-heading text-sm font-bold text-foreground mb-3 tracking-[0.2em] uppercase">The Checklist (The 13)</h4>
-          <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+          <div className="flex sm:flex-row md:flex-col gap-4">
+            <div className="flex-1 bg-secondary rounded-2xl p-5 md:p-6 text-center md:text-left">
+              <div className="text-3xl md:text-4xl font-heading font-black text-foreground">106km</div>
+              <div className="text-muted-foreground text-xs uppercase tracking-wider mt-1">Relentless, Technical Terrain</div>
+            </div>
+            <div className="flex-1 bg-secondary rounded-2xl p-5 md:p-6 text-center md:text-left">
+              <div className="text-3xl md:text-4xl font-heading font-black text-foreground">6,300m</div>
+              <div className="text-muted-foreground text-xs uppercase tracking-wider mt-1">Vertical Gain (Kilimanjaro from sea level)</div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Checklist grid */}
+        <Reveal className="mb-10 md:mb-14">
+          <h4 className="font-heading text-sm font-bold text-foreground mb-4 tracking-[0.2em] uppercase text-left">
+            The Checklist (The 13)
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-3">
             {thirteenPeaks.map((peak) => (
-              <span
-                key={peak}
-                className="bg-secondary text-foreground text-xs font-medium px-3 py-1.5 rounded-full border border-border/50"
-              >
-                {peak}
-              </span>
+              <div key={peak} className="flex items-center gap-2">
+                <Mountain className="w-4 h-4 text-accent flex-shrink-0" />
+                <span className="text-muted-foreground text-sm md:text-base">{peak}</span>
+              </div>
             ))}
           </div>
-        </div>
+        </Reveal>
 
-        <div className="mb-8">
-          <h4 className="font-heading text-sm font-bold text-foreground mb-3 tracking-[0.2em] uppercase">Pick Your Poison</h4>
-          <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-            <div className="bg-secondary rounded-xl p-4 text-center">
-              <div className="font-heading font-bold text-foreground text-sm mb-1 tracking-wide uppercase">The 48-Hour Purge</div>
-              <p className="text-muted-foreground text-sm">The clock never stops. Two days to find out what you're truly made of.</p>
+        {/* Pick your hard */}
+        <Reveal className="mb-10 md:mb-14">
+          <h4 className="font-heading text-sm font-bold text-foreground mb-4 tracking-[0.2em] uppercase text-left">
+            Pick Your Poison
+          </h4>
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="glass-card glow-border rounded-2xl p-6 md:p-8 text-left">
+              <h5 className="font-heading text-xl md:text-2xl font-black text-foreground mb-3 tracking-wide uppercase">
+                The 48-Hour Purge
+              </h5>
+              <p className="text-muted-foreground text-base md:text-lg">
+                The clock never stops. Two days to find out what you're truly made of.
+              </p>
             </div>
-            <div className="bg-secondary rounded-xl p-4 text-center">
-              <div className="font-heading font-bold text-foreground text-sm mb-1 tracking-wide uppercase">The Multi-Day Mission</div>
-              <p className="text-muted-foreground text-sm">Break it down, conquer it piece by piece, and log your time on your own terms.</p>
+            <div className="glass-card glow-border rounded-2xl p-6 md:p-8 text-left">
+              <h5 className="font-heading text-xl md:text-2xl font-black text-foreground mb-3 tracking-wide uppercase">
+                The Multi-Day Mission
+              </h5>
+              <p className="text-muted-foreground text-base md:text-lg">
+                Break it down, conquer it piece by piece, and log your time on your own terms.
+              </p>
             </div>
           </div>
-        </div>
+        </Reveal>
 
-        <p className="text-foreground italic font-heading tracking-wide mb-6">
-          Are you tracking, or are you backing out?
-        </p>
-
-        <button
-          onClick={onOpenChat}
-          className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
-        >
-          Learn More
-        </button>
-      </Reveal>
+        {/* CTA */}
+        <Reveal className="text-center">
+          <p className="text-foreground font-heading tracking-wide text-lg md:text-xl mb-6">
+            Are you tracking, or are you backing out?
+          </p>
+          <button
+            onClick={onOpenChat}
+            className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
+          >
+            Learn More
+          </button>
+        </Reveal>
+      </div>
     </div>
   </section>
 );
