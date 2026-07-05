@@ -61,7 +61,7 @@ const About = ({ onOpenChat }: AboutProps) => (
               Book with Ernest
             </button>
             <a
-              href="https://www.instagram.com/summitfit_adventures"
+              href="https://www.instagram.com/summitfitadventures"
               target="_blank"
               rel="noopener noreferrer"
               className="border-2 border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-all"

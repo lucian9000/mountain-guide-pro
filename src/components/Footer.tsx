@@ -48,8 +48,8 @@ const Footer = () => {
               <a href="mailto:bookings@summitfitadventures.com" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
                 <Mail className="w-4 h-4" /> bookings@summitfitadventures.com
               </a>
-              <a href="https://www.instagram.com/summitfit_adventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Instagram className="w-4 h-4" /> @summitfit_adventures
+              <a href="https://www.instagram.com/summitfitadventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
+                <Instagram className="w-4 h-4" /> @summitfitadventures
               </a>
             </div>
           </div>

@@ -59,11 +59,11 @@ const SocialFeed = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-heading font-bold text-foreground mb-1 tracking-wider uppercase">@summitfit_adventures</h3>
+                <h3 className="text-lg font-heading font-bold text-foreground mb-1 tracking-wider uppercase">@summitfitadventures</h3>
                 <p className="text-muted-foreground text-sm">Follow us on Instagram for daily adventure content</p>
               </div>
               <a
-                href="https://www.instagram.com/summitfit_adventures"
+                href="https://www.instagram.com/summitfitadventures"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45] text-white font-heading font-bold text-sm tracking-wider uppercase hover:opacity-90 transition-opacity"
