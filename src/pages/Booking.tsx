@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import { ArrowLeft, CalendarIcon, Loader2, Minus, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -68,6 +68,7 @@ const Booking = () => {
   const guides = usePublicGuides();
   const createBooking = useCreateBooking();
 
+  const [params] = useSearchParams();
   const [tourId, setTourId] = useState<string>("");
   const [guideId, setGuideId] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>();
@@ -75,6 +76,17 @@ const Booking = () => {
   const [participants, setParticipants] = useState(1);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [confirmed, setConfirmed] = useState<ConfirmedBooking | null>(null);
+
+  // Pre-select the tour when arriving from a route page (?tour=<slug or id>).
+  const requestedTour = params.get("tour");
+  useEffect(() => {
+    if (!requestedTour || tourId || !pricing.data) return;
+    const match = pricing.data.find(
+      (t) => t.tour_slug === requestedTour || t.id === requestedTour
+    );
+    if (match) setTourId(match.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedTour, pricing.data]);
 
   const selectedTour = pricing.data?.find((t) => t.id === tourId);
   const total = selectedTour ? Number(selectedTour.price) * participants : 0;

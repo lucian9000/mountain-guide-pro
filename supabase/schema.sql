@@ -324,15 +324,45 @@ values
   ('lions-head',   'Lion''s Head Sunrise Summit',            'Beginner-friendly sunrise scramble up Lion''s Head with ladders and chains.', 1200, 1000, '2–4 hours', 3, 10, 1, true),
   ('platteklip',   'Platteklip Gorge (The Stairmaster)',     'Steep, direct ascent of Table Mountain via the iconic stone staircase.',       1500, 1200, '1–3 hours', 3, 8,  2, true),
   ('kasteelspoort','Kasteelspoort to Diving Board',          'Rocky track to the famous Diving Board viewpoint above Camps Bay.',            1500, 1200, '4–6 hours', 3, 8,  3, true),
-  ('waterworks',   'Skeleton Gorge / Nursery Ravine Loop',   'Full-day traverse through forest, ladders and dams from Kirstenbosch.',         2000, 1300, '7–8 hours', 3, 6,  4, true),
+  ('waterworks',   'Skeleton Gorge / Nursery Ravine Loop',   'Full-day traverse through forest, ladders and dams from Kirstenbosch.',         2000, 1300, '7–8 hours', 4, 6,  4, true),
   ('india-venster','India Venster (The Adventure Route)',    'Exposed scramble up Table Mountain''s face — for confident adventurers.',       1500, 1200, '3–5 hours', 5, 4,  5, true),
-  ('west-peak',    'West Peak, Helderberg Reserve',          'Scenic climb up Helderberg Reserve''s iconic peak above Somerset West.',        1200, 1000, '5–7 hours', 4, 8,  6, true)
-on conflict (tour_slug) do nothing;
+  ('west-peak',    'West Peak, Helderberg Reserve',          'Scenic climb up Helderberg Reserve''s iconic peak above Somerset West.',        1200, 1000, '5–7 hours', 5, 8,  6, true)
+on conflict (tour_slug) do update set
+  name = excluded.name,
+  description = excluded.description,
+  price = excluded.price,
+  price_group = excluded.price_group,
+  duration = excluded.duration,
+  difficulty = excluded.difficulty,
+  max_participants = excluded.max_participants,
+  display_order = excluded.display_order,
+  active = excluded.active;
 
--- NOTE: `on conflict do nothing` means re-running this file will NOT update
--- prices/names on an already-seeded Supabase project. If you've already run
--- this seed against a live database, apply the corrected values with a
--- manual UPDATE (or change this clause to `do update`) to push them live.
+-- NOTE: `do update` means re-running this file syncs prices/names on an
+-- already-seeded Supabase project to the values above. Edit here, re-run,
+-- and the live rows follow.
+
+-- =====================================================================
+-- FUNCTION PRIVILEGE HARDENING (per Supabase security advisors)
+-- =====================================================================
+-- Pin search_path on the trigger helper.
+alter function public.touch_updated_at() set search_path = public;
+
+-- handle_new_user is only ever invoked by the auth.users trigger; it must not
+-- be callable via the REST RPC surface. EXECUTE for triggers is checked
+-- against the table owner (supabase_auth_admin for auth.users).
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+grant execute on function public.handle_new_user() to supabase_auth_admin;
+
+-- Admin-only RPC: self-guards via is_admin(), but anon has no business calling
+-- it. Keep authenticated (the admin calls it from the browser client).
+revoke execute on function public.set_single_active_special(uuid) from public, anon;
+grant execute on function public.set_single_active_special(uuid) to authenticated;
+
+-- is_admin() stays executable by anon + authenticated ON PURPOSE: the RLS
+-- policies on pricing/specials/guides call it during anonymous public reads.
+-- It leaks nothing (returns a boolean about the caller only). The advisor
+-- WARN for it is expected and accepted.
 
 -- =====================================================================
 -- PHASE 2 ENDS

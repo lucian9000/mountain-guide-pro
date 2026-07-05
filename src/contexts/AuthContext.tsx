@@ -81,7 +81,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Subsequent transitions (sign-in/out in this or another tab, token refresh).
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, nextSession) => {
+    } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (!isMounted.current) return;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
@@ -91,9 +91,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       // Refresh the profile on sign-in; token refreshes keep the existing one.
+      // ⚠️ Deferred via setTimeout: auth-js holds its session lock while
+      // notifying subscribers, and a Supabase query in the same tick needs
+      // that lock to read the access token — awaiting it here deadlocks the
+      // whole client (per the onAuthStateChange docs).
       if (event === "SIGNED_IN" || event === "USER_UPDATED") {
-        const p = await fetchProfile(nextSession.user.id);
-        if (isMounted.current) setProfile(p);
+        const userId = nextSession.user.id;
+        setTimeout(async () => {
+          const p = await fetchProfile(userId);
+          if (isMounted.current) setProfile(p);
+        }, 0);
       }
     });
 
@@ -112,6 +119,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       provider: "google",
       options: {
         redirectTo: callback,
+        // calendar.readonly lets the admin dashboard render the signed-in
+        // user's Google Calendar via session.provider_token. Sensitive scope:
+        // while the Google OAuth app is unverified/in testing, only test
+        // users can grant it.
+        scopes: "https://www.googleapis.com/auth/calendar.readonly",
         queryParams: { access_type: "offline", prompt: "consent" },
       },
     });

@@ -3,13 +3,16 @@ import {
   ArrowLeft,
   CalendarRange,
   LayoutDashboard,
+  Map,
   Mountain,
+  Newspaper,
   Tag,
   Users,
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.webp";
+import { version } from "../../../package.json";
 
 export const ADMIN_NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -18,6 +21,9 @@ export const ADMIN_NAV = [
   { to: "/admin/specials", label: "Specials", icon: Sparkles, end: false },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarRange, end: false },
   { to: "/admin/guides", label: "Guides", icon: Mountain, end: false },
+  // Content area
+  { to: "/admin/routes", label: "Routes", icon: Map, end: false },
+  { to: "/admin/updates", label: "What's New", icon: Newspaper, end: false },
 ] as const;
 
 interface AdminSidebarProps {
@@ -71,6 +77,9 @@ const AdminSidebar = ({ onNavigate }: AdminSidebarProps) => (
       >
         <ArrowLeft className="w-4 h-4" /> Back to Site
       </NavLink>
+      <p className="px-3 pt-2 text-muted-foreground/40 text-[10px] tracking-widest uppercase">
+        v{version} · see docs/CHANGELOG.md
+      </p>
     </div>
   </div>
 );

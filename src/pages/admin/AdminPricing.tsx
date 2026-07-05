@@ -8,6 +8,7 @@ import {
 import type { Pricing } from "@/lib/types/db";
 import { useToast } from "@/hooks/use-toast";
 import DataState from "@/components/admin/DataState";
+import SitePricesSection from "@/components/admin/SitePricesSection";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -243,6 +244,8 @@ const AdminPricing = () => {
           </Table>
         </DataState>
       </div>
+
+      <SitePricesSection />
     </div>
   );
 };

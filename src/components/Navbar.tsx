@@ -10,11 +10,14 @@ interface NavbarProps {
   onOpenChat: () => void;
 }
 
-const NAV_ITEMS: [string, string][] = [
-  ["expeditions", "Routes"],
-  ["about", "The Guide"],
-  ["fitness", "Training"],
-  ["contact", "Contact"],
+type NavItem = { label: string; to?: string; section?: string };
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "Routes", to: "/routes" },
+  { label: "News", to: "/news" },
+  { label: "The Guide", section: "about" },
+  { label: "Training", section: "fitness" },
+  { label: "Contact", section: "contact" },
 ];
 
 const Navbar = ({ onOpenChat }: NavbarProps) => {
@@ -90,15 +93,19 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
 
           {/* Desktop */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_ITEMS.map(([id, label]) => (
-              <button
-                key={id}
-                onClick={() => scrollTo(id)}
-                className="relative text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full"
-              >
-                {label}
-              </button>
-            ))}
+            {NAV_ITEMS.map(({ label, to, section }) => {
+              const cls =
+                "relative text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full";
+              return to ? (
+                <Link key={label} to={to} className={cls}>
+                  {label}
+                </Link>
+              ) : (
+                <button key={label} onClick={() => scrollTo(section!)} className={cls}>
+                  {label}
+                </button>
+              );
+            })}
             <Link
               to="/booking"
               className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all hover:scale-105"
@@ -146,25 +153,36 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
 
         <div className="relative h-full flex flex-col pt-20 pb-8 px-6 overflow-y-auto">
           <nav className="flex-1 flex flex-col justify-center gap-1 max-w-sm mx-auto w-full">
-            {NAV_ITEMS.map(([id, label], i) => (
-              <button
-                key={id}
-                onClick={() => scrollTo(id)}
-                style={{
-                  transitionDelay: isMobileOpen ? `${i * 50 + 80}ms` : "0ms",
-                }}
-                className={`group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition-all duration-500 ${
-                  isMobileOpen
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 -translate-x-4"
-                }`}
-              >
-                <span>{label}</span>
+            {NAV_ITEMS.map(({ label, to, section }, i) => {
+              const style = {
+                transitionDelay: isMobileOpen ? `${i * 50 + 80}ms` : "0ms",
+              };
+              const cls = `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition-all duration-500 ${
+                isMobileOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+              }`;
+              const arrow = (
                 <span className="text-accent/40 group-hover:text-accent group-hover:translate-x-1 transition-all text-base">
                   →
                 </span>
-              </button>
-            ))}
+              );
+              return to ? (
+                <Link
+                  key={label}
+                  to={to}
+                  onClick={() => setIsMobileOpen(false)}
+                  style={style}
+                  className={cls}
+                >
+                  <span>{label}</span>
+                  {arrow}
+                </Link>
+              ) : (
+                <button key={label} onClick={() => scrollTo(section!)} style={style} className={cls}>
+                  <span>{label}</span>
+                  {arrow}
+                </button>
+              );
+            })}
           </nav>
 
           <div

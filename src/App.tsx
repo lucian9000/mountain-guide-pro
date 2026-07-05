@@ -15,6 +15,9 @@ import NotFound from "./pages/NotFound";
 const Login = lazy(() => import("./pages/Login"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Booking = lazy(() => import("./pages/Booking"));
+const RoutesIndex = lazy(() => import("./pages/RoutesIndex"));
+const RouteDetail = lazy(() => import("./pages/RouteDetail"));
+const News = lazy(() => import("./pages/News"));
 const DashboardLayout = lazy(() => import("./pages/dashboard/DashboardLayout"));
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
 const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
@@ -26,6 +29,9 @@ const AdminPricing = lazy(() => import("./pages/admin/AdminPricing"));
 const AdminSpecials = lazy(() => import("./pages/admin/AdminSpecials"));
 const AdminBookings = lazy(() => import("./pages/admin/AdminBookings"));
 const AdminGuides = lazy(() => import("./pages/admin/AdminGuides"));
+const AdminRoutes = lazy(() => import("./pages/admin/AdminRoutes"));
+const AdminRouteEditor = lazy(() => import("./pages/admin/AdminRouteEditor"));
+const AdminUpdates = lazy(() => import("./pages/admin/AdminUpdates"));
 
 const queryClient = new QueryClient();
 
@@ -41,6 +47,9 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/routes" element={<RoutesIndex />} />
+              <Route path="/routes/:slug" element={<RouteDetail />} />
+              <Route path="/news" element={<News />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
@@ -58,6 +67,10 @@ const App = () => (
                   <Route path="/admin/specials" element={<AdminSpecials />} />
                   <Route path="/admin/bookings" element={<AdminBookings />} />
                   <Route path="/admin/guides" element={<AdminGuides />} />
+                  <Route path="/admin/routes" element={<AdminRoutes />} />
+                  <Route path="/admin/routes/new" element={<AdminRouteEditor />} />
+                  <Route path="/admin/routes/:id" element={<AdminRouteEditor />} />
+                  <Route path="/admin/updates" element={<AdminUpdates />} />
                 </Route>
               </Route>
 

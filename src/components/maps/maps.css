@@ -1,0 +1,45 @@
+/* Leaflet theming to match the site's design tokens. Loaded only with the
+   code-split map chunk. */
+
+.leaflet-container {
+  font-family: inherit;
+  background: hsl(var(--muted));
+  border-radius: 0.75rem;
+}
+
+.leaflet-popup-content-wrapper {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 30px hsl(var(--background) / 0.6);
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px;
+}
+
+.leaflet-popup-tip {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+.leaflet-popup-close-button {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.leaflet-control-zoom a {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.leaflet-control-attribution {
+  background: hsl(var(--background) / 0.8) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 10px;
+}
+
+.leaflet-control-attribution a {
+  color: hsl(var(--accent)) !important;
+}

@@ -6,6 +6,7 @@ import {
   useRecentClients,
 } from "@/lib/queries/admin";
 import DataState from "@/components/admin/DataState";
+import GoogleCalendarCard from "@/components/admin/GoogleCalendarCard";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -141,6 +142,8 @@ const AdminDashboard = () => {
           </div>
         </section>
       </div>
+
+      <GoogleCalendarCard />
     </div>
   );
 };

@@ -9,7 +9,7 @@ import Fitness from "@/components/Fitness";
 import Gallery from "@/components/Gallery";
 import Values from "@/components/Values";
 import CTASection from "@/components/CTASection";
-import SocialFeed from "@/components/SocialFeed";
+import WhatsNew from "@/components/WhatsNew";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import BackToTop from "@/components/BackToTop";
@@ -23,6 +23,7 @@ const Index = () => {
       <Navbar onOpenChat={openChat} />
       <Hero onOpenChat={openChat} />
       <TrustBar />
+      <WhatsNew />
       <Services />
       <Expeditions onOpenChat={openChat} />
       <About onOpenChat={openChat} />
@@ -30,7 +31,6 @@ const Index = () => {
       <Gallery onOpenChat={openChat} />
       <Values />
       <CTASection onOpenChat={openChat} />
-      <SocialFeed />
       <Footer />
       <BackToTop />
       <ChatWidget isOpen={chatOpen} onOpen={openChat} onClose={() => setChatOpen(false)} />

@@ -1,4 +1,5 @@
-import { Phone, Mail, Instagram, MessageCircle } from "lucide-react";
+import { Phone, Mail, Instagram, Facebook, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.webp";
 
 const Footer = () => {
@@ -21,7 +22,19 @@ const Footer = () => {
           <div>
             <h3 className="font-heading text-sm font-bold text-foreground mb-4 tracking-wider uppercase">Quick Links</h3>
             <div className="flex flex-col gap-2">
-              {[["expeditions", "Routes"], ["about", "The Guide"], ["fitness", "Training"]].map(([id, label]) => (
+              <Link
+                to="/routes"
+                className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
+              >
+                Routes
+              </Link>
+              <Link
+                to="/news"
+                className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
+              >
+                What's New
+              </Link>
+              {[["about", "The Guide"], ["fitness", "Training"]].map(([id, label]) => (
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}
@@ -50,6 +63,9 @@ const Footer = () => {
               </a>
               <a href="https://www.instagram.com/summitfitadventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
                 <Instagram className="w-4 h-4" /> @summitfitadventures
+              </a>
+              <a href="https://www.facebook.com/carrickadventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
+                <Facebook className="w-4 h-4" /> Follow us on Facebook
               </a>
             </div>
           </div>

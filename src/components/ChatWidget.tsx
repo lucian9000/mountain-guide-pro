@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MessageCircle, X, ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.webp";
 import { findRoutes, type Route } from "@/data/routes";
+import { useTourPrices } from "@/lib/queries/content";
 
 interface ChatWidgetProps {
   isOpen: boolean;
@@ -44,6 +45,20 @@ const WELCOME: Message = {
 const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [stage, setStage] = useState<Stage>("initial");
+  // Live tour prices from the pricing table (routes.ts values are stale copy).
+  const { data: tourPrices } = useTourPrices();
+
+  const priceLine = (route: Route): string => {
+    const db = tourPrices?.[route.id];
+    if (db) {
+      return `R${Number(db.price)} (Private)${
+        db.price_group != null ? ` / R${Number(db.price_group)} (Group)` : ""
+      }`;
+    }
+    return route.logistics.contactForPricing
+      ? "Contact for Pricing"
+      : `R${route.logistics.price} (Private) / R${route.logistics.priceGroup} (Group)`;
+  };
 
   const push = (...msgs: Message[]) =>
     setMessages((prev) => [...prev, ...msgs]);
@@ -196,9 +211,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                       ⛅ {route.weather.policy}
                     </div>
                     <div className="text-accent font-heading font-bold text-sm mb-2">
-                      {route.logistics.contactForPricing
-                        ? "Contact for Pricing"
-                        : `R${route.logistics.price} (Private) / R${route.logistics.priceGroup} (Group)`}
+                      {priceLine(route)}
                     </div>
                     <button
                       onClick={() => bookRoute(route)}
