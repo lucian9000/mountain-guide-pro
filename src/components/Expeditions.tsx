@@ -1,6 +1,6 @@
 import expedition1 from "@/assets/expedition-1.webp";
 import expedition2 from "@/assets/expedition-2.webp";
-import expedition3 from "@/assets/expedition-3.webp";
+import helderbergDome from "@/assets/helderberg-dome.webp";
 import { Clock, TrendingUp } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
@@ -26,7 +26,7 @@ const expeditions = [
     description: "Full-day traverse through ancient forests and ladders to the highest point.",
   },
   {
-    image: expedition3,
+    image: helderbergDome,
     title: "West Peak, Hottentots Holland",
     duration: "5–7 Hours",
     difficulty: "Hard",

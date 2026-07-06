@@ -1,4 +1,4 @@
-import guideImage from "@/assets/guide-portrait.webp";
+import guideImage from "@/assets/meet-ernest.webp";
 import { Shield, Leaf, Camera } from "lucide-react";
 import Reveal from "@/components/Reveal";
 

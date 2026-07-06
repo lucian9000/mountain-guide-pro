@@ -10,6 +10,7 @@ import Gallery from "@/components/Gallery";
 import Values from "@/components/Values";
 import CTASection from "@/components/CTASection";
 import WhatsNew from "@/components/WhatsNew";
+import SocialFeed from "@/components/SocialFeed";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import BackToTop from "@/components/BackToTop";
@@ -31,6 +32,7 @@ const Index = () => {
       <Gallery onOpenChat={openChat} />
       <Values />
       <CTASection onOpenChat={openChat} />
+      <SocialFeed />
       <Footer />
       <BackToTop />
       <ChatWidget isOpen={chatOpen} onOpen={openChat} onClose={() => setChatOpen(false)} />

@@ -12,6 +12,16 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## v3.0.1 — Photos + social section restored (2026-07-05)
+
+- "Meet Ernest" section now uses the real portrait (`meet-ernest.webp`);
+  West Peak / Hottentots Holland card and route fallback use
+  `helderberg-dome.webp`. Both compressed to ≤1600px WebP q78
+  (4.7 MB → 426 KB, 240 KB → 117 KB).
+- Restored the Facebook + Instagram social section at the bottom of the
+  homepage (it was removed with the What's New work in v2.0.0; the footer
+  Facebook link stays too).
+
 ## v3.0.0 — Maps (2026-07-05)
 
 Free map stack — no API keys, no billing, no paid services.
