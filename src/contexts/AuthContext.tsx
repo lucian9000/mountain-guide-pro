@@ -17,7 +17,10 @@ interface AuthContextValue {
   role: UserRole | null;
   /** True until the initial session + profile fetch settles. Guards must wait. */
   loading: boolean;
-  signInWithGoogle: (redirectTo?: string) => Promise<void>;
+  signInWithGoogle: (
+    redirectTo?: string,
+    options?: { requestCalendar?: boolean }
+  ) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -110,7 +113,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const signInWithGoogle = async (redirectTo?: string) => {
+  const signInWithGoogle = async (
+    redirectTo?: string,
+    options?: { requestCalendar?: boolean }
+  ) => {
     const base = import.meta.env.VITE_SITE_URL || window.location.origin;
     const callback = `${base}/auth/callback${
       redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""
@@ -119,12 +125,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       provider: "google",
       options: {
         redirectTo: callback,
-        // calendar.readonly lets the admin dashboard render the signed-in
-        // user's Google Calendar via session.provider_token. Sensitive scope:
-        // while the Google OAuth app is unverified/in testing, only test
-        // users can grant it.
-        scopes: "https://www.googleapis.com/auth/calendar.readonly",
-        queryParams: { access_type: "offline", prompt: "consent" },
+        // Normal sign-ins request ONLY basic scopes (openid/email/profile) —
+        // no Google verification needed, no "unverified app" warning.
+        // calendar.readonly (SENSITIVE scope) is requested only when the
+        // admin clicks "Connect Google Calendar" on the dashboard; the token
+        // lands in session.provider_token for the calendar card.
+        ...(options?.requestCalendar
+          ? {
+              scopes: "https://www.googleapis.com/auth/calendar.readonly",
+              queryParams: { access_type: "offline", prompt: "consent" },
+            }
+          : {}),
       },
     });
   };

@@ -12,6 +12,25 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## v3.1.0 — Client-friendly sign-in, Facebook in What's New, scroll fix (2026-07-06)
+
+- **Google sign-in for clients requests only basic scopes** (email/profile) —
+  no more "unverified app" warning or 100-user cap for normal users. The
+  sensitive `calendar.readonly` scope moved to the admin dashboard's
+  "Connect Google Calendar" button (`signInWithGoogle(..., { requestCalendar:
+  true })`).
+- **What's New** now pairs the announcements column (space reserved even
+  when empty) with the live Facebook page feed (500px plugin, 600px tall).
+  Bottom-of-page social section unchanged.
+- **Scroll restoration fix**: SPA navigation now always starts pages at the
+  top (`ScrollToTop` on pathname change). Browser back/forward still
+  restores position natively.
+- Verified end-to-end with Playwright driving system Edge (headless):
+  What's New render, routes overview map + attribution, scroll behavior,
+  route detail, news, booking pre-select, and the OAuth scope on the real
+  Google redirect (`scope=email profile`). `playwright` added as a dev
+  dependency for repeatable site drives.
+
 ## v3.0.1 — Photos + social section restored (2026-07-05)
 
 - "Meet Ernest" section now uses the real portrait (`meet-ernest.webp`);

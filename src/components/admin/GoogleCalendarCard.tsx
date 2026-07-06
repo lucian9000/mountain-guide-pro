@@ -100,10 +100,14 @@ const GoogleCalendarCard = () => {
             <CalendarDays className="w-8 h-8 text-accent" />
             <p className="text-sm text-muted-foreground max-w-sm">
               Connect your Google Calendar to see your upcoming events here.
-              Google access expires periodically — reconnecting just repeats
-              the sign-in.
+              Google will ask for read-only calendar access (admins only —
+              client sign-ins never request it). Access expires periodically;
+              reconnecting just repeats the sign-in.
             </p>
-            <Button size="sm" onClick={() => signInWithGoogle("/admin")}>
+            <Button
+              size="sm"
+              onClick={() => signInWithGoogle("/admin", { requestCalendar: true })}
+            >
               <RefreshCw className="w-4 h-4 mr-2" />
               Connect Google Calendar
             </Button>

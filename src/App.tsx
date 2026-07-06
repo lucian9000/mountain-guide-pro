@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useLayoutEffect } from "react";
 import AuthProvider from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AdminRoute from "@/components/auth/AdminRoute";
@@ -35,12 +36,26 @@ const AdminUpdates = lazy(() => import("./pages/admin/AdminUpdates"));
 
 const queryClient = new QueryClient();
 
+/**
+ * SPA navigations keep the previous scroll position by default (scroll to
+ * the bottom of /routes, click Home → you land mid-page). Reset to the top
+ * on every path change, before paint so there's no visible jump.
+ */
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <Suspense fallback={<AuthLoading />}>
             <Routes>
