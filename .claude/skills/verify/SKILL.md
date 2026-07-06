@@ -32,8 +32,11 @@ If the script lives outside the repo, require playwright by absolute path
 
 ## Flows worth driving
 
-- `/` — `#whats-new` (announcements + Facebook iframe), `Meet Ernest
-  Carrick`, bottom `Follow Our Adventures` social section
+- `/` — hero → TrustBar → Services (NO What's New section since v3.1.1),
+  `Meet Ernest Carrick`, bottom `Follow Our Adventures` social section
+- `/news` — announcements section + Facebook feed (centered, 500px wide ×
+  900px tall; the plugin height URL param must match the box height or it
+  renders blank)
 - `/routes` — 8 route cards, `.leaflet-container`, attribution must read
   `© OpenStreetMap contributors, SRTM | © OpenTopoMap (CC-BY-SA)`
 - `/routes/lions-head` — h1, difficulty badge, Enquire CTA; `?preview=1`

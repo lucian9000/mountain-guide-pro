@@ -12,6 +12,16 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## v3.1.1 — What's New moves to /news (2026-07-06)
+
+- Homepage no longer has a What's New section (spacing looked poor with an
+  empty announcements column; FB/IG links already live at the page bottom).
+- /news (nav → News) is now the What's New page: announcements up top
+  (full-width, space reserved when empty), then the Facebook feed —
+  centered, 900px tall. Facebook hard-caps its embed at 500px wide, so
+  "full page" width is not possible; tall + centered is the max.
+- Removed the now-unused WhatsNew homepage component.
+
 ## v3.1.0 — Client-friendly sign-in, Facebook in What's New, scroll fix (2026-07-06)
 
 - **Google sign-in for clients requests only basic scopes** (email/profile) —

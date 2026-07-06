@@ -9,7 +9,6 @@ import Fitness from "@/components/Fitness";
 import Gallery from "@/components/Gallery";
 import Values from "@/components/Values";
 import CTASection from "@/components/CTASection";
-import WhatsNew from "@/components/WhatsNew";
 import SocialFeed from "@/components/SocialFeed";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
@@ -24,7 +23,6 @@ const Index = () => {
       <Navbar onOpenChat={openChat} />
       <Hero onOpenChat={openChat} />
       <TrustBar />
-      <WhatsNew />
       <Services />
       <Expeditions onOpenChat={openChat} />
       <About onOpenChat={openChat} />
