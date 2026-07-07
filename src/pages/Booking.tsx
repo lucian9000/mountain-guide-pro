@@ -181,11 +181,16 @@ const Booking = () => {
               <div className="glass-card glow-border p-6 md:p-8 space-y-6">
                 {/* Tour */}
                 <div className="space-y-2">
-                  <label className="text-sm font-heading font-bold text-foreground tracking-wider uppercase">
+                  <label
+                    htmlFor="booking-tour"
+                    className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                  >
                     Tour
+                    <span aria-hidden="true" className="text-accent"> *</span>
+                    <span className="sr-only"> (required)</span>
                   </label>
                   <Select value={tourId} onValueChange={setTourId}>
-                    <SelectTrigger>
+                    <SelectTrigger id="booking-tour" aria-required="true">
                       <SelectValue placeholder="Choose a route" />
                     </SelectTrigger>
                     <SelectContent>
@@ -200,7 +205,10 @@ const Booking = () => {
 
                 {/* Guide */}
                 <div className="space-y-2">
-                  <label className="text-sm font-heading font-bold text-foreground tracking-wider uppercase">
+                  <label
+                    htmlFor="booking-guide"
+                    className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                  >
                     Guide{" "}
                     <span className="text-muted-foreground font-normal normal-case">
                       (optional)
@@ -208,7 +216,7 @@ const Booking = () => {
                   </label>
                   {guides.data && guides.data.length > 0 ? (
                     <Select value={guideId} onValueChange={setGuideId}>
-                      <SelectTrigger>
+                      <SelectTrigger id="booking-guide">
                         <SelectValue placeholder="Any available guide" />
                       </SelectTrigger>
                       <SelectContent>
@@ -228,12 +236,21 @@ const Booking = () => {
 
                 {/* Date */}
                 <div className="space-y-2">
-                  <label className="text-sm font-heading font-bold text-foreground tracking-wider uppercase">
+                  <label
+                    htmlFor="booking-date"
+                    className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                  >
                     Date
+                    <span aria-hidden="true" className="text-accent"> *</span>
+                    <span className="sr-only"> (required)</span>
                   </label>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <button className="w-full flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm text-left hover:border-accent transition-colors">
+                      <button
+                        id="booking-date"
+                        aria-required="true"
+                        className="w-full flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm text-left hover:border-accent transition-colors"
+                      >
                         <CalendarIcon className="w-4 h-4 text-accent" />
                         {date ? format(date, "EEEE, d MMMM yyyy") : (
                           <span className="text-muted-foreground">Pick a date</span>
@@ -259,11 +276,14 @@ const Booking = () => {
                 {/* Time slot */}
                 {slots.length > 0 && (
                   <div className="space-y-2">
-                    <label className="text-sm font-heading font-bold text-foreground tracking-wider uppercase">
+                    <label
+                      htmlFor="booking-time"
+                      className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                    >
                       Time
                     </label>
                     <Select value={slot} onValueChange={setSlot}>
-                      <SelectTrigger>
+                      <SelectTrigger id="booking-time">
                         <SelectValue placeholder="Pick a start time" />
                       </SelectTrigger>
                       <SelectContent>
@@ -279,23 +299,30 @@ const Booking = () => {
 
                 {/* Participants */}
                 <div className="space-y-2">
-                  <label className="text-sm font-heading font-bold text-foreground tracking-wider uppercase">
+                  <label
+                    htmlFor="booking-participants"
+                    className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                  >
                     Participants
                   </label>
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setParticipants((p) => Math.max(1, p - 1))}
-                      className="w-9 h-9 rounded-lg border border-border hover:border-accent text-foreground flex items-center justify-center transition-colors"
+                      className="w-11 h-11 rounded-lg border border-border hover:border-accent text-foreground flex items-center justify-center transition-colors"
                       aria-label="Fewer participants"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="font-heading text-xl font-bold text-foreground w-8 text-center">
-                      {participants}
-                    </span>
+                    <input
+                      id="booking-participants"
+                      type="text"
+                      readOnly
+                      value={participants}
+                      className="font-heading text-xl font-bold text-foreground w-8 text-center bg-transparent border-0 p-0"
+                    />
                     <button
                       onClick={() => setParticipants((p) => Math.min(maxPax, p + 1))}
-                      className="w-9 h-9 rounded-lg border border-border hover:border-accent text-foreground flex items-center justify-center transition-colors"
+                      className="w-11 h-11 rounded-lg border border-border hover:border-accent text-foreground flex items-center justify-center transition-colors"
                       aria-label="More participants"
                     >
                       <Plus className="w-4 h-4" />
@@ -305,30 +332,37 @@ const Booking = () => {
                 </div>
 
                 {/* Summary + submit */}
-                <div className="border-t border-border/40 pt-5 flex items-center justify-between">
-                  <div>
-                    <div className="text-muted-foreground text-xs uppercase tracking-wider">
-                      Total
+                <div className="border-t border-border/40 pt-5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-muted-foreground text-xs uppercase tracking-wider">
+                        Total
+                      </div>
+                      <div className="font-heading text-2xl font-black text-accent">
+                        R{total}
+                      </div>
                     </div>
-                    <div className="font-heading text-2xl font-black text-accent">
-                      R{total}
-                    </div>
+                    <button
+                      onClick={handleBook}
+                      disabled={!canSubmit}
+                      className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                    >
+                      {createBooking.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" /> Booking…
+                        </>
+                      ) : user ? (
+                        "Book Now"
+                      ) : (
+                        "Sign in to Book"
+                      )}
+                    </button>
                   </div>
-                  <button
-                    onClick={handleBook}
-                    disabled={!canSubmit}
-                    className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
-                  >
-                    {createBooking.isPending ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Booking…
-                      </>
-                    ) : user ? (
-                      "Book Now"
-                    ) : (
-                      "Sign in to Book"
-                    )}
-                  </button>
+                  {(!tourId || !date) && (
+                    <p className="text-sm text-muted-foreground mt-3 text-right">
+                      Select a tour and date to continue.
+                    </p>
+                  )}
                 </div>
               </div>
             </DataState>
