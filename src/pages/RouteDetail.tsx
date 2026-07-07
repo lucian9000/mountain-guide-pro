@@ -13,7 +13,7 @@ import {
   Route as RouteIcon,
   TrendingUp,
 } from "lucide-react";
-import PublicHeader from "@/components/PublicHeader";
+import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import DifficultyBadge from "@/components/routes/DifficultyBadge";
 import { routeCover, routeDisplayPrice } from "@/components/routes/RouteCard";
@@ -68,7 +68,7 @@ const RouteDetail = () => {
   if (isLoading) {
     return (
       <div className="min-h-dvh bg-background flex flex-col">
-        <PublicHeader />
+        <SiteHeader variant="solid" />
         <main id="main" className="flex-1 container mx-auto px-4 py-10 space-y-6">
           <Skeleton className="w-full h-[40vh] rounded-xl" />
           <Skeleton className="w-2/3 h-10" />
@@ -82,7 +82,7 @@ const RouteDetail = () => {
   if (error || !route) {
     return (
       <div className="min-h-dvh bg-background flex flex-col">
-        <PublicHeader />
+        <SiteHeader variant="solid" />
         <NotFoundPanel />
         <Footer />
       </div>
@@ -118,7 +118,7 @@ const RouteDetail = () => {
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">
-      <PublicHeader />
+      <SiteHeader variant="solid" />
 
       {isPreview && (
         <div className="bg-gold/15 border-b border-gold/30 text-gold text-center text-xs font-heading font-bold tracking-wider uppercase py-2 px-4 flex items-center justify-center gap-2">

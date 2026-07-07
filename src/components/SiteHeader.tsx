@@ -6,8 +6,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import UserMenu from "@/components/auth/UserMenu";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface NavbarProps {
-  onOpenChat: () => void;
+interface SiteHeaderProps {
+  /**
+   * "overlay" — transparent over the hero, solid on scroll, fixed (Index only).
+   *   Section links scroll in-page.
+   * "solid" — always-solid, sticky (all subpages incl. Booking).
+   *   Section links navigate to /#<section> (home + hash scroll).
+   */
+  variant: "overlay" | "solid";
+  /** Only used by the overlay variant's chat CTA. */
+  onOpenChat?: () => void;
 }
 
 type NavItem = { label: string; to?: string; section?: string };
@@ -23,19 +31,22 @@ const NAV_ITEMS: NavItem[] = [
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-const Navbar = ({ onOpenChat }: NavbarProps) => {
+const SiteHeader = ({ variant, onOpenChat }: SiteHeaderProps) => {
+  const isOverlay = variant === "overlay";
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
   const toggleRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
+  // Overlay variant only: transparent at top, solid once scrolled.
   useEffect(() => {
+    if (!isOverlay) return;
     const onScroll = () => setIsScrolled(window.scrollY > 50);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isOverlay]);
 
   // Lock body scroll while the full-screen mobile menu is open
   useEffect(() => {
@@ -107,49 +118,102 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
     });
   };
 
+  // The logo click: overlay scrolls to the top-of-page services section
+  // in-page; solid navigates home.
+  const solidClass =
+    "bg-background/95 backdrop-blur-md shadow-lg border-b border-border/50";
+  const navPositionClass = isOverlay ? "fixed" : "sticky";
+  const navBgClass = isOverlay
+    ? isScrolled || isMobileOpen
+      ? solidClass
+      : "bg-transparent"
+    : solidClass;
+
+  const desktopLinkCls =
+    "relative text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+  const mobileLinkCls = (i: number) =>
+    `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+      isMobileOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+    }`;
+
+  const mobileArrow = (
+    <span className="text-accent/40 group-hover:text-accent group-hover:translate-x-1 transition text-base">
+      →
+    </span>
+  );
+
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition duration-300 ${
-          isScrolled || isMobileOpen
-            ? "bg-background/95 backdrop-blur-md shadow-lg border-b border-border/50"
-            : "bg-transparent"
-        }`}
+        className={`${navPositionClass} top-0 left-0 right-0 z-50 transition duration-300 ${navBgClass}`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
-          <button
-            onClick={() => scrollTo("services")}
-            className="flex items-center gap-3 group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            aria-label="SummitFit Adventures home"
-          >
-            <img
-              src={logo}
-              alt=""
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-accent/30 group-hover:ring-accent/60 transition"
-            />
-            <div className="text-left">
-              <div className="font-heading font-bold text-foreground text-lg leading-tight tracking-wider uppercase">
-                SummitFit
+          {isOverlay ? (
+            <button
+              onClick={() => scrollTo("services")}
+              className="flex items-center gap-3 group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              aria-label="SummitFit Adventures home"
+            >
+              <img
+                src={logo}
+                alt=""
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-accent/30 group-hover:ring-accent/60 transition"
+              />
+              <div className="text-left">
+                <div className="font-heading font-bold text-foreground text-lg leading-tight tracking-wider uppercase">
+                  SummitFit
+                </div>
+                <div className="text-accent text-xs tracking-widest uppercase">
+                  Adventures
+                </div>
               </div>
-              <div className="text-accent text-xs tracking-widest uppercase">
-                Adventures
+            </button>
+          ) : (
+            <Link
+              to="/"
+              className="flex items-center gap-3 group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              aria-label="SummitFit Adventures home"
+            >
+              <img
+                src={logo}
+                alt=""
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-accent/30 group-hover:ring-accent/60 transition"
+              />
+              <div className="text-left">
+                <div className="font-heading font-bold text-foreground text-lg leading-tight tracking-wider uppercase">
+                  SummitFit
+                </div>
+                <div className="text-accent text-xs tracking-widest uppercase">
+                  Adventures
+                </div>
               </div>
-            </div>
-          </button>
+            </Link>
+          )}
 
           {/* Desktop */}
           <div className="hidden md:flex items-center gap-8">
             {NAV_ITEMS.map(({ label, to, section }) => {
-              const cls =
-                "relative text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
-              return to ? (
-                <Link key={label} to={to} className={cls}>
-                  {label}
-                </Link>
-              ) : (
-                <button key={label} onClick={() => scrollTo(section!)} className={cls}>
+              if (to) {
+                return (
+                  <Link key={label} to={to} className={desktopLinkCls}>
+                    {label}
+                  </Link>
+                );
+              }
+              // Section link: in-page scroll on overlay, /#section navigation on solid.
+              return isOverlay ? (
+                <button
+                  key={label}
+                  onClick={() => scrollTo(section!)}
+                  className={desktopLinkCls}
+                >
                   {label}
                 </button>
+              ) : (
+                <Link key={label} to={`/#${section}`} className={desktopLinkCls}>
+                  {label}
+                </Link>
               );
             })}
             <Link
@@ -206,30 +270,41 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
               const style = {
                 transitionDelay: isMobileOpen ? `${i * 50 + 80}ms` : "0ms",
               };
-              const cls = `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                isMobileOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
-              }`;
-              const arrow = (
-                <span className="text-accent/40 group-hover:text-accent group-hover:translate-x-1 transition text-base">
-                  →
-                </span>
-              );
-              return to ? (
-                <Link
+              if (to) {
+                return (
+                  <Link
+                    key={label}
+                    to={to}
+                    onClick={() => setIsMobileOpen(false)}
+                    style={style}
+                    className={mobileLinkCls(i)}
+                  >
+                    <span>{label}</span>
+                    {mobileArrow}
+                  </Link>
+                );
+              }
+              return isOverlay ? (
+                <button
                   key={label}
-                  to={to}
-                  onClick={() => setIsMobileOpen(false)}
+                  onClick={() => scrollTo(section!)}
                   style={style}
-                  className={cls}
+                  className={mobileLinkCls(i)}
                 >
                   <span>{label}</span>
-                  {arrow}
-                </Link>
-              ) : (
-                <button key={label} onClick={() => scrollTo(section!)} style={style} className={cls}>
-                  <span>{label}</span>
-                  {arrow}
+                  {mobileArrow}
                 </button>
+              ) : (
+                <Link
+                  key={label}
+                  to={`/#${section}`}
+                  onClick={() => setIsMobileOpen(false)}
+                  style={style}
+                  className={mobileLinkCls(i)}
+                >
+                  <span>{label}</span>
+                  {mobileArrow}
+                </Link>
               );
             })}
           </nav>
@@ -250,15 +325,17 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
               <CalendarRange className="w-4 h-4" /> Book Now
             </Link>
 
-            <button
-              onClick={() => {
-                onOpenChat();
-                setIsMobileOpen(false);
-              }}
-              className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <MessageCircle className="w-4 h-4" /> Ask a Question
-            </button>
+            {onOpenChat && (
+              <button
+                onClick={() => {
+                  onOpenChat();
+                  setIsMobileOpen(false);
+                }}
+                className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <MessageCircle className="w-4 h-4" /> Ask a Question
+              </button>
+            )}
             <a
               href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures."
               onClick={() => setIsMobileOpen(false)}
@@ -303,4 +380,4 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
   );
 };
 
-export default Navbar;
+export default SiteHeader;

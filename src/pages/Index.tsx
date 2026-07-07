@@ -1,5 +1,6 @@
-import { useState } from "react";
-import Navbar from "@/components/Navbar";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import SiteHeader from "@/components/SiteHeader";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
 import Services from "@/components/Services";
@@ -17,10 +18,23 @@ import BackToTop from "@/components/BackToTop";
 const Index = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const openChat = () => setChatOpen(true);
+  const location = useLocation();
+
+  // Land on the right section when arriving via /#<section> (e.g. from a
+  // subpage's "Training"/"Contact"/"The Guide" link). Deferred so the target
+  // section has mounted before we scroll.
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.slice(1);
+    const raf = requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [location.hash]);
 
   return (
     <div className="min-h-dvh">
-      <Navbar onOpenChat={openChat} />
+      <SiteHeader variant="overlay" onOpenChat={openChat} />
       <main id="main">
         <Hero onOpenChat={openChat} />
         <TrustBar />

@@ -10,12 +10,11 @@ import {
   useCreateBooking,
 } from "@/lib/queries/booking";
 import { getGuideAvailability, type TimeSlot } from "@/lib/google-calendar";
-import UserMenu from "@/components/auth/UserMenu";
+import SiteHeader from "@/components/SiteHeader";
 import BookingConfirmation, {
   type ConfirmedBooking,
 } from "@/components/booking/BookingConfirmation";
 import DataState from "@/components/admin/DataState";
-import logo from "@/assets/logo-small.webp";
 import {
   Select,
   SelectContent,
@@ -27,37 +26,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const makeRef = () => `SF-${Date.now().toString(36).slice(-6).toUpperCase()}`;
-
-const BookingHeader = () => {
-  const { user, loading } = useAuth();
-  return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border/50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <img
-            src={logo}
-            alt="SummitFit Adventures"
-            className="w-9 h-9 rounded-full object-cover ring-2 ring-accent/30"
-          />
-          <span className="font-heading font-bold text-foreground tracking-wider uppercase">
-            SummitFit
-          </span>
-        </Link>
-        {!loading &&
-          (user ? (
-            <UserMenu />
-          ) : (
-            <Link
-              to="/login?redirect=/booking"
-              className="text-muted-foreground hover:text-accent text-sm font-heading font-medium tracking-wider uppercase transition-colors"
-            >
-              Sign In
-            </Link>
-          ))}
-      </div>
-    </header>
-  );
-};
 
 const Booking = () => {
   const { user } = useAuth();
@@ -149,7 +117,7 @@ const Booking = () => {
 
   return (
     <div className="min-h-dvh bg-background">
-      <BookingHeader />
+      <SiteHeader variant="solid" />
 
       <main id="main" className="container mx-auto px-4 py-8 md:py-12 max-w-2xl">
         <Link

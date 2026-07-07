@@ -1,5 +1,5 @@
 import { Megaphone } from "lucide-react";
-import PublicHeader from "@/components/PublicHeader";
+import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import UpdateCard from "@/components/news/UpdateCard";
 import { usePublishedUpdates } from "@/lib/queries/content";
@@ -15,7 +15,7 @@ const News = () => {
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">
-      <PublicHeader />
+      <SiteHeader variant="solid" />
 
       <main id="main" className="flex-1 container mx-auto px-4 py-10 md:py-16">
         <div className="text-center mb-10 md:mb-14">
