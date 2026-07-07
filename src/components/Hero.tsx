@@ -12,15 +12,14 @@ interface HeroProps {
 }
 
 const Hero = ({ onOpenChat }: HeroProps) => {
-  // Only load the (large) background video on bigger screens with motion
-  // allowed. Mobile / reduced-motion visitors keep the lightweight static
-  // image and download zero video bytes — keeps the site fast on cellular.
+  // Background video runs on all screen sizes (it's only ~0.6 MB, cheaper
+  // than a card image). Reduced-motion visitors keep the static image and
+  // download zero video bytes.
   const [useVideo, setUseVideo] = useState(false);
 
   useEffect(() => {
     const motionOk = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const bigScreen = window.matchMedia("(min-width: 768px)").matches;
-    if (motionOk && bigScreen) setUseVideo(true);
+    if (motionOk) setUseVideo(true);
   }, []);
 
   const scrollTo = (id: string) => {
