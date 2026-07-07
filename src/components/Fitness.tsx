@@ -25,7 +25,7 @@ const Fitness = ({ onOpenChat }: FitnessProps) => (
         {programs.map(({ icon: Icon, title, desc }) => (
           <div
             key={title}
-            className="glass-card glow-border glow-border-hover p-6 md:p-8 text-center transition-all duration-500 hover:-translate-y-1 group"
+            className="glass-card glow-border glow-border-hover p-6 md:p-8 text-center transition duration-300 hover:-translate-y-1 group"
           >
             <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-6 border border-accent/20 group-hover:bg-accent/20 transition-colors">
               <Icon className="w-8 h-8 text-accent" />

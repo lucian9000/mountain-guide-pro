@@ -56,7 +56,7 @@ const About = ({ onOpenChat }: AboutProps) => (
           <div className="flex flex-wrap gap-3">
             <button
               onClick={onOpenChat}
-              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105"
             >
               Book with Ernest
             </button>
@@ -64,7 +64,7 @@ const About = ({ onOpenChat }: AboutProps) => (
               href="https://www.instagram.com/summitfitadventures"
               target="_blank"
               rel="noopener noreferrer"
-              className="border-2 border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-all"
+              className="border-2 border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
             >
               Follow Adventures
             </a>

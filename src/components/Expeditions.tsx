@@ -49,13 +49,13 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
         {expeditions.map((exp) => (
           <div
             key={exp.title}
-            className="glass-card glow-border glow-border-hover overflow-hidden transition-all duration-500 hover:-translate-y-2 group"
+            className="glass-card glow-border glow-border-hover overflow-hidden transition duration-300 hover:-translate-y-2 group"
           >
             <div className="relative h-56 overflow-hidden">
               <img
                 src={exp.image}
                 alt={exp.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
@@ -85,7 +85,7 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
       <div className="text-center">
         <button
           onClick={onOpenChat}
-          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
+          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105"
         >
           Find Your Adventure
         </button>

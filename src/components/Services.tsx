@@ -38,7 +38,7 @@ const Services = () => (
         {services.map(({ icon: Icon, title, description, features, comingSoon }) => (
           <div
             key={title}
-            className="glass-card glow-border glow-border-hover p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 group"
+            className="glass-card glow-border glow-border-hover p-6 md:p-8 transition duration-300 hover:-translate-y-1 group"
           >
             <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-colors">
               <Icon className="w-7 h-7 text-accent" />

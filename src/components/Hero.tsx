@@ -78,13 +78,13 @@ const Hero = ({ onOpenChat }: HeroProps) => {
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
           <button
             onClick={() => scrollTo("expeditions")}
-            className="border-2 border-foreground/30 text-foreground hover:border-accent hover:text-accent px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-all duration-300"
+            className="border-2 border-foreground/30 text-foreground hover:border-accent hover:text-accent px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors duration-300"
           >
             View Routes
           </button>
           <button
             onClick={onOpenChat}
-            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition duration-300 hover:scale-105 flex items-center justify-center gap-2"
           >
             Start Your Journey <ArrowRight className="w-4 h-4" />
           </button>

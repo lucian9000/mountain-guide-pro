@@ -31,7 +31,7 @@ const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none rounded-full focus-visible:ring-2 focus-visible:ring-accent">
-        <Avatar className="w-9 h-9 ring-2 ring-accent/30 hover:ring-accent/60 transition-all">
+        <Avatar className="w-9 h-9 ring-2 ring-accent/30 hover:ring-accent/60 transition">
           {avatarUrl && <AvatarImage src={avatarUrl} alt={name ?? "Account"} />}
           <AvatarFallback className="bg-secondary text-accent text-xs font-heading font-bold">
             {initials(name, email)}

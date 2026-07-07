@@ -29,7 +29,7 @@ const Values = () => (
         {values.map(({ icon: Icon, title, description }) => (
           <div
             key={title}
-            className="glass-card glow-border glow-border-hover p-4 md:p-6 text-center transition-all duration-500 hover:-translate-y-1"
+            className="glass-card glow-border glow-border-hover p-4 md:p-6 text-center transition duration-300 hover:-translate-y-1"
           >
             <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4 border border-gold/20">
               <Icon className="w-6 h-6 text-gold" />

@@ -54,7 +54,7 @@ const AdminUpdates = () => {
             setEditing(null);
             setDialogOpen(true);
           }}
-          className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all whitespace-nowrap"
+          className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-colors whitespace-nowrap"
         >
           <Plus className="w-4 h-4" /> New Post
         </button>

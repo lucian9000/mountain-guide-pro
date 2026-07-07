@@ -55,13 +55,13 @@ const BookingConfirmation = ({ booking }: { booking: ConfirmedBooking }) => {
           href={gcalUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all"
+          className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors"
         >
           <CalendarPlus className="w-4 h-4" /> Add to Google Calendar
         </a>
         <Link
           to="/dashboard/bookings"
-          className="inline-flex items-center justify-center gap-2 border border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-all"
+          className="inline-flex items-center justify-center gap-2 border border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
         >
           <LayoutDashboard className="w-4 h-4" /> My Bookings
         </Link>

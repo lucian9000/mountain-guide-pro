@@ -5,7 +5,7 @@ const DashboardHome = () => (
   <div className="grid sm:grid-cols-2 gap-6 max-w-3xl">
     <Link
       to="/dashboard/bookings"
-      className="glass-card glow-border glow-border-hover p-6 transition-all hover:-translate-y-1"
+      className="glass-card glow-border glow-border-hover p-6 transition hover:-translate-y-1"
     >
       <CalendarDays className="w-7 h-7 text-accent mb-4" />
       <h2 className="font-heading text-lg font-bold text-foreground mb-1 tracking-wider uppercase">
@@ -18,7 +18,7 @@ const DashboardHome = () => (
 
     <Link
       to="/booking"
-      className="glass-card glow-border glow-border-hover p-6 transition-all hover:-translate-y-1"
+      className="glass-card glow-border glow-border-hover p-6 transition hover:-translate-y-1"
     >
       <Mountain className="w-7 h-7 text-gold mb-4" />
       <h2 className="font-heading text-lg font-bold text-foreground mb-1 tracking-wider uppercase">

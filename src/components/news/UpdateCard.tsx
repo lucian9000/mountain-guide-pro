@@ -15,7 +15,7 @@ const UpdateCard = ({
   update: UpdateWithRoute;
   compact?: boolean;
 }) => (
-  <article className="glass-card glow-border glow-border-hover overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-1">
+  <article className="glass-card glow-border glow-border-hover overflow-hidden flex flex-col transition duration-300 hover:-translate-y-1">
     {update.image_path && (
       <div className="relative h-44 overflow-hidden shrink-0">
         <img

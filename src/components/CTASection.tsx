@@ -23,13 +23,13 @@ const CTASection = ({ onOpenChat }: CTAProps) => (
           href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures."
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105 inline-flex items-center justify-center gap-2"
+          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105 inline-flex items-center justify-center gap-2"
         >
           <MessageCircle className="w-5 h-5" /> Contact Now
         </a>
         <button
           onClick={onOpenChat}
-          className="border-2 border-foreground/20 text-foreground hover:border-accent hover:text-accent px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-all"
+          className="border-2 border-foreground/20 text-foreground hover:border-accent hover:text-accent px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
         >
           Chat with Us
         </button>

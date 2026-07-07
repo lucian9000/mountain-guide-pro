@@ -15,7 +15,7 @@ const BackToTop = () => {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Back to top"
-      className={`fixed right-6 bottom-24 z-40 w-11 h-11 rounded-full bg-card/80 backdrop-blur-md border border-accent/30 text-accent shadow-button hover:bg-accent hover:text-accent-foreground hover:scale-110 transition-all duration-300 flex items-center justify-center ${
+      className={`fixed right-6 bottom-24 z-40 w-11 h-11 rounded-full bg-card/80 backdrop-blur-md border border-accent/30 text-accent shadow-button hover:bg-accent hover:text-accent-foreground hover:scale-110 transition duration-300 flex items-center justify-center ${
         visible
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 translate-y-2 pointer-events-none"

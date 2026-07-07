@@ -37,7 +37,7 @@ const RouteCard = ({
   return (
     <Link
       to={`/routes/${route.slug}`}
-      className="glass-card glow-border glow-border-hover overflow-hidden transition-all duration-500 hover:-translate-y-2 group flex flex-col"
+      className="glass-card glow-border glow-border-hover overflow-hidden transition duration-300 hover:-translate-y-2 group flex flex-col"
     >
       <div className="relative h-56 overflow-hidden shrink-0">
         <img
@@ -45,7 +45,7 @@ const RouteCard = ({
           alt={cover.alt}
           width={cover.width ?? undefined}
           height={cover.height ?? undefined}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />

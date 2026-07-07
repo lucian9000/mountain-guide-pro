@@ -44,7 +44,7 @@ const NotFoundPanel = () => (
     </p>
     <Link
       to="/routes"
-      className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all"
+      className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors"
     >
       <ArrowLeft className="w-4 h-4" /> Browse all routes
     </Link>
@@ -248,7 +248,7 @@ const RouteDetail = () => {
                           alt={img.alt_text || route.name}
                           width={img.width ?? undefined}
                           height={img.height ?? undefined}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
                         />
                       </button>
@@ -275,7 +275,7 @@ const RouteDetail = () => {
               {tourPrice ? (
                 <Link
                   to={`/booking?tour=${route.slug}`}
-                  className="w-full inline-flex items-center justify-center bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] mt-2"
+                  className="w-full inline-flex items-center justify-center bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-[1.02] mt-2"
                 >
                   Enquire / Book
                 </Link>
@@ -284,7 +284,7 @@ const RouteDetail = () => {
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] mt-2"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-[1.02] mt-2"
                 >
                   <MessageCircle className="w-4 h-4" /> Enquire
                 </a>

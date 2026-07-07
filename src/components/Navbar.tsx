@@ -110,7 +110,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition duration-300 ${
           isScrolled || isMobileOpen
             ? "bg-background/95 backdrop-blur-md shadow-lg border-b border-border/50"
             : "bg-transparent"
@@ -125,7 +125,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             <img
               src={logo}
               alt=""
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-accent/30 group-hover:ring-accent/60 transition-all"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-accent/30 group-hover:ring-accent/60 transition"
             />
             <div className="text-left">
               <div className="font-heading font-bold text-foreground text-lg leading-tight tracking-wider uppercase">
@@ -154,7 +154,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             })}
             <Link
               to="/booking"
-              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all hover:scale-105"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition hover:scale-105"
             >
               Book Now
             </Link>
@@ -190,7 +190,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
       <div
         ref={overlayRef}
         onKeyDown={onOverlayKeyDown}
-        className={`md:hidden fixed inset-0 z-40 transition-all duration-300 ${
+        className={`md:hidden fixed inset-0 z-40 transition-opacity duration-300 ${
           isMobileOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -206,11 +206,11 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
               const style = {
                 transitionDelay: isMobileOpen ? `${i * 50 + 80}ms` : "0ms",
               };
-              const cls = `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition-all duration-500 ${
+              const cls = `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition duration-300 ${
                 isMobileOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
               }`;
               const arrow = (
-                <span className="text-accent/40 group-hover:text-accent group-hover:translate-x-1 transition-all text-base">
+                <span className="text-accent/40 group-hover:text-accent group-hover:translate-x-1 transition text-base">
                   →
                 </span>
               );
@@ -238,14 +238,14 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             style={{
               transitionDelay: isMobileOpen ? `${NAV_ITEMS.length * 50 + 120}ms` : "0ms",
             }}
-            className={`max-w-sm mx-auto w-full mt-8 flex flex-col gap-3 transition-all duration-500 ${
+            className={`max-w-sm mx-auto w-full mt-8 flex flex-col gap-3 transition duration-300 ${
               isMobileOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             <Link
               to="/booking"
               onClick={() => setIsMobileOpen(false)}
-              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all flex items-center justify-center gap-2"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors flex items-center justify-center gap-2"
             >
               <CalendarRange className="w-4 h-4" /> Book Now
             </Link>
@@ -262,7 +262,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             <a
               href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures."
               onClick={() => setIsMobileOpen(false)}
-              className="border border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-all text-center"
+              className="border border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors text-center"
             >
               WhatsApp Ernest
             </a>

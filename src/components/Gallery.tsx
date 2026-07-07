@@ -40,7 +40,7 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
         <img
           src={challengeImage}
           alt="The 13 Peak Challenge"
-          className="w-full h-56 md:h-96 object-cover group-hover:scale-105 transition-transform duration-700"
+          className="w-full h-56 md:h-96 object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent flex items-end p-6 md:p-8">
@@ -67,7 +67,7 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
             <img
               src={img.src}
               alt={img.alt}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               loading="lazy"
             />
           </div>
@@ -160,7 +160,7 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
           </p>
           <button
             onClick={onOpenChat}
-            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
+            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105"
           >
             Learn More
           </button>
