@@ -12,6 +12,38 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (v4.0 Phase 3) — Design-system discipline (2026-07-08)
+
+Consistency + snappiness pass per `docs/V4-PLAN.md` Phase 3 and
+`docs/superpowers/plans/2026-07-07-v4-phase3-design-system.md`. Same local
+branch. The dark midnight/cyan identity is deliberately preserved — this
+tightens the system, it is not a redesign. axe still 0 serious/critical.
+
+- **One header everywhere.** Navbar, PublicHeader, and the inline Booking
+  header are now a single `SiteHeader` with an `overlay` variant (homepage:
+  transparent → solid on scroll) and a `solid` variant (subpages). Every
+  page now shows the full nav — **The Guide, Training, and Contact were
+  previously unreachable from subpages** — and Book Now no longer clips on
+  small screens. Section links (`The Guide`/`Training`/`Contact`) scroll
+  in-page on the homepage and navigate to `/#section` from subpages (new
+  hash-scroll handler on Index). Phase-1 mobile-menu a11y (inert, focus
+  trap, Escape, scroll lock) ported verbatim.
+- **Semantic color tokens.** Mapped `cyan-hover`, `cyan-soft`, `success`,
+  `warning` in Tailwind; replaced ~40 raw `hsl()` className literals
+  (mostly `hsl(193,100%,42%)` hover states) with token classes. Grep gate
+  now forbids `hsl()` in className. Only survivors: ErrorBoundary's inline
+  fallback styles (must render without CSS) and vendored shadcn.
+- **Snappier motion.** Hover/card transitions 500–700ms → 300ms; the
+  blanket `transition-all` (~46 spots) scoped to `transition-colors` /
+  `transition-transform` / `transition` so the browser only watches what
+  actually changes.
+- **Type scale.** All `text-[10px]`/`text-[11px]` labels → 12px floor;
+  route-detail description body 14px → 16px for mobile reading.
+- **Focus + badges.** `focus-visible` cyan rings on all hand-rolled CTAs
+  (matching the shadcn pattern); DifficultyBadge "easy" now uses the
+  `success` token instead of a raw emerald.
+- Tests: 24 → 28 (SiteHeader suite replaced the Navbar suite).
+
 ## Unreleased (v4.0 Phase 2) — Performance pass (2026-07-07)
 
 Performance work per `docs/V4-PLAN.md` Phase 2 and the plan at
