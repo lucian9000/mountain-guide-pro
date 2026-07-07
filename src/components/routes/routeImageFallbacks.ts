@@ -5,7 +5,10 @@ import helderbergDome from "@/assets/helderberg-dome.webp";
 import gallery13Peaks1 from "@/assets/gallery-13peaks-1.webp";
 import gallery13Peaks2 from "@/assets/gallery-13peaks-2.webp";
 import galleryChallenge from "@/assets/gallery-challenge.webp";
-import heroMountain from "@/assets/hero-mountain.webp";
+
+// Served from /public at a stable URL (moved there so index.html can preload
+// it as the homepage LCP image).
+const heroMountain = "/hero-mountain.webp";
 
 /**
  * Bundled cover images for the seeded routes until real photos are uploaded

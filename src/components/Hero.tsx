@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import heroImage from "@/assets/hero-mountain.webp";
+
+// Served from /public at a stable URL so index.html can <link rel="preload">
+// it — it's the LCP element on every first visit (cache-busting loss accepted).
+const heroImage = "/hero-mountain.webp";
 
 // Served statically from /public — streamed via range requests, NOT bundled
 // into the JS. The static image above is always the poster (instant paint /
@@ -46,6 +49,10 @@ const Hero = ({ onOpenChat }: HeroProps) => {
           <img
             src={heroImage}
             alt="Cape Town mountains at golden hour"
+            width={1600}
+            height={1200}
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover animate-cinematic-pan"
           />
         )}
