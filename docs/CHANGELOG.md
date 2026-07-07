@@ -12,6 +12,42 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (v4.0 Phase 2) — Performance pass (2026-07-07)
+
+Performance work per `docs/V4-PLAN.md` Phase 2 and the plan at
+`docs/superpowers/plans/2026-07-07-v4-phase2-performance.md`. Same local
+branch `v4/phase-1-a11y`; not yet pushed. No accessibility regression —
+the Phase 1 axe gate still reports 0 serious/critical on all public pages.
+
+- **Main JS chunk 648.7 KB → 257.9 KB (−60%, gzip 80 KB)** via
+  `manualChunks`: `react-vendor` (157 KB) and `data-vendor`
+  (Supabase + react-query, 261 KB) split out for long-term caching. The
+  Leaflet `mapSetup` (155 KB) and new `ChatPanel` (16 KB) chunks stay
+  lazy. Verified against a `vite preview` build, not just dev.
+- **Fonts**: dropped the render-blocking CSS `@import` for a
+  `preconnect` + `<link>` in the HTML head, and trimmed 10 → 7 weights
+  (Montserrat 700/800/900, Inter 400/500/600/700).
+- **Hero LCP**: `hero-mountain.webp` moved to `/public`, `<link
+  rel="preload" as="image" fetchpriority="high">` in the head; it now
+  loads as request #3 (before any JS), with `width`/`height` set.
+- **Static images**: `scripts/optimize-images.mjs` (sharp, re-runnable)
+  re-encoded the four route/expedition images at q75 and resized the
+  1600px helderberg-dome to 1280px (−450 KB total); new 96px
+  `logo-small.webp` for the 40–48px navbar/header logo (52 KB → 2.5 KB,
+  now inlined). Route-detail heroes kept at 1280px so desktop stays crisp.
+- **Deferred loads**: `loading="lazy"` on both Facebook page embeds (no
+  facebook.com request until scrolled into view); the chat conversation
+  UI split into a lazy `ChatPanel` (launcher stays eager). Note: chat
+  conversation state now resets on close/reopen (panel unmounts).
+- **Viewport units**: `min-h-screen` → `min-h-dvh` and `100vh` → `100dvh`
+  site-wide so mobile browser chrome never hides content.
+- **Removed dead code**: `recharts` (unused) + six unreferenced shadcn ui
+  files (chart, carousel, command, drawer, input-otp, resizable).
+- Tests: 23 → 24 (chat-panel split covered); `sharp` + `axe-core` added
+  as devDependencies.
+- Deferred: Supabase CMS-image `srcset` (bucket is empty — belongs with
+  Phase 5 uploads); moderate `heading-order` on route detail (Phase 3).
+
 ## Unreleased (v4.0 Phase 1) — Accessibility pass (2026-07-07)
 
 Audit-driven accessibility hardening per `docs/V4-PLAN.md` Phase 1 and the
