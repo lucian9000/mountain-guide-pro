@@ -72,7 +72,10 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border/30 pt-6 text-center">
-          <p className="text-muted-foreground text-sm">&copy; 2026 SummitFit Adventures. All rights reserved.</p>
+          <p className="text-muted-foreground text-sm">
+            &copy; 2026 SummitFit Adventures. Designed &amp; Developed by{" "}
+            <span className="font-medium text-foreground">StateOfAshes</span>.
+          </p>
         </div>
       </div>
     </footer>
