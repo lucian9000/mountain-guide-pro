@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { MessageCircle, X, ArrowLeft } from "lucide-react";
+import {
+  MessageCircle,
+  X,
+  ArrowLeft,
+  Phone,
+  Mountain,
+  Dumbbell,
+  MapPin,
+  Clock,
+  TrendingUp,
+  CloudSun,
+} from "lucide-react";
 import logo from "@/assets/logo.webp";
 import { findRoutes, type Route } from "@/data/routes";
 import { useTourPrices } from "@/lib/queries/content";
@@ -67,7 +78,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
   const chooseRoutes = () => {
     push(
       { type: "user", text: "Mountain Routes" },
-      { type: "bot", text: "Great choice! What's your current fitness level? Be honest — it keeps you safe on the mountain 😄" }
+      { type: "bot", text: "Great choice! What's your current fitness level? Be honest — it keeps you safe on the mountain." }
     );
     setStage("routes-level");
   };
@@ -93,7 +104,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
         { type: "user", text: label },
         {
           type: "bot",
-          text: "No routes found😱 Not too worry, we got you! Chat with us on Whatsapp so we can get your shoes dirty!🥾⛰️",
+          text: "No routes found. Not to worry, we got you! Chat with us on WhatsApp so we can get your shoes dirty!",
           showWhatsApp: true,
         }
       );
@@ -114,7 +125,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
       {
         type: "bot",
         text:
-          "We offer three training formats:\n\n💪 Strength Training — personalised programs for all levels\n🏔 Trail Fitness — hybrid gym + outdoor sessions for uphill power\n📋 Custom Programs — 4–12 week plans built around your goals\n\nReady to get started? Chat to Ernest directly on WhatsApp.",
+          "We offer three training formats:\n\nStrength Training — personalised programs for all levels\nTrail Fitness — hybrid gym + outdoor sessions for uphill power\nCustom Programs — 4–12 week plans built around your goals\n\nReady to get started? Chat to Ernest directly on WhatsApp.",
       }
     );
     setStage("training");
@@ -130,6 +141,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
       {!isOpen && (
         <button
           onClick={onOpen}
+          aria-label="Open chat"
           className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground rounded-full shadow-button flex items-center justify-center transition-all hover:scale-110"
         >
           <MessageCircle className="w-6 h-6" />
@@ -153,14 +165,15 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
             </div>
             <button
               onClick={onClose}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Close chat"
+              className="p-3 -m-3 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div role="log" aria-live="polite" className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((msg, i) => (
               <div key={i}>
                 <div className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
@@ -178,9 +191,9 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                 {msg.showWhatsApp && (
                   <button
                     onClick={requestCustomRoute}
-                    className="mt-2 w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-2 rounded-lg transition-colors tracking-wider uppercase"
+                    className="mt-2 w-full min-h-[44px] bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase flex items-center justify-center gap-2"
                   >
-                    📱 Chat to us on WhatsApp
+                    <Phone className="w-4 h-4 shrink-0" aria-hidden="true" /> Chat to us on WhatsApp
                   </button>
                 )}
 
@@ -192,10 +205,19 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                     <h4 className="font-heading text-sm font-bold text-foreground mb-1 tracking-wider uppercase">
                       {route.name}
                     </h4>
-                    <p className="text-muted-foreground text-xs mb-1">📍 {route.location}</p>
+                    <p className="text-muted-foreground text-xs mb-1 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+                      {route.location}
+                    </p>
                     <div className="flex gap-3 text-xs text-muted-foreground mb-1">
-                      <span>⏱ {route.specs.duration}</span>
-                      <span>⛰ {route.specs.elevation}</span>
+                      <span className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+                        {route.specs.duration}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+                        {route.specs.elevation}
+                      </span>
                     </div>
                     <p className="text-xs text-muted-foreground mb-1">{route.specs.terrain}</p>
                     <span
@@ -207,17 +229,19 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                       <span className="font-semibold text-foreground">Gear:</span>{" "}
                       {route.gear.mandatory.join(", ")}
                     </div>
-                    <div className="text-xs text-muted-foreground mb-1 italic">
-                      ⛅ {route.weather.policy}
+                    <div className="text-xs text-muted-foreground mb-1 italic flex items-center gap-2">
+                      <CloudSun className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+                      {route.weather.policy}
                     </div>
                     <div className="text-accent font-heading font-bold text-sm mb-2">
                       {priceLine(route)}
                     </div>
                     <button
                       onClick={() => bookRoute(route)}
-                      className="w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-2 rounded-lg transition-colors tracking-wider uppercase"
+                      className="w-full min-h-[44px] bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase flex items-center justify-center gap-2"
                     >
-                      {route.logistics.contactForPricing ? "📱 Enquire via WhatsApp" : "📱 Book via WhatsApp"}
+                      <Phone className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      {route.logistics.contactForPricing ? "Enquire via WhatsApp" : "Book via WhatsApp"}
                     </button>
                   </div>
                 ))}
@@ -233,14 +257,15 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                   What are you looking for?
                 </p>
                 {[
-                  { label: "🏔 Mountain Routes", action: chooseRoutes, color: "border-accent text-accent" },
-                  { label: "💪 Personal Training", action: chooseTraining, color: "border-gold text-gold" },
-                ].map(({ label, action, color }) => (
+                  { label: "Mountain Routes", Icon: Mountain, action: chooseRoutes, color: "border-accent text-accent" },
+                  { label: "Personal Training", Icon: Dumbbell, action: chooseTraining, color: "border-gold text-gold" },
+                ].map(({ label, Icon, action, color }) => (
                   <button
                     key={label}
                     onClick={action}
-                    className={`w-full border-2 ${color} py-2 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity`}
+                    className={`w-full border-2 ${color} py-3 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity flex items-center justify-center gap-2`}
                   >
+                    <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
                     {label}
                   </button>
                 ))}
@@ -262,7 +287,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                   <button
                     key={level}
                     onClick={() => selectLevel(level, label)}
-                    className={`w-full border-2 ${color} py-1.5 rounded-lg text-xs font-medium hover:opacity-80 transition-opacity`}
+                    className={`w-full border-2 ${color} py-3 rounded-lg text-xs font-medium hover:opacity-80 transition-opacity`}
                   >
                     {label}
                   </button>
@@ -274,9 +299,9 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
               <div className="space-y-2">
                 <button
                   onClick={() => wa("Hi Ernest, I'm interested in your Personal Training programs. Can you tell me more?")}
-                  className="w-full bg-gold hover:opacity-90 text-background text-xs font-heading font-bold py-2 rounded-lg transition-opacity tracking-wider uppercase"
+                  className="w-full min-h-[44px] bg-gold hover:opacity-90 text-background text-xs font-heading font-bold py-3 rounded-lg transition-opacity tracking-wider uppercase flex items-center justify-center gap-2"
                 >
-                  📱 Chat to Ernest on WhatsApp
+                  <Phone className="w-4 h-4 shrink-0" aria-hidden="true" /> Chat to Ernest on WhatsApp
                 </button>
                 <button
                   onClick={reset}
@@ -297,7 +322,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => {
                     );
                     setStage("routes-level");
                   }}
-                  className="w-full border border-accent/40 text-accent text-xs font-medium py-2 rounded-lg hover:bg-accent/10 transition-colors"
+                  className="w-full min-h-[44px] border border-accent/40 text-accent text-xs font-medium py-3 rounded-lg hover:bg-accent/10 transition-colors"
                 >
                   Different difficulty →
                 </button>
