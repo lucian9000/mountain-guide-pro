@@ -21,16 +21,18 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar onOpenChat={openChat} />
-      <Hero onOpenChat={openChat} />
-      <TrustBar />
-      <Services />
-      <Expeditions onOpenChat={openChat} />
-      <About onOpenChat={openChat} />
-      <Fitness onOpenChat={openChat} />
-      <Gallery onOpenChat={openChat} />
-      <Values />
-      <CTASection onOpenChat={openChat} />
-      <SocialFeed />
+      <main id="main">
+        <Hero onOpenChat={openChat} />
+        <TrustBar />
+        <Services />
+        <Expeditions onOpenChat={openChat} />
+        <About onOpenChat={openChat} />
+        <Fitness onOpenChat={openChat} />
+        <Gallery onOpenChat={openChat} />
+        <Values />
+        <CTASection onOpenChat={openChat} />
+        <SocialFeed />
+      </main>
       <Footer />
       <BackToTop />
       <ChatWidget isOpen={chatOpen} onOpen={openChat} onClose={() => setChatOpen(false)} />

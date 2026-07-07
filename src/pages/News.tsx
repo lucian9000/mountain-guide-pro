@@ -17,7 +17,7 @@ const News = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <PublicHeader />
 
-      <main className="flex-1 container mx-auto px-4 py-10 md:py-16">
+      <main id="main" className="flex-1 container mx-auto px-4 py-10 md:py-16">
         <div className="text-center mb-10 md:mb-14">
           <span className="text-gradient-gold text-sm font-heading font-bold tracking-[0.2em] uppercase mb-3 block">
             Fresh From The Mountain

@@ -55,9 +55,9 @@ const RouteCard = ({
       </div>
 
       <div className="p-6 flex flex-col flex-1">
-        <h3 className="font-heading text-lg font-bold text-foreground mb-2 tracking-wider uppercase">
+        <h2 className="font-heading text-lg font-bold text-foreground mb-2 tracking-wider uppercase">
           {route.name}
-        </h3>
+        </h2>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-sm mb-3">
           {route.duration_hours != null && (
             <span className="flex items-center gap-1">

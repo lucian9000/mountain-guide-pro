@@ -35,7 +35,7 @@ const mapsDirectionsUrl = (lat: number, lng: number) =>
   `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
 const NotFoundPanel = () => (
-  <div className="flex-1 container mx-auto px-4 py-24 text-center">
+  <main id="main" className="flex-1 container mx-auto px-4 py-24 text-center">
     <h1 className="font-heading text-3xl md:text-4xl font-black text-foreground tracking-wider uppercase mb-4">
       Route not found
     </h1>
@@ -48,7 +48,7 @@ const NotFoundPanel = () => (
     >
       <ArrowLeft className="w-4 h-4" /> Browse all routes
     </Link>
-  </div>
+  </main>
 );
 
 /** /routes/:slug — public detail page; ?preview=1 lets an admin view drafts. */
@@ -69,11 +69,11 @@ const RouteDetail = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <PublicHeader />
-        <div className="flex-1 container mx-auto px-4 py-10 space-y-6">
+        <main id="main" className="flex-1 container mx-auto px-4 py-10 space-y-6">
           <Skeleton className="w-full h-[40vh] rounded-xl" />
           <Skeleton className="w-2/3 h-10" />
           <Skeleton className="w-full h-32" />
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -127,7 +127,7 @@ const RouteDetail = () => {
         </div>
       )}
 
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* Hero */}
         <div className="relative h-[40vh] md:h-[52vh] overflow-hidden">
           <img

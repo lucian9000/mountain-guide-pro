@@ -151,7 +151,7 @@ const Booking = () => {
     <div className="min-h-screen bg-background">
       <BookingHeader />
 
-      <main className="container mx-auto px-4 py-8 md:py-12 max-w-2xl">
+      <main id="main" className="container mx-auto px-4 py-8 md:py-12 max-w-2xl">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-accent text-sm mb-6 transition-colors"
