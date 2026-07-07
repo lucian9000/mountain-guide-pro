@@ -22,6 +22,16 @@ export default defineConfig(({ mode }) => {
       "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(env.SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY || ""),
     },
     plugins: [react()].filter(Boolean),
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            "react-vendor": ["react", "react-dom", "react-router-dom"],
+            "data-vendor": ["@tanstack/react-query", "@supabase/supabase-js"],
+          },
+        },
+      },
+    },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
