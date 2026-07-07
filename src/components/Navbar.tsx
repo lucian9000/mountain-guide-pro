@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, MessageCircle, LogOut, LayoutDashboard, LogIn, CalendarRange } from "lucide-react";
 import logo from "@/assets/logo.webp";
@@ -20,10 +20,15 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Contact", section: "contact" },
 ];
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 const Navbar = ({ onOpenChat }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 50);
@@ -52,6 +57,47 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isMobileOpen]);
+
+  // Keep the closed overlay out of the tab order (React 18 has no `inert`
+  // JSX prop, so toggle the attribute directly) and manage focus: move it
+  // into the menu on open, hand it back to the hamburger on close.
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    if (isMobileOpen) {
+      overlay.removeAttribute("inert");
+      // Defer past the opening transition before grabbing focus.
+      const raf = requestAnimationFrame(() => {
+        overlay.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+
+    if (overlay.contains(document.activeElement)) {
+      toggleRef.current?.focus();
+    }
+    overlay.setAttribute("inert", "");
+  }, [isMobileOpen]);
+
+  // Simple focus trap: Tab from the last focusable wraps to the first,
+  // Shift+Tab from the first wraps to the last.
+  const onOverlayKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab" || !overlayRef.current) return;
+    const focusables = Array.from(
+      overlayRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
 
   const scrollTo = (id: string) => {
     setIsMobileOpen(false);
@@ -129,6 +175,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
 
           {/* Mobile toggle */}
           <button
+            ref={toggleRef}
             className="md:hidden text-foreground p-2 -mr-2 rounded-lg hover:bg-foreground/5 transition-colors"
             onClick={() => setIsMobileOpen((v) => !v)}
             aria-label={isMobileOpen ? "Close menu" : "Open menu"}
@@ -141,6 +188,8 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
 
       {/* Mobile full-screen overlay menu */}
       <div
+        ref={overlayRef}
+        onKeyDown={onOverlayKeyDown}
         className={`md:hidden fixed inset-0 z-40 transition-all duration-300 ${
           isMobileOpen
             ? "opacity-100 pointer-events-auto"
