@@ -177,7 +177,7 @@ const AdminRouteMapPicker = ({ routeName, value, onChange }: AdminRouteMapPicker
           </button>
         )}
 
-        <span className="text-muted-foreground/60 text-xs ml-auto">
+        <span className="text-muted-foreground text-xs ml-auto">
           Zoom saves as the public map's default ({value.map_zoom})
         </span>
       </div>
@@ -231,7 +231,7 @@ const AdminRouteMapPicker = ({ routeName, value, onChange }: AdminRouteMapPicker
         </MapContainer>
       </div>
 
-      <p className="text-muted-foreground/60 text-xs">
+      <p className="text-muted-foreground text-xs">
         Drag pins to position them. Coordinates save with the form. Cyan dot =
         trail, gold diamond = meeting point.
       </p>

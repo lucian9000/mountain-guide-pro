@@ -28,7 +28,7 @@ const UpdateCard = ({
       </div>
     )}
     <div className="p-5 flex flex-col gap-2 flex-1">
-      <div className="text-muted-foreground/70 text-xs">
+      <div className="text-muted-foreground text-xs">
         {relativeDate(update.publish_at ?? update.created_at)}
       </div>
       <h3 className="font-heading text-base font-bold text-foreground tracking-wider uppercase">

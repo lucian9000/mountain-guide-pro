@@ -113,7 +113,7 @@ const Login = () => {
           )}
         </button>
 
-        <p className="text-muted-foreground/70 text-xs mt-6 leading-relaxed">
+        <p className="text-muted-foreground text-xs mt-6 leading-relaxed">
           Admins sign in with the same Google button — you'll be routed to the
           admin panel automatically.
         </p>

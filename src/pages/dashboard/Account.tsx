@@ -44,7 +44,7 @@ const Account = () => {
         ))}
       </dl>
 
-      <p className="text-muted-foreground/60 text-xs mt-6">
+      <p className="text-muted-foreground text-xs mt-6">
         Editing your profile and marketing preferences will be available in a
         later phase.
       </p>

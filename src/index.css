@@ -195,7 +195,14 @@
     transition: none;
   }
   .animate-cinematic-pan,
-  .animate-glow-pulse {
+  .animate-glow-pulse,
+  .animate-bounce,
+  .animate-pulse {
     animation: none;
+  }
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

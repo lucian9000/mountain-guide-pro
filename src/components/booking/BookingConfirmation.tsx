@@ -67,7 +67,7 @@ const BookingConfirmation = ({ booking }: { booking: ConfirmedBooking }) => {
         </Link>
       </div>
 
-      <p className="text-muted-foreground/60 text-xs mt-6">
+      <p className="text-muted-foreground text-xs mt-6">
         {/* TODO Phase 3: send confirmation email via an Edge Function (src/lib/email.ts). */}
         You'll receive a confirmation email shortly.
       </p>

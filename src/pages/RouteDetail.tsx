@@ -289,7 +289,7 @@ const RouteDetail = () => {
                   <MessageCircle className="w-4 h-4" /> Enquire
                 </a>
               )}
-              <p className="text-muted-foreground/60 text-xs mt-3 text-center">
+              <p className="text-muted-foreground text-xs mt-3 text-center">
                 Weather dependent — safety first, always.
               </p>
             </aside>

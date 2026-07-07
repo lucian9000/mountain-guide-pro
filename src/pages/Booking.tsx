@@ -267,7 +267,7 @@ const Booking = () => {
                       />
                     </PopoverContent>
                   </Popover>
-                  <p className="text-muted-foreground/60 text-xs">
+                  <p className="text-muted-foreground text-xs">
                     {/* TODO Phase 3: real availability from getGuideAvailability() via Edge Function */}
                     All dates shown as available — live availability arrives with calendar sync.
                   </p>
