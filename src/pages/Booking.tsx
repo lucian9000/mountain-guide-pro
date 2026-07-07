@@ -15,7 +15,7 @@ import BookingConfirmation, {
   type ConfirmedBooking,
 } from "@/components/booking/BookingConfirmation";
 import DataState from "@/components/admin/DataState";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-small.webp";
 import {
   Select,
   SelectContent,

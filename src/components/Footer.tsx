@@ -1,6 +1,6 @@
 import { Phone, Mail, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-small.webp";
 
 const Footer = () => {
   const scrollTo = (id: string) => {

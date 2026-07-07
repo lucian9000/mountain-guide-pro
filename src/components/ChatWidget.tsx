@@ -11,7 +11,7 @@ import {
   TrendingUp,
   CloudSun,
 } from "lucide-react";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-small.webp";
 import { findRoutes, type Route } from "@/data/routes";
 import { useTourPrices } from "@/lib/queries/content";
 
