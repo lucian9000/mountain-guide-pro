@@ -35,6 +35,7 @@ const SocialFeed = () => {
                 frameBorder="0"
                 allowFullScreen
                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                loading="lazy"
                 title="Facebook Page"
               />
             </div>

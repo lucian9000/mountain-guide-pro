@@ -81,6 +81,7 @@ const News = () => {
                 frameBorder="0"
                 allowFullScreen
                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                loading="lazy"
                 title="SummitFit Adventures on Facebook"
               />
             </div>

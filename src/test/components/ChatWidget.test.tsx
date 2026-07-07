@@ -25,12 +25,24 @@ const Harness = () => {
   );
 };
 
-const openWidget = () => {
+// The conversation panel is code-split (React.lazy), so after clicking the
+// launcher the panel appears asynchronously — await it before asserting.
+const openWidget = async () => {
   render(<Harness />);
   fireEvent.click(screen.getByRole("button", { name: /open chat/i }));
+  await screen.findByRole("log");
 };
 
 describe("ChatWidget accessibility", () => {
+  it("renders the launcher synchronously on first render (no lazy chunk needed)", () => {
+    render(<Harness />);
+    // Immediately after render — before any lazy module could resolve — the
+    // launcher must already be in the document.
+    expect(
+      screen.getByRole("button", { name: /open chat/i })
+    ).toBeInTheDocument();
+  });
+
   it("gives the floating launcher an accessible name", () => {
     render(<Harness />);
     expect(
@@ -38,42 +50,46 @@ describe("ChatWidget accessibility", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows a close button with an accessible name after opening", () => {
-    openWidget();
+  it("shows a close button with an accessible name after opening", async () => {
+    await openWidget();
     expect(
-      screen.getByRole("button", { name: /close chat/i })
+      await screen.findByRole("button", { name: /close chat/i })
     ).toBeInTheDocument();
   });
 
-  it("exposes the message list as a polite live region log", () => {
-    openWidget();
-    const log = screen.getByRole("log");
+  it("exposes the message list as a polite live region log", async () => {
+    await openWidget();
+    const log = await screen.findByRole("log");
     expect(log).toHaveAttribute("aria-live", "polite");
   });
 
-  it("renders no emoji anywhere in the widget (initial options)", () => {
-    openWidget();
+  it("renders no emoji anywhere in the widget (initial options)", async () => {
+    await openWidget();
     // Initial quick-reply options are on screen.
     expect(
-      screen.getByRole("button", { name: /mountain routes/i })
+      await screen.findByRole("button", { name: /mountain routes/i })
     ).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(EMOJI_RE);
   });
 
-  it("renders no emoji in bot replies, level options, or route cards", () => {
-    openWidget();
-    fireEvent.click(screen.getByRole("button", { name: /mountain routes/i }));
+  it("renders no emoji in bot replies, level options, or route cards", async () => {
+    await openWidget();
+    fireEvent.click(
+      await screen.findByRole("button", { name: /mountain routes/i })
+    );
     expect(document.body.textContent).not.toMatch(EMOJI_RE);
 
     // Pick the highest level so all route cards render (dates, weather, CTAs).
-    fireEvent.click(screen.getByRole("button", { name: /advanced athlete/i }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /advanced athlete/i })
+    );
     expect(document.body.textContent).not.toMatch(EMOJI_RE);
   });
 
-  it("renders no emoji on the personal training path", () => {
-    openWidget();
+  it("renders no emoji on the personal training path", async () => {
+    await openWidget();
     fireEvent.click(
-      screen.getByRole("button", { name: /personal training/i })
+      await screen.findByRole("button", { name: /personal training/i })
     );
     expect(document.body.textContent).not.toMatch(EMOJI_RE);
   });
