@@ -119,7 +119,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           <button
             onClick={() => scrollTo("services")}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label="SummitFit Adventures home"
           >
             <img
@@ -141,7 +141,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
           <div className="hidden md:flex items-center gap-8">
             {NAV_ITEMS.map(({ label, to, section }) => {
               const cls =
-                "relative text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full";
+                "relative text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
               return to ? (
                 <Link key={label} to={to} className={cls}>
                   {label}
@@ -154,7 +154,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             })}
             <Link
               to="/booking"
-              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition hover:scale-105"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Book Now
             </Link>
@@ -166,7 +166,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             ) : (
               <Link
                 to="/login"
-                className="text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase"
+                className="text-muted-foreground hover:text-accent transition-colors text-sm font-heading font-medium tracking-wider uppercase rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Sign In
               </Link>
@@ -176,7 +176,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
           {/* Mobile toggle */}
           <button
             ref={toggleRef}
-            className="md:hidden text-foreground p-2 -mr-2 rounded-lg hover:bg-foreground/5 transition-colors"
+            className="md:hidden text-foreground p-2 -mr-2 rounded-lg hover:bg-foreground/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             onClick={() => setIsMobileOpen((v) => !v)}
             aria-label={isMobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileOpen}
@@ -206,7 +206,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
               const style = {
                 transitionDelay: isMobileOpen ? `${i * 50 + 80}ms` : "0ms",
               };
-              const cls = `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition duration-300 ${
+              const cls = `group flex items-center justify-between text-left py-4 border-b border-border/30 font-heading font-bold tracking-wider uppercase text-2xl text-foreground hover:text-accent transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                 isMobileOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
               }`;
               const arrow = (
@@ -245,7 +245,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             <Link
               to="/booking"
               onClick={() => setIsMobileOpen(false)}
-              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors flex items-center justify-center gap-2"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <CalendarRange className="w-4 h-4" /> Book Now
             </Link>
@@ -255,14 +255,14 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
                 onOpenChat();
                 setIsMobileOpen(false);
               }}
-              className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+              className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <MessageCircle className="w-4 h-4" /> Ask a Question
             </button>
             <a
               href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures."
               onClick={() => setIsMobileOpen(false)}
-              className="border border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors text-center"
+              className="border border-foreground/20 text-foreground hover:border-accent hover:text-accent px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               WhatsApp Ernest
             </a>
@@ -273,7 +273,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
                   <Link
                     to="/dashboard"
                     onClick={() => setIsMobileOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+                    className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <LayoutDashboard className="w-4 h-4" /> My Dashboard
                   </Link>
@@ -282,7 +282,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
                       setIsMobileOpen(false);
                       void signOut();
                     }}
-                    className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-destructive px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+                    className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-destructive px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <LogOut className="w-4 h-4" /> Sign Out
                   </button>
@@ -291,7 +291,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
                 <Link
                   to="/login"
                   onClick={() => setIsMobileOpen(false)}
-                  className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors"
+                  className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   <LogIn className="w-4 h-4" /> Sign In
                 </Link>

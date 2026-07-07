@@ -13,7 +13,7 @@ const PublicHeader = () => {
   return (
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-3 min-w-0">
+        <Link to="/" className="flex items-center gap-3 min-w-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
           <img
             src={logo}
             alt="SummitFit Adventures"
@@ -33,7 +33,7 @@ const PublicHeader = () => {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `text-sm font-heading font-medium tracking-wider uppercase transition-colors ${
+                `text-sm font-heading font-medium tracking-wider uppercase transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   isActive ? "text-accent" : "text-muted-foreground hover:text-accent"
                 }`
               }
@@ -43,7 +43,7 @@ const PublicHeader = () => {
           ))}
           <Link
             to="/booking"
-            className="hidden sm:inline-flex bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-colors"
+            className="hidden sm:inline-flex bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Book Now
           </Link>
@@ -53,7 +53,7 @@ const PublicHeader = () => {
             ) : (
               <Link
                 to="/login"
-                className="text-muted-foreground hover:text-accent text-sm font-heading font-medium tracking-wider uppercase transition-colors"
+                className="text-muted-foreground hover:text-accent text-sm font-heading font-medium tracking-wider uppercase transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Sign In
               </Link>

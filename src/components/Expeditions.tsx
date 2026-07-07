@@ -73,7 +73,7 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
               {/* py-3 -my-3 grows the tap target to ≥44px without shifting layout */}
               <button
                 onClick={onOpenChat}
-                className="inline-flex items-center gap-1 py-3 -my-3 text-accent hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase"
+                className="inline-flex items-center gap-1 py-3 -my-3 text-accent hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 View Details <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -85,7 +85,7 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
       <div className="text-center">
         <button
           onClick={onOpenChat}
-          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105"
+          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Find Your Adventure
         </button>
