@@ -134,7 +134,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[calc(100vh-4rem)] bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border glow-border animate-fade-in-up">
+    <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[calc(100dvh-4rem)] bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border glow-border animate-fade-in-up">
       {/* Header */}
       <div className="bg-primary px-4 py-3 flex items-center justify-between border-b border-border/30">
         <div className="flex items-center gap-3">

@@ -16,7 +16,7 @@ const AdminLayout = () => {
     "Admin";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       {/* Desktop sidebar */}
       <aside className="hidden md:block fixed inset-y-0 left-0 w-60 border-r border-border/40 z-30">
         <AdminSidebar />

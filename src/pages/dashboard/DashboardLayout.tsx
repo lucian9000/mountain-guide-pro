@@ -15,7 +15,7 @@ const DashboardLayout = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">

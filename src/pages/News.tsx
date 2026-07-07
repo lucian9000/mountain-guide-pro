@@ -14,7 +14,7 @@ const News = () => {
   const updates = usePublishedUpdates();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col">
       <PublicHeader />
 
       <main id="main" className="flex-1 container mx-auto px-4 py-10 md:py-16">

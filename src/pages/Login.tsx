@@ -65,7 +65,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-dvh bg-background flex items-center justify-center px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--cyan-glow)/0.08),transparent_60%)]" />
 
       <div className="relative z-10 w-full max-w-md glass-card glow-border p-8 md:p-10 text-center">

@@ -19,7 +19,7 @@ const Index = () => {
   const openChat = () => setChatOpen(true);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <Navbar onOpenChat={openChat} />
       <main id="main">
         <Hero onOpenChat={openChat} />
