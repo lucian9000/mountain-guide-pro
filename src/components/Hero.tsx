@@ -85,13 +85,13 @@ const Hero = ({ onOpenChat }: HeroProps) => {
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — p-2 around the 28px chevron gives a 44px hit target */}
       <button
         onClick={() => scrollTo("services")}
-        aria-label="Scroll to content"
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-foreground/50 hover:text-accent transition-colors animate-bounce"
+        aria-label="Scroll to services"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 p-2 text-foreground/50 hover:text-accent transition-colors animate-bounce"
       >
-        <ChevronDown className="w-7 h-7" />
+        <ChevronDown className="w-7 h-7" aria-hidden="true" />
       </button>
 
       {/* Bottom gradient fade */}

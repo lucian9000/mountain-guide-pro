@@ -46,9 +46,9 @@ const UpdateCard = ({
       {update.route && (
         <Link
           to={`/routes/${update.route.slug}`}
-          className="mt-auto pt-2 inline-flex items-center gap-1 text-accent hover:text-[hsl(193,100%,70%)] font-heading font-bold text-xs tracking-wider uppercase transition-colors"
+          className="mt-auto pt-2 inline-flex items-center gap-1 min-h-[44px] text-accent hover:text-[hsl(193,100%,70%)] font-heading font-bold text-xs tracking-wider uppercase transition-colors"
         >
-          {update.route.name} <ArrowRight className="w-3.5 h-3.5" />
+          {update.route.name} <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
         </Link>
       )}
     </div>

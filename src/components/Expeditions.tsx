@@ -1,7 +1,7 @@
 import expedition1 from "@/assets/expedition-1.webp";
 import expedition2 from "@/assets/expedition-2.webp";
 import helderbergDome from "@/assets/helderberg-dome.webp";
-import { Clock, TrendingUp } from "lucide-react";
+import { ArrowRight, Clock, TrendingUp } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface ExpeditionsProps {
@@ -70,11 +70,12 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
                 <span className="flex items-center gap-1"><TrendingUp className="w-4 h-4 text-gold" /> {exp.difficulty}</span>
               </div>
               <p className="text-muted-foreground text-sm mb-4">{exp.description}</p>
+              {/* py-3 -my-3 grows the tap target to ≥44px without shifting layout */}
               <button
                 onClick={onOpenChat}
-                className="text-accent hover:text-[hsl(193,100%,70%)] font-heading font-bold text-sm transition-colors tracking-wider uppercase"
+                className="inline-flex items-center gap-1 py-3 -my-3 text-accent hover:text-[hsl(193,100%,70%)] font-heading font-bold text-sm transition-colors tracking-wider uppercase"
               >
-                View Details →
+                View Details <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           </div>

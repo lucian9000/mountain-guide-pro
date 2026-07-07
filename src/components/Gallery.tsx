@@ -57,11 +57,16 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
       </Reveal>
 
       <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        {[galleryPeak1, galleryPeak2, galleryPeak3, galleryPeak4].map((img, i) => (
-          <div key={i} className="rounded-xl overflow-hidden aspect-square group glow-border glow-border-hover">
+        {[
+          { src: galleryPeak1, alt: "Three trail runners taking a summit selfie at a peak beacon under a blue morning sky" },
+          { src: galleryPeak2, alt: "Two hikers with trekking poles leaping off a rocky summit cairn against a clear sky" },
+          { src: galleryPeak3, alt: "Five hikers in winter jackets and beanies showing their 13 Peaks Challenge badges on a windswept summit" },
+          { src: galleryPeak4, alt: "Large group of hikers celebrating at a summit marker high above the Cape Peninsula coastline" },
+        ].map((img) => (
+          <div key={img.src} className="rounded-xl overflow-hidden aspect-square group glow-border glow-border-hover">
             <img
-              src={img}
-              alt={`Adventure gallery ${i + 1}`}
+              src={img.src}
+              alt={img.alt}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               loading="lazy"
             />

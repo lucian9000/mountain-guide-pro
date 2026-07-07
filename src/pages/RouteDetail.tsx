@@ -25,7 +25,7 @@ import {
 } from "@/lib/queries/content";
 import { formatDuration } from "@/lib/format";
 import { publicImageUrl } from "@/lib/images";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Code-split: Leaflet's JS/CSS loads only when a route has coordinates.
@@ -299,7 +299,8 @@ const RouteDetail = () => {
 
       {/* Lightbox */}
       <Dialog open={lightbox !== null} onOpenChange={(o) => !o && setLightbox(null)}>
-        <DialogContent className="max-w-4xl p-2 bg-background/95">
+        <DialogContent className="max-w-4xl p-2 bg-background/95" aria-describedby={undefined}>
+          <DialogTitle className="sr-only">{route.name} photo gallery</DialogTitle>
           {lightbox !== null && gallery[lightbox] && (
             <div className="relative">
               <img
@@ -313,14 +314,14 @@ const RouteDetail = () => {
                     onClick={() =>
                       setLightbox((lightbox - 1 + gallery.length) % gallery.length)
                     }
-                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/70 text-foreground hover:text-accent transition-colors"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/70 text-foreground hover:text-accent transition-colors"
                     aria-label="Previous image"
                   >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                   <button
                     onClick={() => setLightbox((lightbox + 1) % gallery.length)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/70 text-foreground hover:text-accent transition-colors"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/70 text-foreground hover:text-accent transition-colors"
                     aria-label="Next image"
                   >
                     <ChevronRight className="w-6 h-6" />
