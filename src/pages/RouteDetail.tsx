@@ -164,7 +164,7 @@ const RouteDetail = () => {
               >
                 <Icon className="w-5 h-5 text-accent shrink-0" />
                 <div>
-                  <div className="text-muted-foreground text-[10px] tracking-widest uppercase">
+                  <div className="text-muted-foreground text-xs tracking-widest uppercase">
                     {label}
                   </div>
                   <div className="font-heading text-sm font-bold text-foreground capitalize">
@@ -192,7 +192,7 @@ const RouteDetail = () => {
               )}
 
               {/* Description (preserve line breaks) */}
-              <p className="text-muted-foreground text-sm md:text-base leading-relaxed whitespace-pre-line mb-8">
+              <p className="text-muted-foreground text-base leading-relaxed whitespace-pre-line mb-8">
                 {route.description}
               </p>
 

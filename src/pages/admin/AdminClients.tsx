@@ -120,7 +120,7 @@ const AdminClients = () => {
                       {(c.tags ?? []).slice(0, 3).map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] text-accent bg-accent/10 border border-accent/20 px-1.5 py-0.5 rounded-full"
+                          className="text-xs text-accent bg-accent/10 border border-accent/20 px-1.5 py-0.5 rounded-full"
                         >
                           {t}
                         </span>

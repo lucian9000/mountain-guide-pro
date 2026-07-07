@@ -161,7 +161,7 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
                   onBlur={() => void saveAlt(img)}
                   className="h-8 text-xs"
                 />
-                <div className="text-muted-foreground/60 text-[11px]">
+                <div className="text-muted-foreground/60 text-xs">
                   {img.width && img.height ? `${img.width}×${img.height} · ` : ""}
                   drag to reorder
                 </div>

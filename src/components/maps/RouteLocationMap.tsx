@@ -78,7 +78,7 @@ const RouteLocationMap = ({ route }: { route: RouteRow }) => {
                   href={directionsUrl(meeting[0], meeting[1])}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-accent text-accent-foreground px-3 py-1.5 rounded-md font-heading font-bold text-[11px] tracking-wider uppercase"
+                  className="inline-flex items-center gap-1.5 bg-accent text-accent-foreground px-3 py-1.5 rounded-md font-heading font-bold text-xs tracking-wider uppercase"
                 >
                   <Navigation className="w-3 h-3" /> Get directions
                 </a>

@@ -116,7 +116,7 @@ const AdminGuides = () => {
                   {g.specialties.map((s) => (
                     <span
                       key={s}
-                      className="text-[10px] font-medium text-accent/80 bg-accent/5 border border-accent/20 px-2 py-0.5 rounded-full"
+                      className="text-xs font-medium text-accent/80 bg-accent/5 border border-accent/20 px-2 py-0.5 rounded-full"
                     >
                       {s}
                     </span>

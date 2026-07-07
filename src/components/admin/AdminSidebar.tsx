@@ -43,7 +43,7 @@ const AdminSidebar = ({ onNavigate }: AdminSidebarProps) => (
         <div className="font-heading font-bold text-foreground tracking-wider uppercase text-sm">
           SummitFit
         </div>
-        <div className="text-accent text-[10px] tracking-widest uppercase">Admin</div>
+        <div className="text-accent text-xs tracking-widest uppercase">Admin</div>
       </div>
     </div>
 
@@ -77,7 +77,7 @@ const AdminSidebar = ({ onNavigate }: AdminSidebarProps) => (
       >
         <ArrowLeft className="w-4 h-4" /> Back to Site
       </NavLink>
-      <p className="px-3 pt-2 text-muted-foreground/40 text-[10px] tracking-widest uppercase">
+      <p className="px-3 pt-2 text-muted-foreground/40 text-xs tracking-widest uppercase">
         v{version} · see docs/CHANGELOG.md
       </p>
     </div>

@@ -77,7 +77,7 @@ const RoutesOverviewMap = ({
                 </div>
                 <Link
                   to={`/routes/${route.slug}`}
-                  className="inline-flex text-accent font-heading font-bold text-[11px] tracking-wider uppercase hover:underline"
+                  className="inline-flex text-accent font-heading font-bold text-xs tracking-wider uppercase hover:underline"
                 >
                   View route →
                 </Link>
