@@ -43,7 +43,7 @@ const PublicHeader = () => {
           ))}
           <Link
             to="/booking"
-            className="hidden sm:inline-flex bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all"
+            className="hidden sm:inline-flex bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all"
           >
             Book Now
           </Link>

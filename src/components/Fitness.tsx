@@ -34,7 +34,7 @@ const Fitness = ({ onOpenChat }: FitnessProps) => (
             <p className="text-muted-foreground text-sm mb-6">{desc}</p>
             <button
               onClick={onOpenChat}
-              className="text-accent hover:text-[hsl(193,100%,70%)] font-heading font-bold text-sm transition-colors tracking-wider uppercase"
+              className="text-accent hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase"
             >
               Learn More →
             </button>

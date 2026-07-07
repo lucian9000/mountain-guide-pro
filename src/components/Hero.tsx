@@ -84,7 +84,7 @@ const Hero = ({ onOpenChat }: HeroProps) => {
           </button>
           <button
             onClick={onOpenChat}
-            className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
           >
             Start Your Journey <ArrowRight className="w-4 h-4" />
           </button>

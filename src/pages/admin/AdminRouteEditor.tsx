@@ -523,7 +523,7 @@ const AdminRouteEditor = () => {
           type="button"
           disabled={saving}
           onClick={() => void save("published", null)}
-          className="inline-flex items-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-4 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all disabled:opacity-60"
+          className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all disabled:opacity-60"
         >
           <Globe className="w-4 h-4" /> Publish now
         </button>

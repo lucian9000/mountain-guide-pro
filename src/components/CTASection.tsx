@@ -7,8 +7,8 @@ interface CTAProps {
 
 const CTASection = ({ onOpenChat }: CTAProps) => (
   <section className="py-16 md:py-24 bg-primary relative overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--cyan-glow)/0.1),transparent_60%)]" />
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--gold)/0.05),transparent_60%)]" />
+    <div className="absolute inset-0 bg-[image:var(--glow-cyan-top-right)]" />
+    <div className="absolute inset-0 bg-[image:var(--glow-gold-bottom-left)]" />
 
     <Reveal className="container mx-auto px-4 relative z-10 text-center">
       <span className="text-gradient-gold text-sm font-heading font-bold tracking-[0.2em] uppercase mb-3 block">Get Started</span>
@@ -23,7 +23,7 @@ const CTASection = ({ onOpenChat }: CTAProps) => (
           href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures."
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105 inline-flex items-center justify-center gap-2"
+          className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105 inline-flex items-center justify-center gap-2"
         >
           <MessageCircle className="w-5 h-5" /> Contact Now
         </a>

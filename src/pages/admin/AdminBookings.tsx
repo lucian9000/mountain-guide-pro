@@ -48,7 +48,7 @@ const statusClasses: Record<BookingStatus, string> = {
   pending: "bg-warning/20 text-warning",
   confirmed: "bg-accent/20 text-accent",
   cancelled: "bg-destructive/20 text-destructive",
-  completed: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
+  completed: "bg-success/20 text-success",
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -171,7 +171,7 @@ const AdminBookings = () => {
                             variant="secondary"
                             className={
                               b.calendar_synced
-                                ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]"
+                                ? "bg-success/20 text-success"
                                 : "text-muted-foreground"
                             }
                           >

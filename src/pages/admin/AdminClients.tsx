@@ -108,7 +108,7 @@ const AdminClients = () => {
                       variant="secondary"
                       className={
                         c.marketing_opt_in
-                          ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]"
+                          ? "bg-success/20 text-success"
                           : "text-muted-foreground"
                       }
                     >

@@ -146,7 +146,7 @@ const GuideFormDialog = ({ open, onOpenChange, guide, onSave, saving }: Props) =
           <button
             onClick={() => onSave(draft)}
             disabled={saving || !draft.display_name.trim()}
-            className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-5 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all disabled:opacity-60"
+            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-5 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all disabled:opacity-60"
           >
             {saving ? "Saving…" : "Save"}
           </button>

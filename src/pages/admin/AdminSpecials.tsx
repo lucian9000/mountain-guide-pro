@@ -112,7 +112,7 @@ const AdminSpecials = () => {
         </p>
         <button
           onClick={openNew}
-          className="inline-flex items-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all"
+          className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-4 py-2 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all"
         >
           <Plus className="w-4 h-4" /> New Special
         </button>

@@ -33,7 +33,7 @@ interface Message {
 
 const difficultyColor = (d: number) =>
   d <= 2
-    ? "bg-[hsl(var(--success))]"
+    ? "bg-success"
     : d <= 3
     ? "bg-gold"
     : "bg-destructive";
@@ -176,7 +176,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
             {msg.showWhatsApp && (
               <button
                 onClick={requestCustomRoute}
-                className="mt-2 w-full min-h-[44px] bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase flex items-center justify-center gap-2"
+                className="mt-2 w-full min-h-[44px] bg-accent hover:bg-cyan-hover text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase flex items-center justify-center gap-2"
               >
                 <Phone className="w-4 h-4 shrink-0" aria-hidden="true" /> Chat to us on WhatsApp
               </button>
@@ -223,7 +223,7 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
                 </div>
                 <button
                   onClick={() => bookRoute(route)}
-                  className="w-full min-h-[44px] bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase flex items-center justify-center gap-2"
+                  className="w-full min-h-[44px] bg-accent hover:bg-cyan-hover text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase flex items-center justify-center gap-2"
                 >
                   <Phone className="w-4 h-4 shrink-0" aria-hidden="true" />
                   {route.logistics.contactForPricing ? "Enquire via WhatsApp" : "Book via WhatsApp"}
@@ -263,8 +263,8 @@ const ChatPanel = ({ onClose }: ChatPanelProps) => {
               Select your fitness level:
             </p>
             {[
-              { level: 1, label: "1 — Just Starting Out", color: "border-[hsl(var(--success))] text-[hsl(var(--success))]" },
-              { level: 2, label: "2 — Casual Hiker", color: "border-[hsl(var(--success))] text-[hsl(var(--success))]" },
+              { level: 1, label: "1 — Just Starting Out", color: "border-success text-success" },
+              { level: 2, label: "2 — Casual Hiker", color: "border-success text-success" },
               { level: 3, label: "3 — Intermediate (Active)", color: "border-gold text-gold" },
               { level: 4, label: "4 — Fit & Experienced", color: "border-destructive text-destructive" },
               { level: 5, label: "5 — Advanced Athlete", color: "border-destructive text-destructive" },

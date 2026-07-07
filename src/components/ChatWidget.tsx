@@ -17,7 +17,7 @@ const ChatWidget = ({ isOpen, onOpen, onClose }: ChatWidgetProps) => (
       <button
         onClick={onOpen}
         aria-label="Open chat"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground rounded-full shadow-button flex items-center justify-center transition-all hover:scale-110"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-accent hover:bg-cyan-hover text-accent-foreground rounded-full shadow-button flex items-center justify-center transition-all hover:scale-110"
       >
         <MessageCircle className="w-6 h-6" />
       </button>

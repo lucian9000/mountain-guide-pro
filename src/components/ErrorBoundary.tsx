@@ -39,8 +39,8 @@ class ErrorBoundary extends Component<Props, State> {
           alignItems: "center",
           justifyContent: "center",
           padding: "1.5rem",
-          background: "hsl(207 75% 10%)",
-          color: "hsl(210 40% 96%)",
+          background: "hsl(207 75% 10%)", // token: --midnight-deep
+          color: "hsl(210 40% 96%)", // token: --foreground
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif",
         }}
@@ -49,8 +49,8 @@ class ErrorBoundary extends Component<Props, State> {
           style={{
             maxWidth: "32rem",
             width: "100%",
-            background: "hsl(207 60% 14%)",
-            border: "1px solid hsl(193 100% 50% / 0.25)",
+            background: "hsl(207 60% 14%)", // token: --card (approx surface)
+            border: "1px solid hsl(193 100% 50% / 0.25)", // token: --cyan-glow
             borderRadius: "1rem",
             padding: "2rem",
             boxShadow: "0 20px 60px rgba(0,0,0,0.45)",
@@ -84,14 +84,14 @@ class ErrorBoundary extends Component<Props, State> {
               fontSize: "0.8rem",
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",
-              background: "hsl(207 75% 8%)",
-              border: "1px solid hsl(210 40% 96% / 0.1)",
+              background: "hsl(207 75% 8%)", // token: --midnight-deep (darker inset)
+              border: "1px solid hsl(210 40% 96% / 0.1)", // token: --foreground
               borderRadius: "0.5rem",
               padding: "0.85rem",
               marginBottom: "1.25rem",
               maxHeight: "12rem",
               overflow: "auto",
-              color: "hsl(0 80% 78%)",
+              color: "hsl(0 80% 78%)", // token: --destructive (soft error text)
             }}
           >
             {error.message}
@@ -102,8 +102,8 @@ class ErrorBoundary extends Component<Props, State> {
             type="button"
             onClick={() => window.location.reload()}
             style={{
-              background: "hsl(193 100% 50%)",
-              color: "hsl(207 75% 10%)",
+              background: "hsl(193 100% 50%)", // token: --cyan-glow
+              color: "hsl(207 75% 10%)", // token: --midnight-deep
               border: "none",
               borderRadius: "0.5rem",
               padding: "0.7rem 1.4rem",

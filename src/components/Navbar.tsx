@@ -154,7 +154,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             })}
             <Link
               to="/booking"
-              className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all hover:scale-105"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-5 py-2.5 rounded-lg font-heading font-bold text-xs tracking-wider uppercase shadow-button transition-all hover:scale-105"
             >
               Book Now
             </Link>
@@ -198,7 +198,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
         aria-hidden={!isMobileOpen}
       >
         <div className="absolute inset-0 bg-background/98 backdrop-blur-xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--cyan-glow)/0.08),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[image:var(--glow-cyan-top)]" />
 
         <div className="relative h-full flex flex-col pt-20 pb-8 px-6 overflow-y-auto">
           <nav className="flex-1 flex flex-col justify-center gap-1 max-w-sm mx-auto w-full">
@@ -245,7 +245,7 @@ const Navbar = ({ onOpenChat }: NavbarProps) => {
             <Link
               to="/booking"
               onClick={() => setIsMobileOpen(false)}
-              className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all flex items-center justify-center gap-2"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all flex items-center justify-center gap-2"
             >
               <CalendarRange className="w-4 h-4" /> Book Now
             </Link>

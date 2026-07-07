@@ -66,7 +66,7 @@ const Login = () => {
 
   return (
     <div className="min-h-dvh bg-background flex items-center justify-center px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--cyan-glow)/0.08),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[image:var(--glow-cyan-top)]" />
 
       <div className="relative z-10 w-full max-w-md glass-card glow-border p-8 md:p-10 text-center">
         <Link to="/" className="inline-flex items-center gap-3 mb-8">
@@ -97,7 +97,7 @@ const Login = () => {
         <button
           onClick={handleSignIn}
           disabled={submitting || !isSupabaseConfigured}
-          className="w-full bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-3"
+          className="w-full bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-3"
         >
           {submitting ? (
             <>

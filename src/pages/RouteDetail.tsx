@@ -44,7 +44,7 @@ const NotFoundPanel = () => (
     </p>
     <Link
       to="/routes"
-      className="inline-flex items-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all"
+      className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all"
     >
       <ArrowLeft className="w-4 h-4" /> Browse all routes
     </Link>
@@ -209,7 +209,7 @@ const RouteDetail = () => {
                         href={mapsDirectionsUrl(route.meeting_latitude, route.meeting_longitude)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-2 inline-flex items-center gap-1.5 text-accent hover:text-[hsl(193,100%,70%)] font-heading font-bold text-xs tracking-wider uppercase transition-colors"
+                        className="mt-2 inline-flex items-center gap-1.5 text-accent hover:text-cyan-soft font-heading font-bold text-xs tracking-wider uppercase transition-colors"
                       >
                         <Navigation className="w-3.5 h-3.5" /> Get directions
                       </a>
@@ -275,7 +275,7 @@ const RouteDetail = () => {
               {tourPrice ? (
                 <Link
                   to={`/booking?tour=${route.slug}`}
-                  className="w-full inline-flex items-center justify-center bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] mt-2"
+                  className="w-full inline-flex items-center justify-center bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] mt-2"
                 >
                   Enquire / Book
                 </Link>
@@ -284,7 +284,7 @@ const RouteDetail = () => {
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] mt-2"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] mt-2"
                 >
                   <MessageCircle className="w-4 h-4" /> Enquire
                 </a>

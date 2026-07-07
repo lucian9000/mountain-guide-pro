@@ -160,7 +160,7 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
           </p>
           <button
             onClick={onOpenChat}
-            className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
+            className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
           >
             Learn More
           </button>

@@ -76,7 +76,7 @@ const RouteCard = ({
           <span className="font-heading text-xl font-black text-accent whitespace-nowrap">
             {price ?? "Contact us"}
           </span>
-          <span className="text-accent group-hover:text-[hsl(193,100%,70%)] font-heading font-bold text-sm transition-colors tracking-wider uppercase whitespace-nowrap">
+          <span className="text-accent group-hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase whitespace-nowrap">
             View Route →
           </span>
         </div>

@@ -56,7 +56,7 @@ const About = ({ onOpenChat }: AboutProps) => (
           <div className="flex flex-wrap gap-3">
             <button
               onClick={onOpenChat}
-              className="bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
+              className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-105"
             >
               Book with Ernest
             </button>

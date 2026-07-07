@@ -32,7 +32,7 @@ const BookingConfirmation = ({ booking }: { booking: ConfirmedBooking }) => {
 
   return (
     <div className="glass-card glow-border p-8 max-w-lg mx-auto text-center">
-      <CheckCircle2 className="w-12 h-12 text-[hsl(var(--success))] mx-auto mb-4" />
+      <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-4" />
       <h1 className="font-heading text-2xl font-black text-foreground mb-2 tracking-wider uppercase">
         Booking Requested
       </h1>
@@ -55,7 +55,7 @@ const BookingConfirmation = ({ booking }: { booking: ConfirmedBooking }) => {
           href={gcalUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all"
+          className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all"
         >
           <CalendarPlus className="w-4 h-4" /> Add to Google Calendar
         </a>

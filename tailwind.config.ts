@@ -54,6 +54,9 @@ export default {
         },
         gold: "hsl(var(--gold))",
         cyan: "hsl(var(--cyan-glow))",
+        "cyan-hover": "hsl(var(--cyan-hover))",
+        "cyan-soft": "hsl(var(--cyan-soft))",
+        success: "hsl(var(--success))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

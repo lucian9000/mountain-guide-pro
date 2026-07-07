@@ -344,7 +344,7 @@ const Booking = () => {
                     <button
                       onClick={handleBook}
                       disabled={!canSubmit}
-                      className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-[hsl(193,100%,42%)] text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                      className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-all hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                     >
                       {createBooking.isPending ? (
                         <>
