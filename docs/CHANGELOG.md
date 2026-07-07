@@ -12,6 +12,35 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (v4.0 Phase 1) — Accessibility pass (2026-07-07)
+
+Audit-driven accessibility hardening per `docs/V4-PLAN.md` Phase 1 and the
+`ui-ux-pro-max` skill checklist. Local branch `v4/phase-1-a11y`; version
+bump deferred until the v4 ship vehicle is decided.
+
+- 404 "Return to Home" link was invisible (dark-navy `primary` token on
+  dark background, ~1.1:1) — now `accent` cyan; page gained a `main` landmark.
+- ChatWidget: labeled launcher/close, 44px targets, `role="log"`
+  + `aria-live="polite"` message log, all emoji replaced with Lucide icons.
+- Booking: labels associated (`htmlFor`/`id`), 44px stepper, required
+  indicators on Tour/Date, "Select a tour and date to continue" hint under
+  the disabled submit.
+- Navbar mobile menu: `inert` while closed (was tabbable-invisible), focus
+  moves in on open, focus trap, focus returns to hamburger on close.
+- Skip-to-content link on every route; `main#main` landmark on all public
+  pages; /routes card headings h3 → h2.
+- Contrast: removed all opacity-diluted `text-muted-foreground/40|60|70`
+  from public surfaces (worst was ~2:1, now ≈6.5:1).
+- `prefers-reduced-motion` now also disables `animate-fade-in-up`,
+  `animate-bounce`, `animate-pulse`.
+- 44px tap areas for "View Details", news links, lightbox arrows, hero
+  scroll cue; lightbox dialog gained an sr-only title; gallery images have
+  real descriptions instead of numbered filler.
+- Tests: 1 → 23 (Vitest + RTL); axe-core gate added (0 serious/critical on
+  all public pages, verified with Playwright + system Edge).
+- Known deferred: one moderate axe `heading-order` on route detail
+  (Phase 3 candidate); admin-area contrast sweep (Phase 5).
+
 ## v3.1.1 — What's New moves to /news (2026-07-06)
 
 - Homepage no longer has a What's New section (spacing looked poor with an

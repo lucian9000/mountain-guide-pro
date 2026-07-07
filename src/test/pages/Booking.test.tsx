@@ -129,10 +129,10 @@ describe("Booking page accessibility", () => {
       "aria-required",
       "true"
     );
-    expect(screen.getByLabelText(/date/i)).toHaveAttribute(
-      "aria-required",
-      "true"
-    );
+    // The date control is a plain popover-trigger <button>; ARIA does not
+    // allow aria-required on role="button" (axe: aria-allowed-attr), so the
+    // required state is conveyed by the label's indicator asserted above.
+    expect(screen.getByLabelText(/date/i)).not.toHaveAttribute("aria-required");
   });
 
   it("explains the disabled submit button when tour/date are missing", () => {

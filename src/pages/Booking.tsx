@@ -248,7 +248,6 @@ const Booking = () => {
                     <PopoverTrigger asChild>
                       <button
                         id="booking-date"
-                        aria-required="true"
                         className="w-full flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm text-left hover:border-accent transition-colors"
                       >
                         <CalendarIcon className="w-4 h-4 text-accent" />
