@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, CalendarIcon, Loader2, Minus, Plus } from "lucide-react";
+import { ArrowLeft, CalendarIcon, Loader2, Minus, Plus, LogIn } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -11,6 +11,8 @@ import {
 } from "@/lib/queries/booking";
 import { getGuideAvailability, type TimeSlot } from "@/lib/google-calendar";
 import SiteHeader from "@/components/SiteHeader";
+import GoogleCalendarBooking from "@/components/booking/GoogleCalendarBooking";
+import { Button } from "@/components/ui/button";
 import BookingConfirmation, {
   type ConfirmedBooking,
 } from "@/components/booking/BookingConfirmation";
@@ -28,7 +30,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const makeRef = () => `SF-${Date.now().toString(36).slice(-6).toUpperCase()}`;
 
 const Booking = () => {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -57,6 +59,7 @@ const Booking = () => {
   }, [requestedTour, pricing.data]);
 
   const selectedTour = pricing.data?.find((t) => t.id === tourId);
+  const selectedGuide = guides.data?.find((g) => g.id === guideId);
   const total = selectedTour ? Number(selectedTour.price) * participants : 0;
   const maxPax = selectedTour?.max_participants ?? 12;
 
@@ -127,7 +130,24 @@ const Booking = () => {
           <ArrowLeft className="w-4 h-4" /> Back to site
         </Link>
 
-        {confirmed ? (
+        {!user ? (
+          <div className="max-w-md mx-auto text-center glass-card glow-border rounded-xl p-8 mt-6">
+            <h1 className="font-heading text-2xl md:text-3xl font-black text-foreground tracking-wider uppercase mb-3">
+              Sign in to book your adventure
+            </h1>
+            <p className="text-muted-foreground text-sm mb-6">
+              Create a free account or sign in with your existing Google account to
+              check availability and book a guided tour with Ernest.
+            </p>
+            <Button
+              onClick={() => signInWithGoogle("/booking")}
+              className="w-full bg-accent hover:bg-cyan-hover text-accent-foreground font-heading font-bold tracking-wider uppercase transition-colors"
+            >
+              <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
+              Continue with Google
+            </Button>
+          </div>
+        ) : confirmed ? (
           <BookingConfirmation booking={confirmed} />
         ) : (
           <>
@@ -201,6 +221,21 @@ const Booking = () => {
                     </p>
                   )}
                 </div>
+
+                {/* Primary flow: book directly in Ernest's Google Calendar */}
+                <GoogleCalendarBooking
+                  tourName={selectedTour?.name ?? ""}
+                  guideName={selectedGuide?.display_name ?? ""}
+                  isVisible={!!tourId}
+                />
+
+                {/* Fallback: the native Supabase request form (participants +
+                    price capture). Google Calendar is the primary path above. */}
+                <details className="border-t border-border/40 pt-5">
+                  <summary className="cursor-pointer select-none text-sm font-heading font-bold text-muted-foreground hover:text-accent tracking-wider uppercase transition-colors">
+                    Prefer to request manually?
+                  </summary>
+                  <div className="space-y-6 pt-6">
 
                 {/* Date */}
                 <div className="space-y-2">
@@ -331,6 +366,8 @@ const Booking = () => {
                     </p>
                   )}
                 </div>
+                  </div>
+                </details>
               </div>
             </DataState>
           </>

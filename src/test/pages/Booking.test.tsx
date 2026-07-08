@@ -1,7 +1,18 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Booking from "@/pages/Booking";
+
+// Mutable auth state so individual tests can flip between signed-in / out.
+const authState = vi.hoisted(() => ({
+  user: null as null | { id: string; email: string; user_metadata: Record<string, unknown> },
+  signInWithGoogle: vi.fn(),
+}));
+const SIGNED_IN_USER = {
+  id: "user-1",
+  email: "climber@example.com",
+  user_metadata: {},
+};
 
 // Several @radix-ui packages have truncated ESM builds in the local
 // node_modules (vite.config.ts aliases them to CJS for the app, but the
@@ -22,16 +33,12 @@ vi.mock("@/components/auth/UserMenu", () => ({ default: () => null }));
 // layers out the same way ChatWidget.test.tsx stubs @/lib/queries/content.
 vi.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({
-    user: {
-      id: "user-1",
-      email: "climber@example.com",
-      user_metadata: {},
-    },
+    user: authState.user,
     session: null,
     profile: null,
     role: null,
     loading: false,
-    signInWithGoogle: vi.fn(),
+    signInWithGoogle: authState.signInWithGoogle,
     signOut: vi.fn(),
   }),
 }));
@@ -72,7 +79,34 @@ const renderBooking = () =>
     </MemoryRouter>
   );
 
+describe("Booking auth gate", () => {
+  beforeEach(() => {
+    authState.user = null;
+    authState.signInWithGoogle.mockClear();
+  });
+
+  it("shows a sign-in card (not the form) when logged out", () => {
+    renderBooking();
+    expect(screen.getByText(/sign in to book your adventure/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /continue with google/i })
+    ).toBeInTheDocument();
+    // The booking form must NOT render for anonymous visitors.
+    expect(screen.queryByLabelText(/tour/i)).not.toBeInTheDocument();
+  });
+
+  it("calls signInWithGoogle('/booking') from the sign-in card", () => {
+    renderBooking();
+    fireEvent.click(screen.getByRole("button", { name: /continue with google/i }));
+    expect(authState.signInWithGoogle).toHaveBeenCalledWith("/booking");
+  });
+});
+
 describe("Booking page accessibility", () => {
+  beforeEach(() => {
+    authState.user = SIGNED_IN_USER;
+  });
+
   it("associates the Tour label with the tour select trigger", () => {
     renderBooking();
     const trigger = screen.getByLabelText(/tour/i);
