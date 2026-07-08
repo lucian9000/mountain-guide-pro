@@ -30,12 +30,15 @@ const AuthCallback = () => {
 
   useEffect(() => {
     if (loading) return;
-    const redirect = params.get("redirect") || "/dashboard";
     if (user) {
+      const redirect = params.get("redirect") || "/dashboard";
       navigate(redirect, { replace: true });
-    } else {
-      navigate("/login?error=auth_failed", { replace: true });
     }
+    // No user yet is NOT failure: the PKCE code exchange
+    // (detectSessionInUrl) finishes asynchronously AFTER the initial
+    // getSession() resolves null, so bailing here bounced first-time
+    // sign-ins to /login. Wait for SIGNED_IN to flip `user`; the 10s
+    // safety timeout above handles genuinely failed exchanges.
   }, [loading, user, params, navigate]);
 
   return <AuthLoading message="Completing sign-in…" />;
