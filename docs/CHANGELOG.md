@@ -12,6 +12,45 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (v4.0 Phase 5a) — Google Calendar booking (frontend) (2026-07-08)
+
+Booking pivots to Ernest's Google Calendar Appointment Schedule. Per
+`docs/superpowers/plans/2026-07-08-v4-phase5a-booking-integration.md`, after a
+recon pass reconciled the original spec with the real codebase/DB. Same local
+branch. axe still 0 serious/critical.
+
+- **Auth-gated /booking.** Anonymous visitors get a "Sign in to book your
+  adventure" card with a Google button (uses the existing
+  `signInWithGoogle('/booking')` + `?redirect=` callback — no localStorage,
+  no AuthCallback change).
+- **Google Calendar is the primary booking flow.** New
+  `GoogleCalendarBooking` component embeds Ernest's appointment schedule
+  (iframe on desktop, "open in new tab" on mobile) once a tour is selected.
+  Google Workspace sends the client confirmation, notifies Ernest, and
+  creates the calendar event automatically — no code. The existing native
+  Supabase request form is kept as a collapsible fallback (still captures
+  participants + price).
+- **New /booking/confirmed** thank-you page (route added, not auth-protected):
+  green check, "what happens next" (Google email / Ernest WhatsApp /
+  add-to-your-calendar), reads optional query params defensively. It does
+  **not** write a Supabase row (no unverified client-side data).
+- **Admin:** new "Via Cal Page" booking badge (indigo) for calendar-page
+  bookings, alongside Synced / Not synced.
+- **Maps hidden** on /routes and /routes/:slug (component files kept) pending
+  the Phase-5 route-mapping work.
+- New env vars in `.env.example`: `VITE_GOOGLE_BOOKING_URL` (Ernest's embed
+  URL — must be pasted in to activate the calendar) and
+  `VITE_SUPABASE_FUNCTIONS_URL`.
+
+**Known limitations / deferred to the backend Edge Function (Phase 5b):**
+Google Appointment Schedules do NOT support a post-booking redirect or return
+booking data as URL params, so calendar bookings do **not** appear in Supabase
+/ My Bookings until a backend job reads Ernest's calendar via the Google
+Calendar API and creates the mirror rows (+ real branded emails, +
+`google_cal_event_id`). The frontend is built to accept that data when it
+arrives. Also: the iframe can only be verified end-to-end once Ernest's real
+`VITE_GOOGLE_BOOKING_URL` embed value is set.
+
 ## Unreleased (v4.0 Phase 3) — Design-system discipline (2026-07-08)
 
 Consistency + snappiness pass per `docs/V4-PLAN.md` Phase 3 and
