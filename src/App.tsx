@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 const Login = lazy(() => import("./pages/Login"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Booking = lazy(() => import("./pages/Booking"));
+const BookingConfirmed = lazy(() => import("./pages/BookingConfirmed"));
 const RoutesIndex = lazy(() => import("./pages/RoutesIndex"));
 const RouteDetail = lazy(() => import("./pages/RouteDetail"));
 const News = lazy(() => import("./pages/News"));
@@ -70,6 +71,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/booking/confirmed" element={<BookingConfirmed />} />
               <Route path="/routes" element={<RoutesIndex />} />
               <Route path="/routes/:slug" element={<RouteDetail />} />
               <Route path="/news" element={<News />} />
