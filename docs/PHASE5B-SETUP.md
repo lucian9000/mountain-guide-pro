@@ -11,6 +11,26 @@ live on the info@ account; mail to booking@ lands in the info@ inbox.
 
 ---
 
+## Resolved values for this project (2026-07-09)
+
+- **Booking embed URL** (`VITE_GOOGLE_BOOKING_URL`, already set in `.env.local`):
+  `https://calendar.google.com/calendar/appointments/schedules/AcZssZ2CTgbHPkkvfb0mBkY11LMIc1DB7cSo853SMwiHvAQvrz0GP4SznKgtkbDeZ3CJoafwiSawiq3j?gv=true`
+  Resolved from the short link `https://calendar.app.google/NU2nTpLhBZXVxbQJ7`.
+  ⚠️ The `?gv=true` suffix is REQUIRED — only that variant lacks
+  `X-Frame-Options`, so only it embeds in an iframe (verified in-browser:
+  Ernest's "Book A Tour" schedule renders). Still add it to **Vercel** env.
+- **Service account** (from the JSON key): `GOOGLE_SA_EMAIL` =
+  `crm-calendar-sync@white-artwork-501815-g2.iam.gserviceaccount.com`
+  (GCP project `white-artwork-501815-g2`). The `GOOGLE_SA_PRIVATE_KEY` is the
+  `private_key` field of that JSON — set it as a Supabase secret only, never
+  in a VITE_ var or git. **Rotate this key** once sync works (it was shared in
+  chat): GCP Console → service account → Keys → delete → add new.
+- **Still needed:** `GOOGLE_CALENDAR_ID` (the calendar the appointment
+  schedule writes to — almost certainly `info@summitfitadventures.com`; confirm
+  in Calendar settings), and the calendar must be SHARED with the service
+  account email above (Part B step 2). The Calendar API must be enabled in the
+  GCP project.
+
 ## Part A — Client booking page (frontend embed) — 5 minutes
 
 1. Sign in to Google Calendar as **info@summitfitadventures.com**.
