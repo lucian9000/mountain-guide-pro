@@ -42,7 +42,7 @@ const BookingConfirmed = () => {
   }
 
   const mailto =
-    "mailto:ernest@summitfitadventures.com?subject=Booking%20Enquiry" +
+    "mailto:booking@summitfitadventures.com?subject=Booking%20Enquiry" +
     "&body=Hi%20Ernest%2C%20I%20just%20completed%20a%20booking%20via%20your%20calendar.";
 
   const steps = [
@@ -146,7 +146,7 @@ export default BookingConfirmed;
  *    (user_id matched by client email, status 'confirmed',
  *    notes 'Booked via Google Calendar appointment page', google_cal_event_id set).
  * 2. Sends a branded confirmation email to the client via Resend.
- * 3. Sends an admin notification to ernest@summitfitadventures.com.
+ * 3. Sends an admin notification to booking@summitfitadventures.com.
  * Env var for the trigger: VITE_SUPABASE_FUNCTIONS_URL (in .env.example).
  * This page stays purely informational so no unverified client-side rows are written.
  */

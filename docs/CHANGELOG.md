@@ -12,6 +12,33 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (v4.0 Phase 5b) — Booking backend + SSO fix (2026-07-08)
+
+- **Fixed: first Google sign-in bounced back signed-out.** AuthCallback bailed
+  to /login while the PKCE code exchange was still settling (initial
+  getSession() resolves null before SIGNED_IN fires). It now waits for the
+  session; explicit provider errors and the 10s timeout still fail fast.
+  Covered by 4 new tests reproducing the race.
+- **Deployed `calendar-sync` Edge Function** (live on Supabase, inert until
+  secrets set): polls Ernest's Google Calendar via a service account (calendar
+  sharing, no domain-wide delegation) and mirrors appointment bookings into
+  `public.bookings` (upsert by `google_cal_event_id`, cancellations tracked,
+  client matched by `profiles.email`, tour matched from the event title).
+  Guarded by `x-cron-secret`; schedule every 10 min via dashboard cron.
+- **Deployed `booking-email` Edge Function** (live, skips until Resend
+  configured): for native fallback-form bookings — branded "request received"
+  email to the client + notification to booking@summitfitadventures.com.
+  Verifies the caller's JWT owns the booking. Auth guards verified live
+  (401 without credentials).
+- `useCreateBooking` now fire-and-forgets the email function after insert
+  (booking never fails because email did — tested).
+- Email addresses corrected: notifications → booking@summitfitadventures.com
+  (alias); admin account is info@summitfitadventures.com (.env.example +
+  confirmed-page mailto updated — align .env.local/Vercel/DB role).
+- **`docs/PHASE5B-SETUP.md`** — full runbook: appointment-schedule embed URL,
+  GCP service account + calendar sharing + Calendar ID, Supabase secrets,
+  cron schedule, Resend DNS verification, verification curl.
+
 ## Unreleased (v4.0 Phase 5a) — Google Calendar booking (frontend) (2026-07-08)
 
 Booking pivots to Ernest's Google Calendar Appointment Schedule. Per

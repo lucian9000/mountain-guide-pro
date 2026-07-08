@@ -51,12 +51,20 @@ export interface NewBooking {
 /** Insert a booking for the current user (owner RLS allows own inserts). */
 export const useCreateBooking = () =>
   useMutation({
-    mutationFn: async (booking: NewBooking): Promise<Booking> =>
-      unwrap(
+    mutationFn: async (booking: NewBooking): Promise<Booking> => {
+      const row = unwrap<Booking>(
         await supabase
           .from("bookings")
           .insert({ ...booking, status: "pending" })
           .select()
           .single()
-      ),
+      );
+      // Phase 5b: fire-and-forget the confirmation/notification emails.
+      // Best-effort — the booking itself must never fail because email did
+      // (the function no-ops gracefully until Resend is configured).
+      void Promise.resolve(
+        supabase.functions.invoke("booking-email", { body: { booking_id: row.id } })
+      ).catch((err) => console.warn("[booking] email notify failed:", err));
+      return row;
+    },
   });
