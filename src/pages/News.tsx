@@ -49,8 +49,10 @@ const News = () => {
           )}
         </section>
 
-        {/* Facebook feed — centered, tall (FB caps the embed at 500px wide) */}
-        <section className="max-w-[540px] mx-auto">
+        {/* Facebook feed — the card spans the full width to match the
+            Announcements block above; FB caps its timeline at 500px, so the
+            feed itself sits centered within the wider frame. */}
+        <section>
           <div className="rounded-xl overflow-hidden glass-card glow-border">
             <div className="p-4 border-b border-border/30 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center">
@@ -76,7 +78,7 @@ const News = () => {
                 src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcarrickadventures&tabs=timeline&width=500&height=884&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false&appId"
                 width="500"
                 height="884"
-                style={{ border: "none", overflow: "hidden", width: "100%", height: "100%" }}
+                style={{ border: "none", overflow: "hidden", width: "500px", maxWidth: "100%", height: "100%" }}
                 scrolling="no"
                 frameBorder="0"
                 allowFullScreen
