@@ -35,12 +35,13 @@ const GoogleCalendarBooking = ({ tourName, guideName, isVisible }: GoogleCalenda
     );
   }
 
-  // Appointment Schedules currently ignore gv_successUrl; harmless + future-proof.
-  // The reliable path to the thank-you page is the manual button below.
-  const successUrl = encodeURIComponent(
-    `${import.meta.env.VITE_SITE_URL || window.location.origin}/booking/confirmed`
-  );
-  const url = `${bookingUrl}?gv_successUrl=${successUrl}`;
+  // Use the embed URL exactly as configured. It must be the appointment
+  // schedule's `?gv=true` form — that's the only variant Google serves
+  // without X-Frame-Options, so it's the one that renders in an iframe.
+  // (Appointment Schedules have no post-booking redirect, so we don't append
+  // a success URL — the reliable path to the thank-you page is the button
+  // below.)
+  const url = bookingUrl;
 
   return (
     <div className="space-y-6">
