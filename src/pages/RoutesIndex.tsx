@@ -1,13 +1,11 @@
-import { lazy, Suspense } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import RouteCard from "@/components/routes/RouteCard";
 import DataState from "@/components/admin/DataState";
 import { usePublishedRoutes, useTourPrices } from "@/lib/queries/content";
-import { Skeleton } from "@/components/ui/skeleton";
 
-// Code-split: the card grid never waits on Leaflet.
-const RoutesOverviewMap = lazy(() => import("@/components/maps/RoutesOverviewMap"));
+// MAP REMOVED — Phase 5: RoutesOverviewMap (@/components/maps/RoutesOverviewMap)
+// will be re-added when route mapping is ready. Component file kept in place.
 
 /** /routes — all published routes, card grid, ordered by sort_order, name. */
 const RoutesIndex = () => {
@@ -32,13 +30,7 @@ const RoutesIndex = () => {
           </p>
         </div>
 
-        {routes.data && routes.data.length > 0 && (
-          <div className="mb-10 md:mb-14">
-            <Suspense fallback={<Skeleton className="w-full h-[300px] md:h-[380px] rounded-xl" />}>
-              <RoutesOverviewMap routes={routes.data} prices={prices.data} />
-            </Suspense>
-          </div>
-        )}
+        {/* MAP REMOVED — Phase 5: will be re-added when route mapping is ready */}
 
         <DataState
           loading={routes.isLoading}

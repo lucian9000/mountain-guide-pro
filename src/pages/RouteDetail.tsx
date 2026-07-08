@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -28,8 +28,8 @@ import { publicImageUrl } from "@/lib/images";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Code-split: Leaflet's JS/CSS loads only when a route has coordinates.
-const RouteLocationMap = lazy(() => import("@/components/maps/RouteLocationMap"));
+// MAP REMOVED — Phase 5: RouteLocationMap (@/components/maps/RouteLocationMap)
+// will be re-added when route mapping is ready. Component file kept in place.
 
 const mapsDirectionsUrl = (lat: number, lng: number) =>
   `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -218,17 +218,7 @@ const RouteDetail = () => {
                 </div>
               )}
 
-              {/* Location map — omitted entirely when no coordinates */}
-              {route.latitude != null && route.longitude != null && (
-                <div className="mb-8">
-                  <h2 className="font-heading text-sm font-bold text-foreground tracking-wider uppercase mb-3">
-                    Location
-                  </h2>
-                  <Suspense fallback={<Skeleton className="w-full h-[320px] md:h-[360px] rounded-xl" />}>
-                    <RouteLocationMap route={route} />
-                  </Suspense>
-                </div>
-              )}
+              {/* MAP REMOVED — Phase 5: will be re-added when route mapping is ready */}
 
               {/* Gallery */}
               {gallery.length > 1 && (
