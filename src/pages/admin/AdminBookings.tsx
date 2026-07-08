@@ -167,16 +167,22 @@ const AdminBookings = () => {
                           {b.total_price != null ? `R${b.total_price}` : "—"}
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className={
-                              b.calendar_synced
-                                ? "bg-success/20 text-success"
-                                : "text-muted-foreground"
-                            }
-                          >
-                            {b.calendar_synced ? "Synced" : "Not synced"}
-                          </Badge>
+                          {b.calendar_synced ? (
+                            <Badge variant="secondary" className="bg-success/20 text-success">
+                              Synced
+                            </Badge>
+                          ) : b.notes === "Booked via Google Calendar appointment page" ? (
+                            <Badge
+                              variant="secondary"
+                              className="bg-indigo-500/20 text-indigo-300 border-indigo-500/30"
+                            >
+                              Via Cal Page
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-muted-foreground">
+                              Not synced
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Select
