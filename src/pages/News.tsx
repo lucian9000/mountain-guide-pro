@@ -1,8 +1,30 @@
-import { Megaphone } from "lucide-react";
+import { Megaphone, Instagram, Facebook, MessageCircle, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import UpdateCard from "@/components/news/UpdateCard";
 import { usePublishedUpdates } from "@/lib/queries/content";
+
+const SOCIAL_LINKS = [
+  {
+    icon: Instagram,
+    label: "Follow on Instagram",
+    handle: "@summitfitadventures",
+    href: "https://instagram.com/summitfitadventures",
+  },
+  {
+    icon: Facebook,
+    label: "Like on Facebook",
+    handle: "SummitFit Adventures",
+    href: "https://www.facebook.com/carrickadventures",
+  },
+  {
+    icon: MessageCircle,
+    label: "Chat on WhatsApp",
+    handle: "+27 67 130 1536",
+    href: "https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20a%20SummitFit%20adventure.",
+  },
+];
 
 /**
  * /news — the "What's New" page (nav → News): announcements at the top
@@ -49,10 +71,55 @@ const News = () => {
           )}
         </section>
 
-        {/* Facebook feed — the card spans the full width to match the
-            Announcements block above; FB caps its timeline at 500px, so the
-            feed itself sits centered within the wider frame. */}
-        <section>
+        {/* Social band — an evergreen "Follow" sidebar fills the space beside
+            the Facebook feed (FB hard-caps its timeline at 500px, so rather
+            than stretch it we pair it with useful CTAs). Stacks on mobile. */}
+        <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_540px] lg:items-start">
+          <aside className="glass-card glow-border rounded-xl p-6 md:p-8 flex flex-col">
+            <h2 className="font-heading text-lg font-bold text-foreground tracking-wider uppercase mb-2">
+              Follow the Adventure
+            </h2>
+            <p className="text-muted-foreground text-sm mb-6">
+              Trip photos, trail conditions and the next summit — first on our
+              socials. Give us a follow, or reach out directly.
+            </p>
+
+            <div className="space-y-3">
+              {SOCIAL_LINKS.map(({ icon: Icon, label, handle, href }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 rounded-lg border border-border/50 hover:border-accent p-3 group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  <span className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-accent" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-heading font-bold text-foreground tracking-wider uppercase group-hover:text-accent transition-colors">
+                      {label}
+                    </span>
+                    <span className="block text-muted-foreground text-xs truncate">{handle}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border/40">
+              <p className="text-muted-foreground text-sm mb-3">
+                Ready to get out there?
+              </p>
+              <Link
+                to="/booking"
+                className="inline-flex items-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                Book a tour
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </aside>
+
           <div className="rounded-xl overflow-hidden glass-card glow-border">
             <div className="p-4 border-b border-border/30 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center">
