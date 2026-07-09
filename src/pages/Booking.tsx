@@ -151,14 +151,23 @@ const Booking = () => {
           <BookingConfirmation booking={confirmed} />
         ) : (
           <>
-            <div className="mb-8">
-              <span className="text-gradient-gold text-sm font-heading font-bold tracking-[0.2em] uppercase mb-2 block">
+            {/* Full hero heading before a tour is picked; once picked it
+                shrinks to a compact title so the calendar fits on-screen
+                without scrolling (an h1 stays for accessibility). */}
+            {!tourId ? (
+              <div className="mb-8">
+                <span className="text-gradient-gold text-sm font-heading font-bold tracking-[0.2em] uppercase mb-2 block">
+                  Book a Tour
+                </span>
+                <h1 className="font-heading text-3xl md:text-4xl font-black text-foreground tracking-wider uppercase">
+                  Plan Your Ascent
+                </h1>
+              </div>
+            ) : (
+              <h1 className="font-heading text-xl font-black text-foreground tracking-wider uppercase mb-4">
                 Book a Tour
-              </span>
-              <h1 className="font-heading text-3xl md:text-4xl font-black text-foreground tracking-wider uppercase">
-                Plan Your Ascent
               </h1>
-            </div>
+            )}
 
             <DataState
               loading={pricing.isLoading || guides.isLoading}
@@ -167,60 +176,91 @@ const Booking = () => {
               emptyMessage="No tours are available right now. Please check back soon."
             >
               <div className="glass-card glow-border p-6 md:p-8 space-y-6">
-                {/* Tour */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="booking-tour"
-                    className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
-                  >
-                    Tour
-                    <span aria-hidden="true" className="text-accent"> *</span>
-                    <span className="sr-only"> (required)</span>
-                  </label>
-                  <Select value={tourId} onValueChange={setTourId}>
-                    <SelectTrigger id="booking-tour" aria-required="true">
-                      <SelectValue placeholder="Choose a route" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {pricing.data?.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>
-                          {t.name} — R{t.price}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Tour + Guide pickers. Once a tour is chosen these collapse
+                    into a one-line summary so the calendar rises to the top
+                    and the whole thing fits without scrolling. */}
+                {!tourId ? (
+                  <>
+                    {/* Tour */}
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="booking-tour"
+                        className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                      >
+                        Tour
+                        <span aria-hidden="true" className="text-accent"> *</span>
+                        <span className="sr-only"> (required)</span>
+                      </label>
+                      <Select value={tourId} onValueChange={setTourId}>
+                        <SelectTrigger id="booking-tour" aria-required="true">
+                          <SelectValue placeholder="Choose a route" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {pricing.data?.map((t) => (
+                            <SelectItem key={t.id} value={t.id}>
+                              {t.name} — R{t.price}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {/* Guide */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="booking-guide"
-                    className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
-                  >
-                    Guide{" "}
-                    <span className="text-muted-foreground font-normal normal-case">
-                      (optional)
-                    </span>
-                  </label>
-                  {guides.data && guides.data.length > 0 ? (
-                    <Select value={guideId} onValueChange={setGuideId}>
-                      <SelectTrigger id="booking-guide">
-                        <SelectValue placeholder="Any available guide" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {guides.data.map((g) => (
-                          <SelectItem key={g.id} value={g.id}>
-                            {g.display_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <p className="text-muted-foreground text-sm">
-                      A guide will be assigned to your booking.
-                    </p>
-                  )}
-                </div>
+                    {/* Guide */}
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="booking-guide"
+                        className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                      >
+                        Guide{" "}
+                        <span className="text-muted-foreground font-normal normal-case">
+                          (optional)
+                        </span>
+                      </label>
+                      {guides.data && guides.data.length > 0 ? (
+                        <Select value={guideId} onValueChange={setGuideId}>
+                          <SelectTrigger id="booking-guide">
+                            <SelectValue placeholder="Any available guide" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {guides.data.map((g) => (
+                              <SelectItem key={g.id} value={g.id}>
+                                {g.display_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <p className="text-muted-foreground text-sm">
+                          A guide will be assigned to your booking.
+                        </p>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-between gap-3 border-b border-border/40 pb-4">
+                    <div className="min-w-0">
+                      <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                        Your tour
+                      </div>
+                      <div className="font-heading font-bold text-foreground truncate">
+                        {selectedTour?.name}
+                        {selectedTour ? ` — R${selectedTour.price}` : ""}
+                      </div>
+                      <div className="text-muted-foreground text-sm">
+                        {selectedGuide ? `with ${selectedGuide.display_name}` : "Any available guide"}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setTourId("");
+                        setGuideId("");
+                      }}
+                      className="shrink-0 text-accent hover:text-cyan-hover text-sm font-heading font-bold tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded px-2 py-1"
+                    >
+                      Change
+                    </button>
+                  </div>
+                )}
 
                 {/* Primary flow: book directly in Ernest's Google Calendar */}
                 <GoogleCalendarBooking

@@ -15,7 +15,7 @@ interface GoogleCalendarBookingProps {
  * and the calendar event automatically — no code. Clients do NOT need their own
  * Google Calendar; they just use this embedded page.
  */
-const GoogleCalendarBooking = ({ tourName, guideName, isVisible }: GoogleCalendarBookingProps) => {
+const GoogleCalendarBooking = ({ isVisible }: GoogleCalendarBookingProps) => {
   const isMobile = useIsMobile();
   const bookingUrl = import.meta.env.VITE_GOOGLE_BOOKING_URL as string | undefined;
 
@@ -44,23 +44,10 @@ const GoogleCalendarBooking = ({ tourName, guideName, isVisible }: GoogleCalenda
   const url = bookingUrl;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="font-heading text-xl font-bold text-foreground tracking-wider uppercase mb-2">
-          Select your date &amp; time
-        </h3>
-        <p className="text-muted-foreground text-sm">
-          You're booking: <span className="text-foreground font-medium">{tourName}</span>
-          {guideName ? (
-            <>
-              {" "}with <span className="text-foreground font-medium">{guideName}</span>
-            </>
-          ) : null}
-        </p>
-        <p className="text-muted-foreground text-sm">
-          Pick an available slot from Ernest's calendar below.
-        </p>
-      </div>
+    <div className="space-y-4">
+      <h3 className="font-heading text-lg font-bold text-foreground tracking-wider uppercase">
+        Select your date &amp; time
+      </h3>
 
       {isMobile ? (
         <a href={url} target="_blank" rel="noreferrer" className="block">
@@ -78,7 +65,10 @@ const GoogleCalendarBooking = ({ tourName, guideName, isVisible }: GoogleCalenda
           src={url}
           style={{
             width: "100%",
-            minHeight: "820px",
+            // On desktop the iframe is locked to the ~672px booking column, so
+            // Google always renders its compact side-by-side layout (~620px).
+            // 680 fits it with a hair of headroom and no dead white space.
+            minHeight: "680px",
             border: "none",
             borderRadius: "12px",
             // Google's appointment-schedule embed has transparent regions
