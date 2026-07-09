@@ -65,10 +65,13 @@ const GoogleCalendarBooking = ({ isVisible }: GoogleCalendarBookingProps) => {
           src={url}
           style={{
             width: "100%",
-            // On desktop the iframe is locked to the ~672px booking column, so
-            // Google always renders its compact side-by-side layout (~620px).
-            // 680 fits it with a hair of headroom and no dead white space.
-            minHeight: "680px",
+            // On desktop the iframe is ~672px wide (booking column is
+            // max-w-3xl), so Google renders its compact side-by-side layout
+            // (month grid + time slots together, ~660px tall). 720 contains
+            // the whole widget — including the expandable description and the
+            // "Powered by Google" footer — so there is NEVER an internal
+            // scrollbar hiding the time slots; the page scrolls instead.
+            minHeight: "720px",
             border: "none",
             borderRadius: "12px",
             // Google's appointment-schedule embed has transparent regions

@@ -122,7 +122,11 @@ const Booking = () => {
     <div className="min-h-dvh bg-background">
       <SiteHeader variant="solid" />
 
-      <main id="main" className="container mx-auto px-4 py-8 md:py-12 max-w-2xl">
+      {/* max-w-3xl (not 2xl) so the calendar iframe is ~672px wide — above
+          Google's ~620px threshold, where it switches to the compact
+          side-by-side month + time-slots layout (times appear beside the
+          chosen date, never hidden below an internal scroll). */}
+      <main id="main" className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-accent text-sm mb-6 transition-colors"
