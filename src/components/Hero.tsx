@@ -51,8 +51,11 @@ const Hero = ({ onOpenChat }: HeroProps) => {
             alt="Cape Town mountains at golden hour"
             width={1600}
             height={1200}
-            fetchPriority="high"
             decoding="async"
+            // React 18 doesn't know the camelCase `fetchPriority` prop (that's
+            // React 19), so spread the lowercase DOM attribute to set it
+            // without the console warning.
+            {...({ fetchpriority: "high" } as Record<string, string>)}
             className="w-full h-full object-cover animate-cinematic-pan"
           />
         )}

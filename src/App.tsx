@@ -55,7 +55,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         {/* First tabbable element on every route — jumps past the nav to
             each page's <main id="main">. Visually hidden until focused. */}
         <a
