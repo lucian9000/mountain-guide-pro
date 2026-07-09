@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SummitFit Adventures — v4.0 Update Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: hsl(207 75% 10%);
+    --bg-deep: hsl(207 75% 6%);
+    --card: hsl(207 65% 14%);
+    --fg: hsl(210 40% 96%);
+    --muted: hsl(210 20% 64%);
+    --cyan: hsl(193 100% 50%);
+    --cyan-soft: hsl(193 100% 70%);
+    --gold: hsl(43 72% 55%);
+    --border: hsl(207 40% 22%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(1100px 500px at 80% -10%, hsl(193 100% 50% / 0.08), transparent),
+      radial-gradient(900px 500px at 0% 100%, hsl(43 72% 52% / 0.06), transparent),
+      var(--bg);
+    color: var(--fg);
+    font-family: "Inter", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1000px; margin: 0 auto; padding: 64px 28px 88px; }
+  h1, h2, h3 { font-family: "Montserrat", sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; }
+  .eyebrow { color: var(--gold); font-family: "Montserrat", sans-serif; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 13px; margin-bottom: 14px; }
+  .hero h1 { font-size: 52px; font-weight: 900; line-height: 1.02; margin-bottom: 18px; }
+  .hero h1 .grad { background: linear-gradient(120deg, var(--cyan), var(--cyan-soft)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { color: var(--muted); font-size: 18px; max-width: 640px; }
+  .badge { display: inline-block; margin-top: 22px; border: 1px solid hsl(193 100% 50% / 0.4); color: var(--cyan); border-radius: 999px; padding: 7px 16px; font-family: "Montserrat", sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; font-size: 12px; }
+
+  .section { margin-top: 64px; }
+  .section > h2 { font-size: 15px; color: var(--cyan); letter-spacing: 0.2em; margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .card {
+    background: linear-gradient(180deg, hsl(207 65% 15% / 0.7), hsl(207 65% 12% / 0.7));
+    border: 1px solid hsl(193 100% 50% / 0.22);
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 0 0 1px hsl(207 40% 20% / 0.4), inset 0 0 40px hsl(193 100% 50% / 0.02);
+  }
+  .card .n { font-family: "Montserrat", sans-serif; font-weight: 900; font-size: 14px; color: var(--bg-deep); background: var(--cyan); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .card h3 { font-size: 17px; margin-bottom: 8px; letter-spacing: 0.06em; }
+  .card p { color: var(--muted); font-size: 14.5px; }
+  .card .stat { color: var(--cyan-soft); font-weight: 600; }
+
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .step { background: hsl(207 65% 14% / 0.55); border: 1px solid var(--border); border-radius: 14px; padding: 18px 16px; position: relative; }
+  .step .s { font-family: "Montserrat", sans-serif; font-weight: 900; color: var(--gold); font-size: 22px; line-height: 1; margin-bottom: 10px; }
+  .step p { font-size: 13px; color: var(--muted); }
+  .step b { color: var(--fg); font-weight: 600; }
+
+  .callout { margin-top: 18px; border-left: 3px solid var(--gold); background: hsl(43 72% 52% / 0.06); padding: 16px 20px; border-radius: 0 12px 12px 0; }
+  .callout b { color: var(--gold); }
+  .callout p { color: var(--muted); font-size: 14.5px; }
+
+  .status-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .pill { font-family: "Montserrat", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 11px; padding: 4px 10px; border-radius: 999px; display: inline-block; margin-bottom: 12px; }
+  .pill.live { background: hsl(160 84% 39% / 0.2); color: hsl(160 84% 60%); }
+  .pill.next { background: hsl(193 100% 50% / 0.18); color: var(--cyan); }
+  .pill.soon { background: hsl(43 72% 52% / 0.18); color: var(--gold); }
+  .status-cols ul { list-style: none; }
+  .status-cols li { color: var(--muted); font-size: 14px; padding: 5px 0 5px 18px; position: relative; }
+  .status-cols li::before { content: "›"; color: var(--cyan); position: absolute; left: 0; }
+
+  .foot { margin-top: 72px; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; color: var(--muted); font-size: 13px; }
+  .foot b { color: var(--fg); }
+
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 36px; }
+    .grid, .flow, .status-cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">SummitFit Adventures</div>
+    <h1>The v4.0 <span class="grad">Update</span></h1>
+    <p>A faster, more accessible, more cohesive site — now with online tour booking built straight into Ernest's Google Calendar.</p>
+    <div class="badge">Accessibility · Speed · Design · Online Booking</div>
+  </header>
+
+  <section class="section">
+    <h2>What's New</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="n">1</div>
+        <h3>Accessible to everyone</h3>
+        <p>Screen-reader labels, full keyboard navigation, readable contrast and larger tap targets across the whole site — now meeting recognised accessibility standards, with <span class="stat">zero critical issues</span>.</p>
+      </div>
+      <div class="card">
+        <div class="n">2</div>
+        <h3>Noticeably faster</h3>
+        <p>The core code bundle shrank <span class="stat">~60% (648 KB → 258 KB)</span>, images were right-sized (~450 KB saved) and the Facebook feed no longer slows loads. Quicker first paint, especially on mobile.</p>
+      </div>
+      <div class="card">
+        <div class="n">3</div>
+        <h3>One cohesive design</h3>
+        <p>A single unified header on every page (full menu now reachable everywhere), snappier animations, and consistent midnight-and-cyan branding throughout.</p>
+      </div>
+      <div class="card">
+        <div class="n">4</div>
+        <h3>Online booking</h3>
+        <p>Clients book a tour on the site, choosing a real slot from Ernest's Google Calendar. Bookings flow automatically into the admin console for approval.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>How a Booking Works</h2>
+    <div class="flow">
+      <div class="step"><div class="s">1</div><p><b>Sign in</b> with Google — one click, free account.</p></div>
+      <div class="step"><div class="s">2</div><p><b>Pick a tour</b>, then a date &amp; time from Ernest's live calendar.</p></div>
+      <div class="step"><div class="s">3</div><p><b>Google books it</b> instantly and emails client &amp; Ernest.</p></div>
+      <div class="step"><div class="s">4</div><p><b>Appears in Admin</b> within ~10 min, marked <b>Pending</b>.</p></div>
+      <div class="step"><div class="s">5</div><p>Ernest confirms payment, sets it <b>Confirmed</b>.</p></div>
+    </div>
+    <div class="callout">
+      <p><b>Why Pending first?</b> There's no online card payment yet, so every booking is held for Ernest's manual approval once payment is arranged directly with the client. When a payment gate is added later, this can switch to auto-confirm.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Admin Console — the essentials</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="n">A</div>
+        <h3>Getting in</h3>
+        <p>Go to <b style="color:var(--fg)">/admin</b> and sign in with the <b style="color:var(--fg)">info@summitfitadventures.com</b> Google account. Only the owner account sees the admin; clients get their own booking dashboard.</p>
+      </div>
+      <div class="card">
+        <div class="n">B</div>
+        <h3>The one workflow that matters</h3>
+        <p>In <b style="color:var(--fg)">Bookings</b>, new website bookings arrive tagged “Via Cal Page” as <b style="color:var(--gold)">Pending</b>. Once you've taken payment, switch the status to <b style="color:var(--cyan)">Confirmed</b>. Cancelling in Google Calendar auto-cancels here too.</p>
+      </div>
+    </div>
+    <div class="callout" style="border-left-color: var(--cyan); background: hsl(193 100% 50% / 0.06);">
+      <p style="color:var(--muted)"><b style="color:var(--cyan)">Full step-by-step:</b> see <b style="color:var(--fg)">docs/ADMIN-GUIDE.md</b> — covers Clients, Guides, Pricing, Routes, Specials and What's New, plus a troubleshooting FAQ.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Live Now · Coming Next</h2>
+    <div class="status-cols">
+      <div>
+        <span class="pill live">Live now</span>
+        <ul>
+          <li>Marketing site + all speed &amp; design upgrades</li>
+          <li>Accessibility improvements</li>
+          <li>Online booking → admin (as Pending)</li>
+        </ul>
+      </div>
+      <div>
+        <span class="pill soon">Final switch</span>
+        <ul>
+          <li>Branded confirmation emails (needs email service connected)</li>
+        </ul>
+      </div>
+      <div>
+        <span class="pill next">Planned</span>
+        <ul>
+          <li>Online card payment → auto-confirm</li>
+          <li>Live guide availability before booking</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>SummitFit Adventures — v4.0 Overview</span>
+    <span>Designed &amp; Developed by <b>StateOfAshes</b></span>
+  </div>
+
+</div>
+</body>
+</html>

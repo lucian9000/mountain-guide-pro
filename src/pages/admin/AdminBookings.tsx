@@ -105,7 +105,9 @@ const AdminBookings = () => {
   return (
     <div className="space-y-4">
       <p className="text-muted-foreground text-sm">
-        Manage reservations. Calendar sync &amp; confirmation emails arrive in Phase 3.
+        Manage reservations. Website bookings sync from Google Calendar every ~10
+        minutes and arrive as <span className="text-warning">Pending</span> — set them
+        to <span className="text-accent">Confirmed</span> once payment is arranged.
       </p>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as TabKey)}>
