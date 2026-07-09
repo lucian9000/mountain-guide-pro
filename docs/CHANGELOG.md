@@ -12,6 +12,41 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (v4.0 Phase 5b) — Booking go-live + UI polish (2026-07-09)
+
+Booking backend is now **live end-to-end**. The Google-side setup from the
+runbook was completed and verified; see `docs/PHASE5B-SETUP.md` for the
+replicable step map.
+
+- **calendar-sync now lands bookings as `pending`, not `confirmed`** (v6). No
+  payment gate exists yet, so every newly-synced calendar booking is held as
+  `pending` for manual review; the admin flips it to `confirmed` in the CRM
+  once payment is received out-of-band. Sync ticks only ever propagate a
+  Google-side *cancellation* — they never overwrite a manual confirm — and a
+  client reschedule keeps date/time current without touching status.
+- **calendar-sync now fires `booking-email`** for each newly-inserted booking
+  (client "request received" + admin alert to booking@summitfitadventures.com),
+  authenticated server-to-server via the shared `x-cron-secret`.
+- **Go-live completed & verified** (via `net.http_post` from SQL): pg_cron +
+  pg_net enabled; cron job `calendar-sync-job` runs every 10 min; Google
+  Calendar API enabled; booking calendar shared with the service account;
+  `calendar-sync` returns `{ ok: true }` reading 228 calendar events. Emails
+  confirmed sending.
+- **Booking calendar embed fixes:** forced a white iframe background (Google's
+  widget has transparent regions that bled the dark theme through, making its
+  text unreadable); widened the booking column to `max-w-3xl` so Google renders
+  its compact **side-by-side** month + time-slot layout (time slots now show
+  beside the chosen date instead of hidden below an internal scroll); collapsed
+  the tour/guide pickers into a one-line summary once a tour is chosen.
+- **Console cleanup (production-affecting):** lowercase `fetchpriority` on the
+  hero image (React 18 didn't recognise the camelCase prop); removed the
+  cross-page hero preload (it wasted ~160KB on non-home routes); opted into
+  React Router v7 future flags. `/`, `/booking`, `/routes` now log zero
+  warnings/errors (remaining `/news` console noise is Facebook's own embed SDK).
+- **/news** — Facebook feed no longer floats in dead space: a "Follow the
+  Adventure" sidebar (Instagram/Facebook/WhatsApp + Book a tour) fills the
+  column beside the 500px-capped feed.
+
 ## Unreleased (v4.0 Phase 5b) — Booking backend + SSO fix (2026-07-08)
 
 - **Fixed: first Google sign-in bounced back signed-out.** AuthCallback bailed

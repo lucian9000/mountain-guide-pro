@@ -25,11 +25,32 @@ live on the info@ account; mail to booking@ lands in the info@ inbox.
   `private_key` field of that JSON — set it as a Supabase secret only, never
   in a VITE_ var or git. **Rotate this key** once sync works (it was shared in
   chat): GCP Console → service account → Keys → delete → add new.
-- **Still needed:** `GOOGLE_CALENDAR_ID` (the calendar the appointment
-  schedule writes to — almost certainly `info@summitfitadventures.com`; confirm
-  in Calendar settings), and the calendar must be SHARED with the service
-  account email above (Part B step 2). The Calendar API must be enabled in the
-  GCP project.
+## ✅ Go-live status (2026-07-09) — DONE & verified
+
+The backend is **live**. Completed and confirmed via a manual `net.http_post`
+invoke returning `{ ok: true, events: 228 }`:
+
+- [x] `pg_cron` + `pg_net` enabled; cron job `calendar-sync-job` runs every 10 min.
+- [x] Google Calendar API enabled in GCP project `white-artwork-501815-g2`.
+- [x] Booking calendar shared with the service account ("See all event details").
+      Note: org policy blocked per-calendar external "see all details", so it was
+      enabled via Admin console → Apps → Google Workspace → Calendar → Sharing
+      settings → external option "Share all information, outsiders cannot change".
+- [x] All four Supabase secrets set (`GOOGLE_SA_EMAIL`, `GOOGLE_SA_PRIVATE_KEY`,
+      `GOOGLE_CALENDAR_ID`, `CRON_SECRET`).
+- [x] `calendar-sync` v6 deployed — new bookings insert as `pending` and trigger
+      `booking-email`.
+
+**Still outstanding (not blocking, do when ready):**
+- [ ] **Rotate the service-account key** — it was shared in chat. GCP Console →
+      service account → Keys → delete the exposed key → add new → update
+      `GOOGLE_SA_PRIVATE_KEY` in Supabase secrets.
+- [ ] **Add `VITE_GOOGLE_BOOKING_URL` to Vercel** env (currently only in
+      `.env.local`) so production embeds the calendar.
+- [ ] **Resend** — set `RESEND_API_KEY` + verify the `summitfitadventures.com`
+      domain so `booking-email` actually sends (until then it skips gracefully).
+- [ ] **Deploy the frontend** — the booking UI lives on local branch
+      `v4/phase-1-a11y`; push/merge to ship it to production.
 
 ## Part A — Client booking page (frontend embed) — 5 minutes
 

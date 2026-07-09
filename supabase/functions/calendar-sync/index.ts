@@ -4,22 +4,38 @@
 // public.bookings so they appear in the admin CRM and clients' "My Bookings".
 //
 // Google Appointment Schedules cannot push to us (no webhooks/redirects), so
-// this function POLLS the calendar. Schedule it every 10–15 min via the
-// Supabase dashboard cron (see docs/PHASE5B-SETUP.md), or hit it manually.
+// this function POLLS the calendar. Scheduled every 10 min via pg_cron (see
+// docs/PHASE5B-SETUP.md), or hit it manually.
 //
 // AUTH MODEL: a Google Cloud SERVICE ACCOUNT whose email has been granted
 // "See all event details" on the booking calendar (simple calendar sharing —
 // no domain-wide delegation, no OAuth consent screens).
+//
+// STATUS MODEL (no payment gate yet — added 2026-07-09): every NEWLY synced
+// booking lands as 'pending', never auto-'confirmed'. Google has already
+// reserved the calendar slot the moment the client picked it — 'pending' here
+// is purely our own internal review gate (admin manually flips it to
+// 'confirmed' in the CRM once payment is received out-of-band, e.g. via a
+// payment link sent by hand until a real payment gate exists). On every later
+// sync tick we ONLY EVER propagate a real Google-side CANCELLATION — we never
+// push the event's "still active" state back as 'confirmed', so a sync tick
+// can never clobber an admin's manual pending → confirmed decision. Date/time
+// are still kept in sync if the client reschedules in Google.
+//
+// Also fires the booking-email notification (client "request received" +
+// admin alert to booking@summitfitadventures.com) for each newly-inserted
+// pending booking, using CRON_SECRET as a shared server-to-server secret
+// (see booking-email's internal-auth path).
 //
 // Secrets (Supabase dashboard → Edge Functions → Secrets):
 //   GOOGLE_SA_EMAIL        service-account email (…@…iam.gserviceaccount.com)
 //   GOOGLE_SA_PRIVATE_KEY  the "private_key" field from the SA JSON key (PEM, with \n)
 //   GOOGLE_CALENDAR_ID     the calendar the appointment schedule books onto
 //   CRON_SECRET            shared secret; callers must send x-cron-secret
+//                          (also reused as the internal secret when this
+//                          function notifies booking-email)
 //
 // SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are injected automatically.
-//
-// @ts-nocheck — Deno runtime types are not available in the Vite tsconfig.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -109,6 +125,31 @@ async function listEvents(token, calendarId) {
   return events;
 }
 
+/** Fire-and-await the booking-email notification for a freshly inserted booking.
+ * Never throws — a notification failure must not break the sync loop. */
+async function notifyBookingEmail(supabaseUrl, cronSecret, bookingId) {
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/booking-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Satisfies the platform-level verify_jwt gate on booking-email (any
+        // Supabase-signed JWT does); the function's OWN internal-secret check
+        // (x-cron-secret) is what actually authorizes this as a trusted
+        // server-to-server call, bypassing the normal owner-JWT requirement.
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        "x-cron-secret": cronSecret,
+      },
+      body: JSON.stringify({ booking_id: bookingId }),
+    });
+    if (!res.ok) {
+      console.error(`[calendar-sync] booking-email notify failed: ${res.status} ${await res.text()}`);
+    }
+  } catch (err) {
+    console.error("[calendar-sync] booking-email notify errored:", err);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
 
@@ -125,10 +166,8 @@ Deno.serve(async (req) => {
     return Response.json({ skipped: true, reason: "google secrets not configured" });
   }
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL"),
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
-  );
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const supabase = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
 
   try {
     const token = await googleAccessToken(saEmail, saKey);
@@ -139,10 +178,14 @@ Deno.serve(async (req) => {
       (e.attendees ?? []).some((a) => !a.organizer && !a.resource && !a.self)
     );
 
-    // Existing mirror rows in one query.
+    // Existing mirror rows in one query (date/time included so we can detect
+    // a client-side reschedule in Google without touching status).
     const ids = bookings.map((e) => e.id);
     const { data: existing } = ids.length
-      ? await supabase.from("bookings").select("id, google_cal_event_id, status").in("google_cal_event_id", ids)
+      ? await supabase
+          .from("bookings")
+          .select("id, google_cal_event_id, status, booking_date, time_slot")
+          .in("google_cal_event_id", ids)
       : { data: [] };
     const byEventId = new Map((existing ?? []).map((r) => [r.google_cal_event_id, r]));
 
@@ -154,7 +197,7 @@ Deno.serve(async (req) => {
       unmatchedClients = 0;
 
     for (const e of bookings) {
-      const status = e.status === "cancelled" ? "cancelled" : "confirmed";
+      const cancelled = e.status === "cancelled";
       const startIso = e.start?.dateTime ?? (e.start?.date ? `${e.start.date}T00:00:00Z` : null);
       if (!startIso) continue;
       const start = new Date(startIso);
@@ -168,11 +211,22 @@ Deno.serve(async (req) => {
 
       const prev = byEventId.get(e.id);
       if (prev) {
-        // Only churn rows when something we mirror actually changed.
-        if (prev.status !== status) {
+        // Only ever push a CANCELLATION from Google. Never re-derive
+        // 'confirmed' from "event still active" — that would silently
+        // overwrite an admin's manual pending → confirmed approval on the
+        // very next sync tick. If the event is still active but the client
+        // rescheduled, keep the mirrored date/time current without touching
+        // status either way.
+        if (cancelled && prev.status !== "cancelled") {
           await supabase
             .from("bookings")
-            .update({ status, booking_date: bookingDate, time_slot: timeSlot })
+            .update({ status: "cancelled", booking_date: bookingDate, time_slot: timeSlot })
+            .eq("id", prev.id);
+          updated++;
+        } else if (!cancelled && (prev.booking_date !== bookingDate || prev.time_slot !== timeSlot)) {
+          await supabase
+            .from("bookings")
+            .update({ booking_date: bookingDate, time_slot: timeSlot })
             .eq("id", prev.id);
           updated++;
         }
@@ -196,21 +250,38 @@ Deno.serve(async (req) => {
       const summary = (e.summary ?? "").toLowerCase();
       const tour = (pricing ?? []).find((p) => summary.includes(p.name.toLowerCase()));
 
-      await supabase.from("bookings").insert({
-        booking_ref: `GC-${e.id.slice(0, 8).toUpperCase()}`,
-        user_id: userId,
-        pricing_id: tour?.id ?? null,
-        guide_id: null,
-        booking_date: bookingDate,
-        time_slot: timeSlot,
-        participants: 1,
-        total_price: null,
-        status,
-        notes: NOTES_TAG,
-        calendar_synced: true,
-        google_cal_event_id: e.id,
-      });
+      const { data: newRow, error: insertErr } = await supabase
+        .from("bookings")
+        .insert({
+          booking_ref: `GC-${e.id.slice(0, 8).toUpperCase()}`,
+          user_id: userId,
+          pricing_id: tour?.id ?? null,
+          guide_id: null,
+          booking_date: bookingDate,
+          time_slot: timeSlot,
+          participants: 1,
+          total_price: null,
+          // No payment gate yet — every new calendar booking starts 'pending'
+          // (matches the column's own DB default) until an admin manually
+          // confirms payment was received. If Google itself already shows the
+          // event cancelled on first sight, mirror that instead.
+          status: cancelled ? "cancelled" : "pending",
+          notes: NOTES_TAG,
+          calendar_synced: true,
+          google_cal_event_id: e.id,
+        })
+        .select("id")
+        .single();
+
+      if (insertErr) {
+        console.error(`[calendar-sync] insert failed for event ${e.id}:`, insertErr);
+        continue;
+      }
       inserted++;
+
+      if (!cancelled && newRow?.id) {
+        await notifyBookingEmail(supabaseUrl, cronSecret, newRow.id);
+      }
     }
 
     console.log(
