@@ -76,7 +76,19 @@ const GoogleCalendarBooking = ({ tourName, guideName, isVisible }: GoogleCalenda
       ) : (
         <iframe
           src={url}
-          style={{ width: "100%", minHeight: "700px", border: "none", borderRadius: "12px" }}
+          style={{
+            width: "100%",
+            minHeight: "820px",
+            border: "none",
+            borderRadius: "12px",
+            // Google's appointment-schedule embed has transparent regions
+            // meant to blend into the host page — on our dark theme that
+            // revealed our navy background through it, making its own
+            // (light-page-assuming) text unreadable. Forcing an opaque white
+            // background here fixes the contrast; it reads as an intentional
+            // white "paper" card floating on the dark page rather than a bug.
+            background: "#ffffff",
+          }}
           title="Book your tour with Ernest"
         />
       )}
