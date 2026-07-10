@@ -12,6 +12,21 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased — Google OAuth + favicon fixes (2026-07-10)
+
+- **Added a static `/privacy` page** (`src/pages/Privacy.tsx`), required by
+  Google's OAuth verification review — it flagged that the consent
+  screen's homepage and privacy policy URLs pointed to the same page.
+  Linked from the footer. See `docs/Google OAuth Privacy Policy Page.md`.
+- **Google OAuth SSO "unverified app" warning resolved.** Added the Privacy
+  Policy link to the OAuth consent screen and promoted publishing status
+  from Testing to Production, removing the blocking warning for admin
+  Google sign-in. See `docs/Google OAuth SSO Warning Fix.md`.
+- **Google Search favicon fix.** Google's crawler requires favicon
+  dimensions to be a multiple of 48px; resized `public/favicon.png` from
+  512x512 to 192x192 and updated `index.html`, then requested re-indexing
+  in Search Console. See `docs/Google Search Favicon Fix.md`.
+
 ## Unreleased (v4.0 Phase 5b) — Booking go-live + UI polish (2026-07-09)
 
 Booking backend is now **live end-to-end**. The Google-side setup from the

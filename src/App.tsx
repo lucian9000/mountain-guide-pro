@@ -20,6 +20,7 @@ const BookingConfirmed = lazy(() => import("./pages/BookingConfirmed"));
 const RoutesIndex = lazy(() => import("./pages/RoutesIndex"));
 const RouteDetail = lazy(() => import("./pages/RouteDetail"));
 const News = lazy(() => import("./pages/News"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 const DashboardLayout = lazy(() => import("./pages/dashboard/DashboardLayout"));
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
 const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
@@ -77,6 +78,7 @@ const App = () => (
               <Route path="/routes" element={<RoutesIndex />} />
               <Route path="/routes/:slug" element={<RouteDetail />} />
               <Route path="/news" element={<News />} />
+              <Route path="/privacy" element={<Privacy />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>

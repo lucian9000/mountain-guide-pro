@@ -43,6 +43,12 @@ const Footer = () => {
                   {label}
                 </button>
               ))}
+              <Link
+                to="/privacy"
+                className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
+              >
+                Privacy Policy
+              </Link>
             </div>
           </div>
 
