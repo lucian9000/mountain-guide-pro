@@ -25,6 +25,29 @@ live on the info@ account; mail to booking@ lands in the info@ inbox.
   `private_key` field of that JSON — set it as a Supabase secret only, never
   in a VITE_ var or git. **Rotate this key** once sync works (it was shared in
   chat): GCP Console → service account → Keys → delete → add new.
+## OAuth app migration (2026-07-10)
+
+The Google OAuth app moved to the Workspace GCP project `white-artwork-501815-g2`
+(project number 278010960949 — same project as the calendar-sync service
+account). New **Client ID**:
+`278010960949-2f8o57oqeqn2pq0mql954qp5o5bged52.apps.googleusercontent.com`.
+The client secret is stored ONLY in Supabase Dashboard → Authentication →
+Sign In / Providers → Google (never in this repo — it would be public).
+
+With the migration, the admin "Connect Google Calendar" flow now requests the
+full `https://www.googleapis.com/auth/calendar` scope (was `.readonly`) with
+`access_type=offline&prompt=consent` for a refresh token. Client sign-ins are
+unchanged (basic openid/email/profile only).
+
+New-OAuth-client checklist (Google Cloud Console → Credentials → the client):
+- Authorized redirect URI MUST include
+  `https://rzcvoyciitclilwwqepk.supabase.co/auth/v1/callback` (Supabase
+  completes OAuth, not our domain).
+- Authorized JavaScript origins: `https://summitfitadventures.com` and
+  `http://localhost:8080` (local dev).
+- OAuth consent screen (same project): add the calendar scope; while the app
+  is unverified/in testing, admin accounts must be listed as test users.
+
 ## ✅ Go-live status (2026-07-09) — DONE & verified
 
 The backend is **live**. Completed and confirmed via a manual `net.http_post`

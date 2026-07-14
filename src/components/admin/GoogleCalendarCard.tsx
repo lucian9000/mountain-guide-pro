@@ -57,7 +57,7 @@ const formatEventTime = (event: GoogleCalendarEvent): string => {
  * Upcoming events from the signed-in admin's own Google Calendar.
  *
  * Uses `session.provider_token` — the Google access token Supabase returns
- * from the OAuth sign-in (with the calendar.readonly scope requested in
+ * from the OAuth sign-in (with the calendar scope requested in
  * signInWithGoogle). Supabase does NOT refresh this token: it lives ~1 hour
  * and disappears from the stored session after a Supabase token refresh.
  * When it's missing or rejected we show a "reconnect" prompt, which simply
@@ -100,8 +100,8 @@ const GoogleCalendarCard = () => {
             <CalendarDays className="w-8 h-8 text-accent" />
             <p className="text-sm text-muted-foreground max-w-sm">
               Connect your Google Calendar to see your upcoming events here.
-              Google will ask for read-only calendar access (admins only —
-              client sign-ins never request it). Access expires periodically;
+              Google will ask for calendar access (admins only — client
+              sign-ins never request it). Access expires periodically;
               reconnecting just repeats the sign-in.
             </p>
             <Button

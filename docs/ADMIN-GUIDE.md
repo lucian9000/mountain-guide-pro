@@ -30,7 +30,7 @@ Below that:
 
 - **Recent Bookings** — the latest few reservations (with a "View all" link to the full Bookings page).
 - **New Clients** — the newest people to sign up.
-- **Google Calendar** — a small card showing your own upcoming calendar events. The first time you use it, it asks to connect your Google Calendar (read-only, admins only). This is just a convenience view — you can safely skip it.
+- **Google Calendar** — a small card showing your own upcoming calendar events. The first time you use it, it asks to connect your Google Calendar (admins only). This is just a convenience view — you can safely skip it.
 
 Everything is reached from the **menu down the left-hand side**: Dashboard, Clients, Pricing, Specials, Bookings, Guides, Routes, What's New. On a phone, tap the **menu icon** (top-left) to open that list. The **Back to Site** link at the bottom returns you to the public website.
 

@@ -125,14 +125,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       provider: "google",
       options: {
         redirectTo: callback,
-        // Normal sign-ins request ONLY basic scopes (openid/email/profile) —
-        // no Google verification needed, no "unverified app" warning.
-        // calendar.readonly (SENSITIVE scope) is requested only when the
-        // admin clicks "Connect Google Calendar" on the dashboard; the token
-        // lands in session.provider_token for the calendar card.
+        // Normal client sign-ins request ONLY basic scopes (openid/email/
+        // profile). The Google Calendar scope (SENSITIVE — full calendar
+        // access, per the Workspace OAuth app config) is requested only when
+        // the admin clicks "Connect Google Calendar" on the dashboard;
+        // access_type=offline + prompt=consent make Google issue a refresh
+        // token. Tokens land in session.provider_token /
+        // session.provider_refresh_token for the calendar card.
         ...(options?.requestCalendar
           ? {
-              scopes: "https://www.googleapis.com/auth/calendar.readonly",
+              scopes: "https://www.googleapis.com/auth/calendar",
               queryParams: { access_type: "offline", prompt: "consent" },
             }
           : {}),

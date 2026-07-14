@@ -7,7 +7,7 @@ import { ShieldCheck } from "lucide-react";
  * homepages that don't explain the Google-data usage in plain sight).
  * Keep this copy accurate to actual behaviour: BOTH clients and the admin
  * sign in with Google (basic profile scopes); only the admin dashboard can
- * additionally connect Google Calendar (read-only).
+ * additionally connect Google Calendar (calendar scope, admin-only).
  */
 const DataUsageDisclosure = () => (
   <section
@@ -31,7 +31,7 @@ const DataUsageDisclosure = () => (
         booking-management dashboard. We retrieve standard identity data (your
         name and email address) solely to verify your identity, manage your
         bookings, and confirm administrative clearance. Administrators may
-        additionally connect Google Calendar (read-only) to manage tour
+        additionally connect Google Calendar to manage tour scheduling and
         availability. We never sell your data or use it for advertising — see
         our{" "}
         <Link
