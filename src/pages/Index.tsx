@@ -11,6 +11,7 @@ import Gallery from "@/components/Gallery";
 import Values from "@/components/Values";
 import CTASection from "@/components/CTASection";
 import SocialFeed from "@/components/SocialFeed";
+import DataUsageDisclosure from "@/components/DataUsageDisclosure";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 import BackToTop from "@/components/BackToTop";
@@ -46,6 +47,7 @@ const Index = () => {
         <Values />
         <CTASection onOpenChat={openChat} />
         <SocialFeed />
+        <DataUsageDisclosure />
       </main>
       <Footer />
       <BackToTop />
