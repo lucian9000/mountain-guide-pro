@@ -21,8 +21,26 @@ interface AuthContextValue {
     redirectTo?: string,
     options?: { requestCalendar?: boolean }
   ) => Promise<void>;
+  signUpWithPassword: (input: {
+    email: string;
+    password: string;
+    fullName: string;
+    marketingOptIn: boolean;
+  }) => Promise<{ error: AuthActionError; session: Session | null }>;
+  signInWithPassword: (input: {
+    email: string;
+    password: string;
+  }) => Promise<{ error: AuthActionError }>;
+  sendPasswordReset: (email: string) => Promise<{ error: AuthActionError }>;
+  updatePassword: (newPassword: string) => Promise<{ error: AuthActionError }>;
   signOut: () => Promise<void>;
 }
+
+/**
+ * Password-auth helpers never throw — they resolve `{ error }` (null on
+ * success) so pages can map the message to a friendly toast in one place.
+ */
+export type AuthActionError = { message: string } | null;
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -142,6 +160,81 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const siteBase = () => import.meta.env.VITE_SITE_URL || window.location.origin;
+
+  const toError = (err: unknown): AuthActionError =>
+    err
+      ? { message: (err as { message?: string }).message || "Something went wrong." }
+      : null;
+
+  const signUpWithPassword = async ({
+    email,
+    password,
+    fullName,
+    marketingOptIn,
+  }: {
+    email: string;
+    password: string;
+    fullName: string;
+    marketingOptIn: boolean;
+  }) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          // handle_new_user() reads both keys off raw_user_meta_data, so the
+          // profile row is created server-side — no client write needed.
+          data: { full_name: fullName, marketing_opt_in: marketingOptIn },
+          emailRedirectTo: `${siteBase()}/login`,
+        },
+      });
+      return { error: toError(error), session: data?.session ?? null };
+    } catch (err) {
+      return { error: toError(err), session: null };
+    }
+  };
+
+  const signInWithPassword = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      return { error: toError(error) };
+    } catch (err) {
+      return { error: toError(err) };
+    }
+  };
+
+  const sendPasswordReset = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${siteBase()}/reset-password`,
+      });
+      return { error: toError(error) };
+    } catch (err) {
+      return { error: toError(err) };
+    }
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      return { error: toError(error) };
+    } catch (err) {
+      return { error: toError(err) };
+    }
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     // Hard nav clears all in-memory state cleanly.
@@ -155,6 +248,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     role: profile?.role ?? null,
     loading,
     signInWithGoogle,
+    signUpWithPassword,
+    signInWithPassword,
+    sendPasswordReset,
+    updatePassword,
     signOut,
   };
 

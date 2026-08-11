@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link, Navigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
@@ -28,11 +28,46 @@ const GoogleIcon = () => (
   </svg>
 );
 
+/** Maps raw Supabase auth errors to copy a hiker can act on. */
+const friendlyAuthError = (message: string): string => {
+  const m = message.toLowerCase();
+  if (m.includes("invalid login credentials"))
+    return "That email or password doesn't look right.";
+  if (m.includes("user already registered") || m.includes("already been registered"))
+    return "That email already has an account — try signing in.";
+  if (m.includes("password") && m.includes("6 characters"))
+    return "Password must be at least 6 characters.";
+  if (m.includes("email not confirmed"))
+    return "Check your inbox to confirm your email first.";
+  return message;
+};
+
+const fieldClass =
+  "w-full rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent min-h-[44px]";
+const labelClass =
+  "block text-left text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground mb-1.5";
+
 const Login = () => {
-  const { user, loading, signInWithGoogle } = useAuth();
+  const {
+    user,
+    loading,
+    signInWithGoogle,
+    signInWithPassword,
+    signUpWithPassword,
+    sendPasswordReset,
+  } = useAuth();
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [marketingOptIn, setMarketingOptIn] = useState(true);
+  const [formPending, setFormPending] = useState(false);
+  const [resetPending, setResetPending] = useState(false);
 
   const redirectTarget = params.get("redirect") || "/dashboard";
 
@@ -61,6 +96,92 @@ const Login = () => {
         description: "Could not start Google sign-in. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  const showError = (message: string) =>
+    toast({
+      title: mode === "signup" ? "Sign-up failed" : "Sign-in failed",
+      description: friendlyAuthError(message),
+      variant: "destructive",
+    });
+
+  const handlePasswordSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (formPending) return;
+
+    if (password.length < 6) {
+      toast({
+        title: mode === "signup" ? "Sign-up failed" : "Sign-in failed",
+        description: "Password must be at least 6 characters.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setFormPending(true);
+    try {
+      if (mode === "signup") {
+        const { error, session } = await signUpWithPassword({
+          email: email.trim(),
+          password,
+          fullName: fullName.trim(),
+          marketingOptIn,
+        });
+        if (error) {
+          showError(error.message);
+          return;
+        }
+        if (session) {
+          navigate(redirectTarget, { replace: true });
+        } else {
+          toast({
+            title: "Almost there",
+            description: "Check your inbox to confirm your email.",
+          });
+        }
+        return;
+      }
+
+      const { error } = await signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error) {
+        showError(error.message);
+        return;
+      }
+      navigate(redirectTarget, { replace: true });
+    } finally {
+      setFormPending(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      toast({
+        title: "Email needed",
+        description: "Enter your email address first, then tap Forgot password.",
+      });
+      return;
+    }
+    setResetPending(true);
+    try {
+      const { error } = await sendPasswordReset(email.trim());
+      if (error) {
+        toast({
+          title: "Couldn't send reset link",
+          description: friendlyAuthError(error.message),
+          variant: "destructive",
+        });
+        return;
+      }
+      toast({
+        title: "Reset link sent",
+        description: "Check your inbox for a link to set a new password.",
+      });
+    } finally {
+      setResetPending(false);
     }
   };
 
@@ -112,6 +233,143 @@ const Login = () => {
             </>
           )}
         </button>
+
+        {isSupabaseConfigured && (
+          <>
+            <div className="flex items-center gap-3 my-6" aria-hidden="true">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-muted-foreground text-xs uppercase tracking-wider">
+                or
+              </span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              {mode === "signup" && (
+                <div>
+                  <label htmlFor="login-full-name" className={labelClass}>
+                    Full Name
+                  </label>
+                  <input
+                    id="login-full-name"
+                    name="fullName"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className={fieldClass}
+                    placeholder="Thabo Mokoena"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="login-email" className={labelClass}>
+                  Email
+                </label>
+                <input
+                  id="login-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={fieldClass}
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="login-password" className={labelClass}>
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="login-password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete={
+                      mode === "signup" ? "new-password" : "current-password"
+                    }
+                    required
+                    minLength={6}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`${fieldClass} pr-12`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-11 w-11 inline-flex items-center justify-center text-muted-foreground hover:text-accent rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {mode === "signup" && (
+                <div className="flex items-start gap-3 text-left">
+                  <input
+                    id="login-marketing-opt-in"
+                    name="marketingOptIn"
+                    type="checkbox"
+                    checked={marketingOptIn}
+                    onChange={(e) => setMarketingOptIn(e.target.checked)}
+                    className="mt-0.5 h-5 w-5 shrink-0 rounded border-border accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  />
+                  <label
+                    htmlFor="login-marketing-opt-in"
+                    className="text-muted-foreground text-xs leading-relaxed"
+                  >
+                    Keep me posted on upcoming hikes and specials
+                  </label>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={formPending}
+                className="w-full bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {formPending && <Loader2 className="w-5 h-5 animate-spin" />}
+                {mode === "signup" ? "Create Account" : "Sign In"}
+              </button>
+            </form>
+
+            {mode === "signin" && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetPending}
+                className="mt-4 text-muted-foreground hover:text-accent text-xs transition-colors disabled:opacity-50 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {resetPending ? "Sending…" : "Forgot password?"}
+              </button>
+            )}
+
+            <p className="mt-4 text-xs text-muted-foreground">
+              <button
+                type="button"
+                onClick={() =>
+                  setMode((m) => (m === "signin" ? "signup" : "signin"))
+                }
+                className="text-accent hover:text-cyan-hover transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {mode === "signin"
+                  ? "New here? Create an account"
+                  : "Already have an account? Sign in"}
+              </button>
+            </p>
+          </>
+        )}
 
         <p className="text-muted-foreground text-xs mt-6 leading-relaxed">
           Admins sign in with the same Google button — you'll be routed to the
