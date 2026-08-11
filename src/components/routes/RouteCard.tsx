@@ -17,6 +17,22 @@ export const routeDisplayPrice = (
   return null; // contact for pricing
 };
 
+/**
+ * Match a route to a `pricing` row: `tour_slug` first, then a
+ * case-insensitive name match. Returns undefined when nothing matches (the
+ * card then shows no price at all rather than a wrong one).
+ */
+export const matchTourPrice = <T extends { tour_slug?: string | null; name?: string | null }>(
+  route: Pick<RouteWithImages, "slug" | "name">,
+  rows: T[] | undefined
+): T | undefined => {
+  if (!rows || rows.length === 0) return undefined;
+  return (
+    rows.find((r) => r.tour_slug && r.tour_slug === route.slug) ??
+    rows.find((r) => (r.name ?? "").toLowerCase() === route.name.toLowerCase())
+  );
+};
+
 export const routeCover = (route: RouteWithImages) => {
   const img = route.images.find((i) => i.is_cover) ?? route.images[0];
   return img
@@ -27,12 +43,17 @@ export const routeCover = (route: RouteWithImages) => {
 const RouteCard = ({
   route,
   tourPrice,
+  pricingRows,
 }: {
   route: RouteWithImages;
+  /** Pricing row already matched by slug (RoutesIndex passes this). */
   tourPrice?: TourPrice;
+  /** Optional full pricing list — enables the case-insensitive name fallback. */
+  pricingRows?: (TourPrice & { tour_slug?: string | null; name?: string | null })[];
 }) => {
   const cover = routeCover(route);
-  const price = routeDisplayPrice(route, tourPrice);
+  const matched = tourPrice ?? matchTourPrice(route, pricingRows);
+  const price = routeDisplayPrice(route, matched);
 
   return (
     <Link
@@ -73,9 +94,11 @@ const RouteCard = ({
         </div>
 
         <div className="mt-auto pt-2 flex items-center justify-between gap-3">
-          <span className="font-heading text-xl font-black text-accent whitespace-nowrap">
-            {price ?? "Contact us"}
-          </span>
+          {price && (
+            <span className="font-heading text-xl font-black text-accent whitespace-nowrap">
+              From {price} pp
+            </span>
+          )}
           <span className="text-accent group-hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase whitespace-nowrap">
             View Route →
           </span>

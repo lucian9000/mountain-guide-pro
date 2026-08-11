@@ -14,6 +14,8 @@ import SocialFeed from "@/components/SocialFeed";
 import DataUsageDisclosure from "@/components/DataUsageDisclosure";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import EventBanner from "@/components/EventBanner";
+import UpcomingAdventures from "@/components/UpcomingAdventures";
 import BackToTop from "@/components/BackToTop";
 
 const Index = () => {
@@ -41,6 +43,7 @@ const Index = () => {
         <TrustBar />
         <Services />
         <Expeditions onOpenChat={openChat} />
+        <UpcomingAdventures />
         <About onOpenChat={openChat} />
         <Fitness onOpenChat={openChat} />
         <Gallery onOpenChat={openChat} />
@@ -51,7 +54,8 @@ const Index = () => {
       </main>
       <Footer />
       <BackToTop />
-      <ChatWidget isOpen={chatOpen} onOpen={openChat} onClose={() => setChatOpen(false)} />
+      <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      <EventBanner />
     </div>
   );
 };

@@ -68,6 +68,13 @@ vi.mock("@/lib/queries/booking", () => ({
   }),
 }));
 
+// Phase 6 event hooks (react-query) — stub so no QueryClientProvider is needed.
+vi.mock("@/lib/queries/events", () => ({
+  usePublicEvents: () => ({ data: [], isLoading: false, error: null, refetch: vi.fn() }),
+  usePublicEvent: () => ({ data: null, isLoading: false, error: null, refetch: vi.fn() }),
+  isEventFullError: () => false,
+}));
+
 vi.mock("@/lib/google-calendar", () => ({
   getGuideAvailability: vi.fn().mockResolvedValue([]),
 }));

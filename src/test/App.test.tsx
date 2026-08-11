@@ -29,6 +29,15 @@ vi.mock("@/lib/queries/content", () => ({
   useTourPrices: () => ({ data: undefined }),
 }));
 
+// Phase 6 homepage sections talk to supabase through react-query; the tests
+// that render <Index /> bare have no QueryClientProvider, so stub them out.
+vi.mock("@/components/EventBanner", () => ({ default: () => null }));
+vi.mock("@/lib/queries/events", () => ({
+  usePublicEvents: () => ({ data: [], isLoading: false, error: null }),
+  usePublicEvent: () => ({ data: null, isLoading: false, error: null }),
+  isEventFullError: () => false,
+}));
+
 // Toasters are irrelevant to landmark structure (sonner also has a broken
 // local ESM build — vite aliases it for the app, vitest doesn't).
 vi.mock("@/components/ui/toaster", () => ({ Toaster: () => null }));

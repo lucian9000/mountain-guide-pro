@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, CalendarIcon, Loader2, Minus, Plus, LogIn } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarIcon,
+  CalendarDays,
+  Check,
+  Loader2,
+  MapPin,
+  Minus,
+  Plus,
+  LogIn,
+  Users,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -9,6 +20,10 @@ import {
   usePublicGuides,
   useCreateBooking,
 } from "@/lib/queries/booking";
+import { usePublicEvents, usePublicEvent, isEventFullError } from "@/lib/queries/events";
+import { perPersonPrice, isGroupRate } from "@/lib/types/db";
+import { supabase } from "@/lib/supabase/client";
+import { findRoutes, type Route } from "@/data/routes";
 import { getGuideAvailability, type TimeSlot } from "@/lib/google-calendar";
 import SiteHeader from "@/components/SiteHeader";
 import GoogleCalendarBooking from "@/components/booking/GoogleCalendarBooking";
@@ -29,6 +44,83 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 const makeRef = () => `SF-${Date.now().toString(36).slice(-6).toUpperCase()}`;
 
+const formatEventDate = (iso: string): string => {
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return iso;
+  return new Date(y, m - 1, d).toLocaleDateString("en-ZA", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+};
+
+/**
+ * The chat's route-recommendation step, reused here (same src/data/routes.ts
+ * source — no duplicated route data) so unsure visitors can narrow down a hike
+ * without leaving the booking page.
+ */
+const RouteRecommender = () => {
+  const [picked, setPicked] = useState<number | null>(null);
+  const results: Route[] = picked ? findRoutes(picked) : [];
+
+  return (
+    <details className="border border-border/40 rounded-lg px-4 py-3">
+      <summary className="cursor-pointer select-none text-sm font-heading font-bold text-muted-foreground hover:text-accent tracking-wider uppercase transition-colors">
+        Not sure which hike? Get a recommendation
+      </summary>
+      <div className="pt-4 space-y-2">
+        <p className="text-xs text-muted-foreground">
+          Pick your current fitness level — be honest, it keeps you safe on the
+          mountain.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { level: 1, label: "1 — Just starting out" },
+            { level: 2, label: "2 — Casual hiker" },
+            { level: 3, label: "3 — Intermediate" },
+            { level: 4, label: "4 — Fit & experienced" },
+            { level: 5, label: "5 — Advanced athlete" },
+          ].map(({ level, label }) => (
+            <button
+              key={level}
+              type="button"
+              onClick={() => setPicked(level)}
+              className={`min-h-[44px] px-4 rounded-lg border text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                picked === level
+                  ? "border-accent text-accent"
+                  : "border-border text-muted-foreground hover:text-accent hover:border-accent"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {picked != null && (
+          <ul className="space-y-2 pt-2">
+            {results.length === 0 && (
+              <li className="text-sm text-muted-foreground">
+                No standard route matches — pick any tour below and we will
+                tailor it with you.
+              </li>
+            )}
+            {results.map((r) => (
+              <li key={r.id} className="bg-secondary rounded-lg p-3 border-l-4 border-accent">
+                <div className="font-heading text-sm font-bold text-foreground tracking-wider uppercase">
+                  {r.name}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {r.location} — {r.specs.duration}, {r.specs.elevation}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </details>
+  );
+};
+
 const Booking = () => {
   const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -39,6 +131,16 @@ const Booking = () => {
   const createBooking = useCreateBooking();
 
   const [params] = useSearchParams();
+  const eventParam = params.get("event");
+
+  const events = usePublicEvents();
+  const deepLinkedEvent = usePublicEvent(eventParam);
+
+  const [mode, setMode] = useState<"group" | "private">(eventParam ? "group" : "private");
+  const [eventId, setEventId] = useState<string>(eventParam ?? "");
+  const [eventPax, setEventPax] = useState(1);
+  const [eventPending, setEventPending] = useState(false);
+
   const [tourId, setTourId] = useState<string>("");
   const [guideId, setGuideId] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>();
@@ -60,8 +162,16 @@ const Booking = () => {
 
   const selectedTour = pricing.data?.find((t) => t.id === tourId);
   const selectedGuide = guides.data?.find((g) => g.id === guideId);
-  const total = selectedTour ? Number(selectedTour.price) * participants : 0;
+  const perPerson = selectedTour ? perPersonPrice(selectedTour, participants) : 0;
+  const groupRateApplied = selectedTour ? isGroupRate(selectedTour, participants) : false;
+  const total = perPerson * participants;
   const maxPax = selectedTour?.max_participants ?? 12;
+
+  const selectedEvent =
+    events.data?.find((e) => e.id === eventId) ??
+    (deepLinkedEvent.data && deepLinkedEvent.data.id === eventId ? deepLinkedEvent.data : undefined);
+  const eventSpots = selectedEvent?.spots_left ?? selectedEvent?.capacity ?? 0;
+  const eventTotal = selectedEvent ? Number(selectedEvent.price_per_person) * eventPax : 0;
 
   // Load (mock) availability whenever guide + date are chosen.
   useEffect(() => {
@@ -118,6 +228,76 @@ const Booking = () => {
     }
   };
 
+  /**
+   * Event bookings carry `event_id` and NO `pricing_id` (DB constraint: one or
+   * the other, never both). The overbooking trigger raises EVENT_FULL when the
+   * last spots go while the visitor was deciding.
+   */
+  const handleBookEvent = async () => {
+    if (!user) {
+      navigate("/login?redirect=/booking");
+      return;
+    }
+    if (!selectedEvent) return;
+
+    const ref = makeRef();
+    setEventPending(true);
+    try {
+      const { data, error } = await supabase
+        .from("bookings")
+        .insert({
+          user_id: user.id,
+          pricing_id: null,
+          event_id: selectedEvent.id,
+          guide_id: selectedEvent.guide_id,
+          booking_date: selectedEvent.event_date,
+          time_slot: selectedEvent.start_time,
+          participants: eventPax,
+          total_price: eventTotal,
+          booking_ref: ref,
+          status: "pending",
+        })
+        .select()
+        .single();
+      if (error) throw new Error(error.message);
+
+      void Promise.resolve(
+        supabase.functions.invoke("booking-email", { body: { booking_id: data.id } })
+      ).catch((err) => console.warn("[booking] email notify failed:", err));
+
+      setConfirmed({
+        ref,
+        tourName: selectedEvent.title,
+        guideName: null,
+        date: selectedEvent.event_date,
+        time: selectedEvent.start_time,
+        participants: eventPax,
+        total: eventTotal,
+      });
+    } catch (e) {
+      if (isEventFullError(e)) {
+        toast({
+          title: "This event just filled up",
+          description: "Please pick another date.",
+          variant: "destructive",
+        });
+        events.refetch();
+        deepLinkedEvent.refetch();
+        setEventId("");
+      } else {
+        toast({
+          title: "Booking failed",
+          description: e instanceof Error ? e.message : "Please try again.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setEventPending(false);
+    }
+  };
+
+  const openEvents = (events.data ?? []).filter((e) => (e.spots_left ?? e.capacity) > 0);
+
   return (
     <div className="min-h-dvh bg-background">
       <SiteHeader variant="solid" />
@@ -173,17 +353,188 @@ const Booking = () => {
               </h1>
             )}
 
-            <DataState
-              loading={pricing.isLoading || guides.isLoading}
-              error={pricing.error || guides.error}
-              empty={!pricing.data || pricing.data.length === 0}
-              emptyMessage="No tours are available right now. Please check back soon."
+            {/* Mode toggle: scheduled group events vs the private-tour flow. */}
+            <div
+              role="group"
+              aria-label="Booking type"
+              className="flex gap-2 mb-6"
             >
+              {([
+                { value: "group", label: "Join a group event" },
+                { value: "private", label: "Book a private tour" },
+              ] as const).map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setMode(value)}
+                  aria-pressed={mode === value}
+                  className={`flex-1 min-h-[44px] px-4 rounded-lg border font-heading font-bold text-xs tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                    mode === value
+                      ? "border-accent bg-accent text-accent-foreground"
+                      : "border-border text-muted-foreground hover:text-accent hover:border-accent"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {mode === "group" ? (
               <div className="glass-card glow-border p-6 md:p-8 space-y-6">
-                {/* Tour + Guide pickers. Once a tour is chosen these collapse
-                    into a one-line summary so the calendar rises to the top
-                    and the whole thing fits without scrolling. */}
-                {!tourId ? (
+                {selectedEvent ? (
+                  <>
+                    <div className="flex items-start justify-between gap-3 border-b border-border/40 pb-4">
+                      <div className="min-w-0">
+                        <div className="font-heading font-bold text-foreground tracking-wider uppercase">
+                          {selectedEvent.title}
+                        </div>
+                        <div className="text-muted-foreground text-sm flex flex-wrap gap-x-4">
+                          <span className="flex items-center gap-1">
+                            <CalendarDays className="w-4 h-4 text-accent" aria-hidden="true" />
+                            {formatEventDate(selectedEvent.event_date)}
+                          </span>
+                          {selectedEvent.location && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-4 h-4 text-gold" aria-hidden="true" />
+                              {selectedEvent.location}
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1">
+                            <Users className="w-4 h-4 text-accent" aria-hidden="true" />
+                            {eventSpots} spots left
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setEventId("")}
+                        className="shrink-0 text-accent hover:text-cyan-hover text-sm font-heading font-bold tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded px-2 py-1"
+                      >
+                        Change
+                      </button>
+                    </div>
+
+                    {selectedEvent.description && (
+                      <p className="text-muted-foreground text-sm">
+                        {selectedEvent.description}
+                      </p>
+                    )}
+
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="event-participants"
+                        className="text-sm font-heading font-bold text-foreground tracking-wider uppercase"
+                      >
+                        Participants
+                      </label>
+                      <div className="flex items-center gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setEventPax((p) => Math.max(1, p - 1))}
+                          className="w-11 h-11 rounded-lg border border-border hover:border-accent text-foreground flex items-center justify-center transition-colors"
+                          aria-label="Fewer event participants"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <input
+                          id="event-participants"
+                          type="text"
+                          readOnly
+                          value={eventPax}
+                          className="font-heading text-xl font-bold text-foreground w-8 text-center bg-transparent border-0 p-0"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setEventPax((p) => Math.min(Math.max(1, eventSpots), p + 1))
+                          }
+                          className="w-11 h-11 rounded-lg border border-border hover:border-accent text-foreground flex items-center justify-center transition-colors"
+                          aria-label="More event participants"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                        <span className="text-muted-foreground text-xs">
+                          max {eventSpots}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-border/40 pt-5 flex items-center justify-between">
+                      <div>
+                        <div className="text-muted-foreground text-xs uppercase tracking-wider">
+                          Total
+                        </div>
+                        <div className="font-heading text-2xl font-black text-accent">
+                          R{eventTotal}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleBookEvent}
+                        disabled={eventPending || eventSpots < 1}
+                        className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors disabled:opacity-60"
+                      >
+                        {eventPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" /> Booking…
+                          </>
+                        ) : (
+                          "Book my spot"
+                        )}
+                      </button>
+                    </div>
+                  </>
+                ) : openEvents.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">
+                    No group events are scheduled right now — book a private tour
+                    instead and we will find a date that suits you.
+                  </p>
+                ) : (
+                  <ul className="space-y-3">
+                    {openEvents.map((e) => (
+                      <li
+                        key={e.id}
+                        className="flex items-center justify-between gap-3 border border-border/40 rounded-lg p-4"
+                      >
+                        <div className="min-w-0">
+                          <div className="font-heading font-bold text-foreground tracking-wider uppercase truncate">
+                            {e.title}
+                          </div>
+                          <div className="text-muted-foreground text-sm">
+                            {formatEventDate(e.event_date)} — R
+                            {Number(e.price_per_person)} pp —{" "}
+                            {e.spots_left ?? e.capacity} spots left
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEventId(e.id);
+                            setEventPax(1);
+                          }}
+                          className="shrink-0 min-h-[44px] px-4 rounded-lg bg-accent hover:bg-cyan-hover text-accent-foreground font-heading font-bold text-xs tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        >
+                          Select
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <DataState
+                loading={pricing.isLoading || guides.isLoading}
+                error={pricing.error || guides.error}
+                empty={!pricing.data || pricing.data.length === 0}
+                emptyMessage="No tours are available right now. Please check back soon."
+              >
+                <div className="glass-card glow-border p-6 md:p-8 space-y-6">
+                  <RouteRecommender />
+
+                  {/* Tour + Guide pickers. Once a tour is chosen these collapse
+                      into a one-line summary so the calendar rises to the top
+                      and the whole thing fits without scrolling. */}
+                  {!tourId ? (
                   <>
                     {/* Tour */}
                     <div className="space-y-2">
@@ -375,6 +726,16 @@ const Booking = () => {
                     </button>
                     <span className="text-muted-foreground text-xs">max {maxPax}</span>
                   </div>
+                  {selectedTour && groupRateApplied && (
+                    <p className="text-sm text-accent font-heading font-bold tracking-wider uppercase">
+                      Group rate applied
+                      <Check className="w-4 h-4 inline-block mx-1" aria-hidden="true" />{" "}
+                      <span className="font-normal normal-case tracking-normal text-muted-foreground">
+                        <span className="line-through">R{Number(selectedTour.price)}</span>{" "}
+                        R{perPerson} per person
+                      </span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Summary + submit */}
@@ -391,7 +752,7 @@ const Booking = () => {
                     <button
                       onClick={handleBook}
                       disabled={!canSubmit}
-                      className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                      className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition-colors disabled:opacity-60"
                     >
                       {createBooking.isPending ? (
                         <>
@@ -412,8 +773,9 @@ const Booking = () => {
                 </div>
                   </div>
                 </details>
-              </div>
-            </DataState>
+                </div>
+              </DataState>
+            )}
           </>
         )}
       </main>

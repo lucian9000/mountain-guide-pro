@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { useState } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import ChatWidget from "@/components/ChatWidget";
 
 // The widget reads live tour prices via react-query + supabase; stub it out.
@@ -13,15 +14,16 @@ vi.mock("@/lib/queries/content", () => ({
 const EMOJI_RE =
   /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE0F}]/u;
 
-// ChatWidget is controlled by its parent, so wrap it in a tiny stateful harness.
+// ChatWidget is controlled by its parent (the header / section CTAs open the
+// chat); the floating launcher is now a "Book Now" link to /booking. The
+// harness exposes a plain button standing in for those external CTAs.
 const Harness = () => {
   const [open, setOpen] = useState(false);
   return (
-    <ChatWidget
-      isOpen={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
-    />
+    <MemoryRouter>
+      <button onClick={() => setOpen(true)}>open chat</button>
+      <ChatWidget isOpen={open} onClose={() => setOpen(false)} />
+    </MemoryRouter>
   );
 };
 
@@ -34,20 +36,16 @@ const openWidget = async () => {
 };
 
 describe("ChatWidget accessibility", () => {
-  it("renders the launcher synchronously on first render (no lazy chunk needed)", () => {
+  it("renders the Book Now FAB synchronously (no lazy chunk needed)", () => {
     render(<Harness />);
-    // Immediately after render — before any lazy module could resolve — the
-    // launcher must already be in the document.
-    expect(
-      screen.getByRole("button", { name: /open chat/i })
-    ).toBeInTheDocument();
+    const fab = screen.getByRole("link", { name: /book now/i });
+    expect(fab).toBeInTheDocument();
+    expect(fab).toHaveAttribute("href", "/booking");
   });
 
-  it("gives the floating launcher an accessible name", () => {
-    render(<Harness />);
-    expect(
-      screen.getByRole("button", { name: /open chat/i })
-    ).toBeInTheDocument();
+  it("hides the FAB while the chat panel is open", async () => {
+    await openWidget();
+    expect(screen.queryByRole("link", { name: /book now/i })).not.toBeInTheDocument();
   });
 
   it("shows a close button with an accessible name after opening", async () => {
