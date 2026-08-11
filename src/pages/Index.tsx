@@ -54,7 +54,11 @@ const Index = () => {
       </main>
       <Footer />
       <BackToTop />
-      <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      <ChatWidget
+        isOpen={chatOpen}
+        onOpen={openChat}
+        onClose={() => setChatOpen(false)}
+      />
       <EventBanner />
     </div>
   );

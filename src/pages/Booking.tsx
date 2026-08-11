@@ -11,6 +11,7 @@ import {
   Minus,
   Plus,
   LogIn,
+  Mail,
   Users,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -330,6 +331,35 @@ const Booking = () => {
               <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
               Continue with Google
             </Button>
+
+            {/* Email is the second path — same choice as /login, offered here so
+                the visitor never has to leave the booking flow to discover it. */}
+            <div className="flex items-center gap-3 my-4" aria-hidden="true">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-muted-foreground text-xs uppercase tracking-wider">or</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <Button
+              asChild
+              variant="outline"
+              className="w-full font-heading font-bold tracking-wider uppercase transition-colors"
+            >
+              <Link to="/login?redirect=/booking">
+                <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
+                Sign up with email
+              </Link>
+            </Button>
+
+            <p className="text-muted-foreground text-xs mt-4">
+              Already have an account?{" "}
+              <Link
+                to="/login?redirect=/booking"
+                className="text-accent hover:text-cyan-hover underline underline-offset-4 transition-colors"
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
         ) : confirmed ? (
           <BookingConfirmation booking={confirmed} />

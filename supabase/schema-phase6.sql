@@ -208,6 +208,10 @@ create trigger bookings_check_event_capacity
 -- auth metadata. Reading it here means the preference is stored even when
 -- email confirmation is ON (no client session exists at that point to write
 -- the profile row itself). Google SSO simply omits the key → defaults false.
+--
+-- ⚠️ This function is REPLACED wholesale, so it must also carry the admin
+-- allow-list introduced by the earlier `auto_admin_email_list` migration —
+-- omitting it silently removes auto-admin on first sign-in.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -215,17 +219,30 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email, full_name, avatar_url, marketing_opt_in)
+  insert into public.profiles (id, email, full_name, avatar_url, role, marketing_opt_in)
   values (
     new.id,
     new.email,
     new.raw_user_meta_data ->> 'full_name',
     new.raw_user_meta_data ->> 'avatar_url',
+    case when lower(new.email) in (
+      'ernest@summitfitadventures.com',
+      'ernestcarrick@gmail.com',
+      'info@summitfitadventures.com'
+    ) then 'admin' else 'client' end,
     coalesce((new.raw_user_meta_data ->> 'marketing_opt_in')::boolean, false)
   )
   on conflict (id) do nothing;
   return new;
 end;
 $$;
+
+-- Safety net: promote the allow-listed emails if they signed up earlier.
+update public.profiles set role = 'admin'
+where lower(email) in (
+  'ernest@summitfitadventures.com',
+  'ernestcarrick@gmail.com',
+  'info@summitfitadventures.com'
+) and role <> 'admin';
 
 -- (trigger on_auth_user_created already exists from schema.sql and is unchanged)

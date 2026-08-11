@@ -14,15 +14,20 @@ vi.mock("@/lib/queries/content", () => ({
 const EMOJI_RE =
   /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE0F}]/u;
 
-// ChatWidget is controlled by its parent (the header / section CTAs open the
-// chat); the floating launcher is now a "Book Now" link to /booking. The
-// harness exposes a plain button standing in for those external CTAs.
+// ChatWidget is controlled by its parent. The floating "Book Now" FAB opens
+// the guided chat (the original assistant behaviour, kept behind the
+// high-intent label); the header / section CTAs open it too, stood in for here
+// by a plain button.
 const Harness = () => {
   const [open, setOpen] = useState(false);
   return (
     <MemoryRouter>
       <button onClick={() => setOpen(true)}>open chat</button>
-      <ChatWidget isOpen={open} onClose={() => setOpen(false)} />
+      <ChatWidget
+        isOpen={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+      />
     </MemoryRouter>
   );
 };
@@ -38,14 +43,19 @@ const openWidget = async () => {
 describe("ChatWidget accessibility", () => {
   it("renders the Book Now FAB synchronously (no lazy chunk needed)", () => {
     render(<Harness />);
-    const fab = screen.getByRole("link", { name: /book now/i });
-    expect(fab).toBeInTheDocument();
-    expect(fab).toHaveAttribute("href", "/booking");
+    expect(screen.getByRole("button", { name: /book now/i })).toBeInTheDocument();
+  });
+
+  it("opens the guided chat from the Book Now FAB", async () => {
+    render(<Harness />);
+    fireEvent.click(screen.getByRole("button", { name: /book now/i }));
+    // The conversation panel is code-split, so it resolves asynchronously.
+    expect(await screen.findByRole("log")).toBeInTheDocument();
   });
 
   it("hides the FAB while the chat panel is open", async () => {
     await openWidget();
-    expect(screen.queryByRole("link", { name: /book now/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /book now/i })).not.toBeInTheDocument();
   });
 
   it("shows a close button with an accessible name after opening", async () => {
