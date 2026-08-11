@@ -53,6 +53,7 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         gold: "hsl(var(--gold))",
+        raised: "hsl(var(--surface-raised))",
         cyan: "hsl(var(--cyan-glow))",
         "cyan-hover": "hsl(var(--cyan-hover))",
         "cyan-soft": "hsl(var(--cyan-soft))",

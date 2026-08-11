@@ -41,6 +41,9 @@
     --cyan-glow: 193 100% 50%;
     --cyan-hover: 193 100% 42%;
     --cyan-soft: 193 100% 70%;
+    /* Raised surface for floating notifications — lighter and less blue than
+       the page navy so a card sitting on the hero reads as 'above' it. */
+    --surface-raised: 205 28% 16%;
     --gold: 43 72% 52%;
     --gold-soft: 43 72% 65%;
     --success: 160 84% 39%;
