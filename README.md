@@ -307,6 +307,41 @@ marketing site works fully and the event sections simply don't render.
   `bookings_single_subject` check. It is deliberately permissive about *neither*,
   because calendar-synced bookings can have no matched tour.
 
+## Phase 6 — Quick Book Panel
+
+The floating "Adventure Bot" chat widget has been replaced by a **quick-book
+menu**. The old widget opened with a scripted greeting, asked whether you wanted
+routes or training, then made you pick a fitness level (1–5) — which *filtered*
+the trail list and dead-ended in a WhatsApp enquiry even when bookable trails
+matched. That whole conversation was fake, and it hid inventory behind
+questions.
+
+**What it does now** (`src/components/QuickBookPanel.tsx` + `QuickBookMenu.tsx`,
+formerly `ChatWidget.tsx`/`ChatPanel.tsx`):
+
+- The floating **"Book Now"** button opens a panel titled *Book Your Adventure*
+  — a plain menu, no simulated conversation, no message bubbles.
+- Two always-visible tabs, **Mountain Routes** and **Personal Training**, swap
+  the list below them. Nothing is a sequential step.
+- **Every** route is listed every time — never filtered. Each card shows the
+  difficulty badge (same colour coding), duration and elevation, and expands
+  in place to reveal terrain, mandatory gear and the weather policy.
+- **WhatsApp is now the fallback, not the default.** A route or programme with
+  an active row in the `pricing` table gets **Book Now** →
+  `/booking?tour={pricing.id}` (closing the panel). Only unpriced/custom items
+  — the 13 Peaks challenges, bespoke training plans — keep **Enquire via
+  WhatsApp**. A muted *"Prefer to chat? WhatsApp Ernest →"* line sits in the
+  footer as a secondary option.
+- Prices come from the existing `usePublicPricing` query (matched by
+  `tour_slug`, falling back to a case-insensitive name match). Skeleton cards
+  show while it loads, and **with no Supabase configuration every item degrades
+  to a WhatsApp enquiry** rather than showing broken pricing.
+- `/booking` accepts `?tour=` (pricing id *or* slug) and forces private-tour
+  mode, since a tour param always refers to a pricing row rather than an event.
+
+Training programmes now live in `src/data/training.ts`, shared by this panel and
+the homepage Fitness section so the two cannot drift apart.
+
 ## Contact
 
 - **WhatsApp / Phone:** +27 67 130 1536

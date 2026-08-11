@@ -24,7 +24,6 @@ import {
 import { usePublicEvents, usePublicEvent, isEventFullError } from "@/lib/queries/events";
 import { perPersonPrice, isGroupRate } from "@/lib/types/db";
 import { supabase } from "@/lib/supabase/client";
-import { findRoutes, type Route } from "@/data/routes";
 import { getGuideAvailability, type TimeSlot } from "@/lib/google-calendar";
 import SiteHeader from "@/components/SiteHeader";
 import GoogleCalendarBooking from "@/components/booking/GoogleCalendarBooking";
@@ -55,73 +54,6 @@ const formatEventDate = (iso: string): string => {
   });
 };
 
-/**
- * The chat's route-recommendation step, reused here (same src/data/routes.ts
- * source — no duplicated route data) so unsure visitors can narrow down a hike
- * without leaving the booking page.
- */
-const RouteRecommender = () => {
-  const [picked, setPicked] = useState<number | null>(null);
-  const results: Route[] = picked ? findRoutes(picked) : [];
-
-  return (
-    <details className="border border-border/40 rounded-lg px-4 py-3">
-      <summary className="cursor-pointer select-none text-sm font-heading font-bold text-muted-foreground hover:text-accent tracking-wider uppercase transition-colors">
-        Not sure which hike? Get a recommendation
-      </summary>
-      <div className="pt-4 space-y-2">
-        <p className="text-xs text-muted-foreground">
-          Pick your current fitness level — be honest, it keeps you safe on the
-          mountain.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { level: 1, label: "1 — Just starting out" },
-            { level: 2, label: "2 — Casual hiker" },
-            { level: 3, label: "3 — Intermediate" },
-            { level: 4, label: "4 — Fit & experienced" },
-            { level: 5, label: "5 — Advanced athlete" },
-          ].map(({ level, label }) => (
-            <button
-              key={level}
-              type="button"
-              onClick={() => setPicked(level)}
-              className={`min-h-[44px] px-4 rounded-lg border text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                picked === level
-                  ? "border-accent text-accent"
-                  : "border-border text-muted-foreground hover:text-accent hover:border-accent"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {picked != null && (
-          <ul className="space-y-2 pt-2">
-            {results.length === 0 && (
-              <li className="text-sm text-muted-foreground">
-                No standard route matches — pick any tour below and we will
-                tailor it with you.
-              </li>
-            )}
-            {results.map((r) => (
-              <li key={r.id} className="bg-secondary rounded-lg p-3 border-l-4 border-accent">
-                <div className="font-heading text-sm font-bold text-foreground tracking-wider uppercase">
-                  {r.name}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {r.location} — {r.specs.duration}, {r.specs.elevation}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </details>
-  );
-};
-
 const Booking = () => {
   const { user, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -137,7 +69,11 @@ const Booking = () => {
   const events = usePublicEvents();
   const deepLinkedEvent = usePublicEvent(eventParam);
 
-  const [mode, setMode] = useState<"group" | "private">(eventParam ? "group" : "private");
+  // `?tour=` always refers to a pricing row, so it forces private-tour mode
+  // even if an event param is also present.
+  const [mode, setMode] = useState<"group" | "private">(
+    eventParam && !params.get("tour") ? "group" : "private"
+  );
   const [eventId, setEventId] = useState<string>(eventParam ?? "");
   const [eventPax, setEventPax] = useState(1);
   const [eventPending, setEventPending] = useState(false);
@@ -559,8 +495,6 @@ const Booking = () => {
                 emptyMessage="No tours are available right now. Please check back soon."
               >
                 <div className="glass-card glow-border p-6 md:p-8 space-y-6">
-                  <RouteRecommender />
-
                   {/* Tour + Guide pickers. Once a tour is chosen these collapse
                       into a one-line summary so the calendar rises to the top
                       and the whole thing fits without scrolling. */}

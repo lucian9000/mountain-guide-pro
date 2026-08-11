@@ -1,15 +1,9 @@
-import { Dumbbell, Mountain, Users } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { trainingProgrammes } from "@/data/training";
 
 interface FitnessProps {
   onOpenBooking: () => void;
 }
-
-const programs = [
-  { icon: Dumbbell, title: "Strength Training", desc: "Personalized programs for beginners to advanced athletes." },
-  { icon: Mountain, title: "Trail Fitness", desc: "Hybrid outdoor + gym sessions for uphill power and endurance." },
-  { icon: Users, title: "Custom Programs", desc: "4-12 week programs tailored to your specific goals." },
-];
 
 const Fitness = ({ onOpenBooking }: FitnessProps) => (
   <section id="fitness" className="scroll-mt-20 py-16 md:py-24 bg-muted">
@@ -22,7 +16,7 @@ const Fitness = ({ onOpenBooking }: FitnessProps) => (
       </Reveal>
 
       <Reveal className="grid md:grid-cols-3 gap-6 md:gap-8">
-        {programs.map(({ icon: Icon, title, desc }) => (
+        {trainingProgrammes.map(({ icon: Icon, title, description: desc }) => (
           <div
             key={title}
             className="glass-card glow-border glow-border-hover p-6 md:p-8 text-center transition duration-300 hover:-translate-y-1 group"
