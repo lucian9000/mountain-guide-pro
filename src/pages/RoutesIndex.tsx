@@ -2,7 +2,7 @@ import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import RouteCard from "@/components/routes/RouteCard";
 import DataState from "@/components/admin/DataState";
-import { usePublishedRoutes, useTourPrices } from "@/lib/queries/content";
+import { usePublishedRoutes, useTourPrices, useTourPriceRows } from "@/lib/queries/content";
 
 // MAP REMOVED — Phase 5: RoutesOverviewMap (@/components/maps/RoutesOverviewMap)
 // will be re-added when route mapping is ready. Component file kept in place.
@@ -11,6 +11,9 @@ import { usePublishedRoutes, useTourPrices } from "@/lib/queries/content";
 const RoutesIndex = () => {
   const routes = usePublishedRoutes();
   const prices = useTourPrices();
+  // Rows (with names) enable RouteCard's case-insensitive name fallback for
+  // routes whose pricing row has no tour_slug. One query, not one per card.
+  const priceRows = useTourPriceRows();
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">
@@ -44,6 +47,7 @@ const RoutesIndex = () => {
                 key={route.id}
                 route={route}
                 tourPrice={prices.data?.[route.slug]}
+                pricingRows={priceRows.data}
               />
             ))}
           </div>

@@ -121,6 +121,26 @@ export const useTourPrices = () =>
     },
   });
 
+/**
+ * Raw active pricing rows (including `name`), for matching a route to its tour
+ * when there is no `tour_slug` — the case-insensitive name fallback used by
+ * RouteCard. Kept separate from `useTourPrices` so its slug-keyed map (relied
+ * on by RouteDetail) keeps its shape.
+ */
+export const useTourPriceRows = () =>
+  useQuery<
+    { id: string; tour_slug: string | null; name: string; price: number; price_group: number | null }[]
+  >({
+    queryKey: ["public", "tour-price-rows"],
+    queryFn: async () =>
+      unwrap(
+        await supabase
+          .from("pricing")
+          .select("id, tour_slug, name, price, price_group")
+          .eq("active", true)
+      ),
+  });
+
 /** Site-wide price items (price_items table) keyed by item_key. */
 export const usePriceItems = () =>
   useQuery<Record<string, PriceItem>>({
