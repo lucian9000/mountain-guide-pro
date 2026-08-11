@@ -2,10 +2,10 @@ import { MessageCircle } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface CTAProps {
-  onOpenChat: () => void;
+  onOpenBooking: () => void;
 }
 
-const CTASection = ({ onOpenChat }: CTAProps) => (
+const CTASection = ({ onOpenBooking }: CTAProps) => (
   <section className="py-16 md:py-24 bg-primary relative overflow-hidden">
     <div className="absolute inset-0 bg-[image:var(--glow-cyan-top-right)]" />
     <div className="absolute inset-0 bg-[image:var(--glow-gold-bottom-left)]" />
@@ -28,7 +28,7 @@ const CTASection = ({ onOpenChat }: CTAProps) => (
           <MessageCircle className="w-5 h-5" /> Contact Now
         </a>
         <button
-          onClick={onOpenChat}
+          onClick={onOpenBooking}
           className="border-2 border-foreground/20 text-foreground hover:border-accent hover:text-accent px-8 md:px-10 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Chat with Us

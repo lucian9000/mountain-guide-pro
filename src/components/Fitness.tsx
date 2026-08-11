@@ -2,7 +2,7 @@ import { Dumbbell, Mountain, Users } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface FitnessProps {
-  onOpenChat: () => void;
+  onOpenBooking: () => void;
 }
 
 const programs = [
@@ -11,7 +11,7 @@ const programs = [
   { icon: Users, title: "Custom Programs", desc: "4-12 week programs tailored to your specific goals." },
 ];
 
-const Fitness = ({ onOpenChat }: FitnessProps) => (
+const Fitness = ({ onOpenBooking }: FitnessProps) => (
   <section id="fitness" className="scroll-mt-20 py-16 md:py-24 bg-muted">
     <div className="container mx-auto px-4">
       <Reveal className="text-center mb-10 md:mb-16">
@@ -33,7 +33,7 @@ const Fitness = ({ onOpenChat }: FitnessProps) => (
             <h3 className="font-heading text-lg font-bold text-foreground mb-3 tracking-wider uppercase">{title}</h3>
             <p className="text-muted-foreground text-sm mb-6">{desc}</p>
             <button
-              onClick={onOpenChat}
+              onClick={onOpenBooking}
               className="text-accent hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase"
             >
               Learn More →

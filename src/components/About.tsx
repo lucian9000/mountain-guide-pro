@@ -3,7 +3,7 @@ import { Shield, Leaf, Camera } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface AboutProps {
-  onOpenChat: () => void;
+  onOpenBooking: () => void;
 }
 
 const features = [
@@ -12,7 +12,7 @@ const features = [
   { icon: Camera, title: "Storytelling & Memories", desc: "Every peak has a story. Ernest weaves narrative into nature." },
 ];
 
-const About = ({ onOpenChat }: AboutProps) => (
+const About = ({ onOpenBooking }: AboutProps) => (
   <section id="about" className="scroll-mt-20 py-16 md:py-24 bg-background">
     <div className="container mx-auto px-4">
       <div className="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
@@ -55,7 +55,7 @@ const About = ({ onOpenChat }: AboutProps) => (
 
           <div className="flex flex-wrap gap-3">
             <button
-              onClick={onOpenChat}
+              onClick={onOpenBooking}
               className="bg-accent hover:bg-cyan-hover text-accent-foreground px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105"
             >
               Book with Ernest

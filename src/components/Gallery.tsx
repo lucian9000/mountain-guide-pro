@@ -7,7 +7,7 @@ import { Mountain } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface GalleryProps {
-  onOpenChat: () => void;
+  onOpenBooking: () => void;
 }
 
 const thirteenPeaks = [
@@ -26,7 +26,7 @@ const thirteenPeaks = [
   "Devil's Peak",
 ];
 
-const Gallery = ({ onOpenChat }: GalleryProps) => (
+const Gallery = ({ onOpenBooking }: GalleryProps) => (
   <section className="py-16 md:py-24 bg-background">
     <div className="container mx-auto px-4">
       <Reveal className="text-center mb-10 md:mb-16">
@@ -159,7 +159,7 @@ const Gallery = ({ onOpenChat }: GalleryProps) => (
             Are you tracking, or are you backing out?
           </p>
           <button
-            onClick={onOpenChat}
+            onClick={onOpenBooking}
             className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105"
           >
             Learn More

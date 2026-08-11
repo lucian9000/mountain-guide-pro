@@ -5,7 +5,7 @@ import { ArrowRight, Clock, TrendingUp } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
 interface ExpeditionsProps {
-  onOpenChat: () => void;
+  onOpenBooking: () => void;
 }
 
 const expeditions = [
@@ -35,7 +35,7 @@ const expeditions = [
   },
 ];
 
-const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
+const Expeditions = ({ onOpenBooking }: ExpeditionsProps) => (
   <section id="expeditions" className="scroll-mt-20 py-16 md:py-24 bg-muted">
     <div className="container mx-auto px-4">
       <Reveal className="text-center mb-10 md:mb-16">
@@ -72,7 +72,7 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
               <p className="text-muted-foreground text-sm mb-4">{exp.description}</p>
               {/* py-3 -my-3 grows the tap target to ≥44px without shifting layout */}
               <button
-                onClick={onOpenChat}
+                onClick={onOpenBooking}
                 className="inline-flex items-center gap-1 py-3 -my-3 text-accent hover:text-cyan-soft font-heading font-bold text-sm transition-colors tracking-wider uppercase rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 View Details <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -84,7 +84,7 @@ const Expeditions = ({ onOpenChat }: ExpeditionsProps) => (
 
       <div className="text-center">
         <button
-          onClick={onOpenChat}
+          onClick={onOpenBooking}
           className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Find Your Adventure

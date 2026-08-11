@@ -15,7 +15,7 @@ interface SiteHeaderProps {
    */
   variant: "overlay" | "solid";
   /** Only used by the overlay variant's chat CTA. */
-  onOpenChat?: () => void;
+  onOpenBooking?: () => void;
 }
 
 type NavItem = { label: string; to?: string; section?: string };
@@ -31,7 +31,7 @@ const NAV_ITEMS: NavItem[] = [
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-const SiteHeader = ({ variant, onOpenChat }: SiteHeaderProps) => {
+const SiteHeader = ({ variant, onOpenBooking }: SiteHeaderProps) => {
   const isOverlay = variant === "overlay";
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -325,10 +325,10 @@ const SiteHeader = ({ variant, onOpenChat }: SiteHeaderProps) => {
               <CalendarRange className="w-4 h-4" /> Book Now
             </Link>
 
-            {onOpenChat && (
+            {onOpenBooking && (
               <button
                 onClick={() => {
-                  onOpenChat();
+                  onOpenBooking();
                   setIsMobileOpen(false);
                 }}
                 className="inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-accent px-6 py-3 rounded-lg font-heading font-bold text-sm tracking-wider uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"

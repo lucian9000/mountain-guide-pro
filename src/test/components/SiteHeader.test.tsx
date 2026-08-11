@@ -22,7 +22,7 @@ vi.mock("@/contexts/AuthContext", () => ({
 }));
 
 const renderHeader = (
-  props: { variant: "overlay" | "solid"; onOpenChat?: () => void } = {
+  props: { variant: "overlay" | "solid"; onOpenBooking?: () => void } = {
     variant: "solid",
   },
   initialEntries: string[] = ["/routes"]

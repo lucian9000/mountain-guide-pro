@@ -11,10 +11,10 @@ const heroImage = "/hero-mountain.webp";
 const HERO_VIDEO = "/hero-section.mp4";
 
 interface HeroProps {
-  onOpenChat: () => void;
+  onOpenBooking: () => void;
 }
 
-const Hero = ({ onOpenChat }: HeroProps) => {
+const Hero = ({ onOpenBooking }: HeroProps) => {
   // Background video runs on all screen sizes (it's only ~0.6 MB, cheaper
   // than a card image). Reduced-motion visitors keep the static image and
   // download zero video bytes.
@@ -86,7 +86,7 @@ const Hero = ({ onOpenChat }: HeroProps) => {
             View Routes
           </button>
           <button
-            onClick={onOpenChat}
+            onClick={onOpenBooking}
             className="bg-accent hover:bg-cyan-hover text-accent-foreground px-8 py-3.5 md:py-4 rounded-lg font-heading font-bold text-sm tracking-wider uppercase shadow-button transition duration-300 hover:scale-105 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Start Your Journey <ArrowRight className="w-4 h-4" />

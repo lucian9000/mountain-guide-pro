@@ -13,14 +13,14 @@ import CTASection from "@/components/CTASection";
 import SocialFeed from "@/components/SocialFeed";
 import DataUsageDisclosure from "@/components/DataUsageDisclosure";
 import Footer from "@/components/Footer";
-import ChatWidget from "@/components/ChatWidget";
+import QuickBookPanel from "@/components/QuickBookPanel";
 import EventBanner from "@/components/EventBanner";
 import UpcomingAdventures from "@/components/UpcomingAdventures";
 import BackToTop from "@/components/BackToTop";
 
 const Index = () => {
-  const [chatOpen, setChatOpen] = useState(false);
-  const openChat = () => setChatOpen(true);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const openBooking = () => setBookingOpen(true);
   const location = useLocation();
 
   // Land on the right section when arriving via /#<section> (e.g. from a
@@ -37,27 +37,27 @@ const Index = () => {
 
   return (
     <div className="min-h-dvh">
-      <SiteHeader variant="overlay" onOpenChat={openChat} />
+      <SiteHeader variant="overlay" onOpenBooking={openBooking} />
       <main id="main">
-        <Hero onOpenChat={openChat} />
+        <Hero onOpenBooking={openBooking} />
         <TrustBar />
         <Services />
-        <Expeditions onOpenChat={openChat} />
+        <Expeditions onOpenBooking={openBooking} />
         <UpcomingAdventures />
-        <About onOpenChat={openChat} />
-        <Fitness onOpenChat={openChat} />
-        <Gallery onOpenChat={openChat} />
+        <About onOpenBooking={openBooking} />
+        <Fitness onOpenBooking={openBooking} />
+        <Gallery onOpenBooking={openBooking} />
         <Values />
-        <CTASection onOpenChat={openChat} />
+        <CTASection onOpenBooking={openBooking} />
         <SocialFeed />
         <DataUsageDisclosure />
       </main>
       <Footer />
       <BackToTop />
-      <ChatWidget
-        isOpen={chatOpen}
-        onOpen={openChat}
-        onClose={() => setChatOpen(false)}
+      <QuickBookPanel
+        isOpen={bookingOpen}
+        onOpen={openBooking}
+        onClose={() => setBookingOpen(false)}
       />
       <EventBanner />
     </div>
