@@ -1,28 +1,59 @@
 # Supabase Storage Setup
 
-Image uploads for the admin panel. **Creating the buckets is a one-time manual
-step** — the app never creates them, so until you do this the admin image
-pickers fall back to "paste a URL instead" (with a clear toast, no crash).
+Image uploads for the admin panel. The app never creates buckets, so if one is
+missing the admin image picker falls back to "paste a URL instead" (with a clear
+toast, no crash).
 
-## Current state
+## Current state — ✅ all applied (2026-08-11)
 
 | Bucket | Status | Used by |
 |---|---|---|
-| `route-images` | ✅ already created | Route gallery + What's New images (`src/lib/images.ts`) |
-| `event-images` | ⬜ **create this** | Admin → Events → wizard step 3 |
-| `special-images` | ⬜ **create this** | Admin → Specials → create/edit |
-| `guide-photos` | ⬜ **create this** | Admin → Guides → create/edit |
+| `route-images` | ✅ created | Route gallery + What's New images (`src/lib/images.ts`) |
+| `event-images` | ✅ created (public, 3 MB) | Admin → Events → wizard step 3 |
+| `special-images` | ✅ created (public, 3 MB) | Admin → Specials → create/edit |
+| `guide-photos` | ✅ created (public, 3 MB) | Admin → Guides → create/edit |
+
+Applied as migration `phase6_storage_buckets_and_policies`. Verified: public
+read works (a missing object returns `404 not_found`, not a permission error)
+and an anonymous upload is refused with *"new row violates row-level security
+policy"* — so only an admin profile can write.
 
 > Note: an earlier draft of this doc called the specials bucket
 > `specials-images` (plural). The code uses **`special-images`** — match the
 > code.
 
-## Option A — SQL (fastest)
+## Re-running / doing this on another project
+
+### Option A — SQL (fastest)
 
 Run the **`-- STORAGE POLICIES`** section at the bottom of
 [`supabase/schema-phase6.sql`](../supabase/schema-phase6.sql) in
 Dashboard → SQL Editor. It creates all three buckets and their policies, and is
 idempotent (safe to re-run).
+
+⚠️ **Two gotchas that make it look like it worked when it didn't:**
+
+1. **The SQL editor runs only your *selection* if any text is highlighted.**
+   Highlighting just the `-- STORAGE POLICIES` comment header runs a block of
+   comments — which succeeds and does nothing. Click into the editor and clear
+   the selection (or select the whole block from `insert into storage.buckets`
+   to the final `end $$;`) before running.
+2. **"Success. No rows returned" is the expected output.** `insert`,
+   `create policy` and `do $$ … $$` blocks never return rows, so that message
+   means it ran — it is *not* a warning.
+
+Always confirm with this, which *does* return rows:
+
+```sql
+select id, public, file_size_limit from storage.buckets order by id;
+
+select policyname, cmd from pg_policies
+where schemaname = 'storage' and tablename = 'objects'
+order by policyname;
+```
+
+You should see four buckets and four policies per new bucket
+(public read + admin insert/update/delete).
 
 ## Option B — Dashboard click-through
 

@@ -8,7 +8,7 @@ SummitFit Adventures is a single-page marketing website for Ernest Carrick — a
 
 ## Features
 
-- **Interactive Chat Widget** — guided conversation flow that recommends routes based on fitness level and connects users to WhatsApp for booking
+- **Quick Book panel** — a floating "Book Now" menu listing every route and training programme, with one-tap booking (see Phase 6 below; it replaced the old chat widget)
 - **5 Guided Routes** — Lion's Head, Platteklip Gorge, Kasteelspoort, Waterworks/Skeleton Gorge, India Venster
 - **Personal Training** — Strength, Trail Fitness, and Custom 4–12 week programs
 - **Corporate Events** — Half/full-day team-building experiences
@@ -23,7 +23,7 @@ gracefully (the site still loads; sign-in shows a "not available yet" notice).
 
 | Area | Status | Requires |
 |------|--------|----------|
-| Marketing site (hero, routes, training, gallery, chat widget, social embeds) | ✅ Works out of the box | nothing |
+| Marketing site (hero, routes, training, gallery, quick-book panel, social embeds) | ✅ Works out of the box | nothing |
 | Mobile navigation + premium polish | ✅ Works | nothing |
 | Google sign-in (SSO) | ⚙️ Built | Supabase + Google OAuth + env vars |
 | Client dashboard (`/dashboard` — bookings, account) | ⚙️ Built | Supabase + sign-in |
@@ -33,7 +33,7 @@ gracefully (the site still loads; sign-in shows a "not available yet" notice).
 | Live guide availability + calendar sync | 🚧 Stub | Edge Function + Google Calendar API |
 | Confirmation / transactional emails | 🚧 Stub | Edge Function + email provider |
 | Mailchimp / Loops contact sync | 🚧 Stub | Edge Function + DB webhook |
-| Image uploads for specials & guides | 🚧 Stub (paste a URL for now) | Supabase Storage |
+| Image uploads (events, specials, guides) | ✅ Works | Supabase Storage buckets (already created) |
 
 **Legend:** ✅ works now · ⚙️ code complete, needs a one-time Supabase setup · 🚧 stubbed,
 needs a backend (Supabase Edge Functions). See [Roadmap / next steps](#roadmap--next-steps).
@@ -359,12 +359,18 @@ wizard**, **specials** and **guides** forms:
 - Pasting a URL still works as a fallback, and a failed upload keeps your
   selection with a **Retry** button.
 
-**One-time manual step:** the three buckets must be created before uploads
-work — either run the `-- STORAGE POLICIES` section at the bottom of
-`supabase/schema-phase6.sql`, or follow
-[`docs/supabase-storage-setup.md`](docs/supabase-storage-setup.md). Until then
-the picker says *"Image upload isn't set up yet — paste a URL instead"* and
-reveals the URL box, rather than failing.
+**Bucket setup is already applied** — migration
+`phase6_storage_buckets_and_policies` created `event-images`, `special-images`
+and `guide-photos` (public read, 3 MB, admin-only writes). Verified: anonymous
+uploads are refused by RLS and public reads work.
+
+To recreate them on another project, run the `-- STORAGE POLICIES` section at
+the bottom of `supabase/schema-phase6.sql` — and read the two gotchas in
+[`docs/supabase-storage-setup.md`](docs/supabase-storage-setup.md) first (the
+SQL editor runs only your *selection*, and "Success. No rows returned" is the
+expected output, not a warning). If a bucket is ever missing, the picker says
+*"Image upload isn't set up yet — paste a URL instead"* and opens the URL box
+rather than failing.
 
 ## Contact
 
