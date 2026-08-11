@@ -186,7 +186,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-background flex items-center justify-center px-4 relative overflow-hidden">
+    <main id="main" className="min-h-dvh bg-background flex items-center justify-center px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[image:var(--glow-cyan-top)]" />
 
       <div className="relative z-10 w-full max-w-md glass-card glow-border p-8 md:p-10 text-center">
@@ -383,7 +383,7 @@ const Login = () => {
           <ArrowLeft className="w-4 h-4" /> Back to site
         </Link>
       </div>
-    </div>
+    </main>
   );
 };
 

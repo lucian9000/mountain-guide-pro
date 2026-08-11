@@ -25,7 +25,7 @@ const ResetPassword = () => {
   const [pending, setPending] = useState(false);
 
   const shell = (children: ReactNode) => (
-    <div className="min-h-dvh bg-background flex items-center justify-center px-4 relative overflow-hidden">
+    <main id="main" className="min-h-dvh bg-background flex items-center justify-center px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[image:var(--glow-cyan-top)]" />
       <div className="relative z-10 w-full max-w-md glass-card glow-border p-8 md:p-10 text-center">
         <Link to="/" className="inline-flex items-center gap-3 mb-8">
@@ -46,7 +46,7 @@ const ResetPassword = () => {
           <ArrowLeft className="w-4 h-4" /> Back to sign in
         </Link>
       </div>
-    </div>
+    </main>
   );
 
   if (loading) return <AuthLoading />;
