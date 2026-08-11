@@ -1,6 +1,15 @@
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
+import { Download } from "lucide-react";
 import { useAdminBookings, useUpdateBookingStatus } from "@/lib/queries/admin";
+import { useAdminEvents } from "@/lib/queries/events";
+import {
+  buildRegisterCsv,
+  downloadCsv,
+  registerFileName,
+} from "@/components/admin/eventCsv";
+import { formatEventDate } from "@/components/admin/eventFormat";
+import { Button } from "@/components/ui/button";
 import type { BookingStatus, BookingWithRelations } from "@/lib/types/db";
 import { sendBookingConfirmationEmail } from "@/lib/email";
 import { useToast } from "@/hooks/use-toast";
@@ -33,9 +42,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-type TabKey = "upcoming" | "past" | "pending" | "cancelled";
+type TabKey = "upcoming" | "past" | "pending" | "cancelled" | "events";
+type ListTabKey = Exclude<TabKey, "events">;
 
-const TABS: { key: TabKey; label: string }[] = [
+const TABS: { key: ListTabKey; label: string }[] = [
   { key: "upcoming", label: "Upcoming" },
   { key: "past", label: "Past" },
   { key: "pending", label: "Pending" },
@@ -53,7 +63,7 @@ const statusClasses: Record<BookingStatus, string> = {
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
-const filterByTab = (rows: BookingWithRelations[], tab: TabKey) => {
+const filterByTab = (rows: BookingWithRelations[], tab: ListTabKey) => {
   const today = todayISO();
   switch (tab) {
     case "upcoming":
@@ -75,7 +85,42 @@ const AdminBookings = () => {
   const [tab, setTab] = useState<TabKey>("upcoming");
   const [cancelTarget, setCancelTarget] = useState<BookingWithRelations | null>(null);
 
-  const rows = useMemo(() => (data ? filterByTab(data, tab) : []), [data, tab]);
+  const events = useAdminEvents();
+
+  const rows = useMemo(
+    () => (data && tab !== "events" ? filterByTab(data, tab) : []),
+    [data, tab]
+  );
+
+  /** Bookings that belong to an event, grouped by event, newest event first. */
+  const eventGroups = useMemo(() => {
+    const byEvent = new Map<string, BookingWithRelations[]>();
+    for (const b of data ?? []) {
+      if (!b.event_id || b.status === "cancelled") continue;
+      const list = byEvent.get(b.event_id) ?? [];
+      list.push(b);
+      byEvent.set(b.event_id, list);
+    }
+    return (events.data ?? [])
+      .filter((e) => byEvent.has(e.id))
+      .map((e) => ({ event: e, bookings: byEvent.get(e.id) as BookingWithRelations[] }))
+      .sort((a, b) => b.event.event_date.localeCompare(a.event.event_date));
+  }, [data, events.data]);
+
+  const downloadRegister = (
+    title: string,
+    date: string,
+    bookings: BookingWithRelations[]
+  ) => {
+    const csv = buildRegisterCsv(
+      bookings.map((b) => ({
+        name: b.client?.full_name ?? "",
+        email: b.client?.email ?? "",
+        participants: b.participants,
+      }))
+    );
+    downloadCsv(registerFileName(title, date), csv);
+  };
 
   const applyStatus = async (b: BookingWithRelations, status: BookingStatus) => {
     try {
@@ -117,7 +162,69 @@ const AdminBookings = () => {
               {t.label}
             </TabsTrigger>
           ))}
+          <TabsTrigger value="events">Events</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="events">
+          <div className="space-y-6">
+            <DataState
+              loading={isLoading || events.isLoading}
+              error={error ?? events.error}
+              empty={eventGroups.length === 0}
+              emptyMessage="No event bookings yet."
+            >
+              {eventGroups.map(({ event, bookings }) => (
+                <section key={event.id} className="glass-card glow-border p-4 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className="font-heading font-bold text-foreground text-base">
+                        {event.title}
+                      </h2>
+                      <p className="text-muted-foreground text-sm">
+                        {formatEventDate(event.event_date)} ·{" "}
+                        {bookings.reduce((sum, b) => sum + b.participants, 0)} of{" "}
+                        {event.capacity} spots booked
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        downloadRegister(event.title, event.event_date, bookings)
+                      }
+                      className="h-11 gap-2 focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      <Download className="w-4 h-4" /> Download list
+                    </Button>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Participants</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bookings.map((b) => (
+                          <TableRow key={b.id}>
+                            <TableCell className="text-sm">
+                              {b.client?.full_name ?? "—"}
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">
+                              {b.client?.email ?? "—"}
+                            </TableCell>
+                            <TableCell className="text-sm">{b.participants}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </section>
+              ))}
+            </DataState>
+          </div>
+        </TabsContent>
 
         {TABS.map((t) => (
           <TabsContent key={t.key} value={t.key}>

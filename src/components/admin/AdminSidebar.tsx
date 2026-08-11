@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
   ArrowLeft,
+  CalendarDays,
   CalendarRange,
   LayoutDashboard,
   Map,
@@ -20,6 +21,7 @@ export const ADMIN_NAV = [
   { to: "/admin/pricing", label: "Pricing", icon: Tag, end: false },
   { to: "/admin/specials", label: "Specials", icon: Sparkles, end: false },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarRange, end: false },
+  { to: "/admin/events", label: "Events", icon: CalendarDays, end: false },
   { to: "/admin/guides", label: "Guides", icon: Mountain, end: false },
   // Content area
   { to: "/admin/routes", label: "Routes", icon: Map, end: false },
