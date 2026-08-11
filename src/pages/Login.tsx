@@ -202,10 +202,12 @@ const Login = () => {
         </Link>
 
         <h1 className="font-heading text-2xl md:text-3xl font-black text-foreground mb-2 tracking-wider uppercase">
-          Sign In
+          {mode === "signup" ? "Create Account" : "Sign In"}
         </h1>
         <p className="text-muted-foreground text-sm mb-8">
-          Sign in to book a guided tour or access your account.
+          {mode === "signup"
+            ? "Create a free account to book guided tours and track your adventures."
+            : "Sign in to book a guided tour or access your account."}
         </p>
 
         {!isSupabaseConfigured && (
