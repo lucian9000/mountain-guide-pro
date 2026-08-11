@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import ImageUpload from "@/components/admin/ImageUpload";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -88,16 +89,14 @@ const GuideFormDialog = ({ open, onOpenChange, guide, onSave, saving }: Props) =
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="g-photo">Photo URL</Label>
-            <Input
+            <Label htmlFor="g-photo">Photo</Label>
+            <ImageUpload
               id="g-photo"
-              placeholder="https://…"
-              value={draft.photo_url}
-              onChange={(e) => set("photo_url", e.target.value)}
+              bucket="guide-photos"
+              aspectRatio="1/1"
+              value={draft.photo_url || null}
+              onChange={(url) => set("photo_url", url ?? "")}
             />
-            <p className="text-muted-foreground/60 text-xs">
-              Phase 3: Supabase Storage upload (bucket: guide-photos).
-            </p>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="g-spec">Specialties</Label>

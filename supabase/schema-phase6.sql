@@ -246,3 +246,59 @@ where lower(email) in (
 ) and role <> 'admin';
 
 -- (trigger on_auth_user_created already exists from schema.sql and is unchanged)
+
+
+-- =====================================================================
+-- STORAGE POLICIES  (admin image uploads: events, specials, guide photos)
+-- =====================================================================
+-- ⚠️ NOT applied automatically — run this yourself, or create the buckets in
+-- Dashboard → Storage and add the policies below. See
+-- docs/supabase-storage-setup.md for the click-through version.
+--
+-- Mirrors the existing `route-images` policy shape: public READ comes from the
+-- bucket's `public` flag, and writes are gated on the existing is_admin()
+-- helper, so only an admin profile can upload/replace/delete.
+
+-- 1. Buckets — public read, 3 MB cap, images only.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values
+  ('event-images',   'event-images',   true, 3145728, array['image/jpeg','image/png','image/webp']),
+  ('special-images', 'special-images', true, 3145728, array['image/jpeg','image/png','image/webp']),
+  ('guide-photos',   'guide-photos',   true, 3145728, array['image/jpeg','image/png','image/webp'])
+on conflict (id) do update
+  set public             = excluded.public,
+      file_size_limit    = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
+
+-- 2. Policies. SELECT is granted to anyone so the live site can load images;
+--    every write requires is_admin().
+do $$
+declare
+  b text;
+begin
+  foreach b in array array['event-images', 'special-images', 'guide-photos'] loop
+    execute format('drop policy if exists "public read %1$s" on storage.objects', b);
+    execute format(
+      'create policy "public read %1$s" on storage.objects for select using (bucket_id = %2$L)',
+      b, b
+    );
+
+    execute format('drop policy if exists "admin write %1$s" on storage.objects', b);
+    execute format(
+      'create policy "admin write %1$s" on storage.objects for insert with check (bucket_id = %2$L and public.is_admin())',
+      b, b
+    );
+
+    execute format('drop policy if exists "admin update %1$s" on storage.objects', b);
+    execute format(
+      'create policy "admin update %1$s" on storage.objects for update using (bucket_id = %2$L and public.is_admin())',
+      b, b
+    );
+
+    execute format('drop policy if exists "admin delete %1$s" on storage.objects', b);
+    execute format(
+      'create policy "admin delete %1$s" on storage.objects for delete using (bucket_id = %2$L and public.is_admin())',
+      b, b
+    );
+  end loop;
+end $$;

@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import ImageUpload from "@/components/admin/ImageUpload";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -98,16 +99,14 @@ const SpecialFormDialog = ({ open, onOpenChange, special, onSave, saving }: Prop
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="sp-img">Image URL</Label>
-            <Input
+            <Label htmlFor="sp-img">Photo</Label>
+            <ImageUpload
               id="sp-img"
-              placeholder="https://…"
-              value={draft.image_url}
-              onChange={(e) => set("image_url", e.target.value)}
+              bucket="special-images"
+              aspectRatio="16/9"
+              value={draft.image_url || null}
+              onChange={(url) => set("image_url", url ?? "")}
             />
-            <p className="text-muted-foreground/60 text-xs">
-              Phase 3: this becomes a Supabase Storage upload (bucket: specials-images).
-            </p>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1.5">

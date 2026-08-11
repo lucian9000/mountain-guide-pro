@@ -202,6 +202,14 @@
 }
 
 /* Respect users who prefer reduced motion */
+@keyframes indeterminate-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.animate-indeterminate {
+  animation: indeterminate-slide 1.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -216,6 +224,11 @@
   .animate-bounce,
   .animate-pulse {
     animation: none;
+  }
+  .animate-indeterminate {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
   }
   .animate-fade-in-up,
   .animate-slide-in-bottom {

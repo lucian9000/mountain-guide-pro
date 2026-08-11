@@ -342,6 +342,30 @@ formerly `ChatWidget.tsx`/`ChatPanel.tsx`):
 Training programmes now live in `src/data/training.ts`, shared by this panel and
 the homepage Fitness section so the two cannot drift apart.
 
+### Admin image uploads
+
+The `image_url` / `photo_url` text boxes in the admin panel are now a real
+upload control (`src/components/admin/ImageUpload.tsx`), used by the **event
+wizard**, **specials** and **guides** forms:
+
+- Tap/click or drag a photo in — on a phone it opens the camera directly
+  (`capture="environment"`), which matters because the admin works from a phone.
+- The file is validated (image, under 5 MB), previewed instantly, then
+  compressed **in the browser** to ≤1600px WebP before upload — no server, no new
+  dependency (it reuses the compressor already powering route-gallery uploads).
+- It uploads through the anon client into a public Storage bucket
+  (`event-images`, `special-images`, `guide-photos`); Storage RLS policies are
+  what authorise the write, so the service_role key is never in the bundle.
+- Pasting a URL still works as a fallback, and a failed upload keeps your
+  selection with a **Retry** button.
+
+**One-time manual step:** the three buckets must be created before uploads
+work — either run the `-- STORAGE POLICIES` section at the bottom of
+`supabase/schema-phase6.sql`, or follow
+[`docs/supabase-storage-setup.md`](docs/supabase-storage-setup.md). Until then
+the picker says *"Image upload isn't set up yet — paste a URL instead"* and
+reveals the URL box, rather than failing.
+
 ## Contact
 
 - **WhatsApp / Phone:** +27 67 130 1536

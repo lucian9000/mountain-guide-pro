@@ -11,6 +11,7 @@ import { useGuides } from "@/lib/queries/admin";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import EventPreviewCard from "@/components/admin/EventPreviewCard";
+import ImageUpload from "@/components/admin/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -326,13 +327,13 @@ const AdminEventEditor = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="event-image">Image URL</Label>
-              <Input
+              <Label htmlFor="event-image">Photo</Label>
+              <ImageUpload
                 id="event-image"
-                className="h-12 text-base"
-                placeholder="https://…"
-                value={draft.image_url ?? ""}
-                onChange={(e) => set("image_url", e.target.value)}
+                bucket="event-images"
+                aspectRatio="16/9"
+                value={draft.image_url || null}
+                onChange={(url) => set("image_url", url)}
               />
             </div>
             <div className="space-y-1.5">
