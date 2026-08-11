@@ -21,6 +21,7 @@ const RoutesIndex = lazy(() => import("./pages/RoutesIndex"));
 const RouteDetail = lazy(() => import("./pages/RouteDetail"));
 const News = lazy(() => import("./pages/News"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const DashboardLayout = lazy(() => import("./pages/dashboard/DashboardLayout"));
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
 const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
@@ -35,6 +36,8 @@ const AdminGuides = lazy(() => import("./pages/admin/AdminGuides"));
 const AdminRoutes = lazy(() => import("./pages/admin/AdminRoutes"));
 const AdminRouteEditor = lazy(() => import("./pages/admin/AdminRouteEditor"));
 const AdminUpdates = lazy(() => import("./pages/admin/AdminUpdates"));
+const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
+const AdminEventEditor = lazy(() => import("./pages/admin/AdminEventEditor"));
 
 const queryClient = new QueryClient();
 
@@ -79,6 +82,7 @@ const App = () => (
               <Route path="/routes/:slug" element={<RouteDetail />} />
               <Route path="/news" element={<News />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
@@ -100,6 +104,9 @@ const App = () => (
                   <Route path="/admin/routes/new" element={<AdminRouteEditor />} />
                   <Route path="/admin/routes/:id" element={<AdminRouteEditor />} />
                   <Route path="/admin/updates" element={<AdminUpdates />} />
+                  <Route path="/admin/events" element={<AdminEvents />} />
+                  <Route path="/admin/events/new" element={<AdminEventEditor />} />
+                  <Route path="/admin/events/:id" element={<AdminEventEditor />} />
                 </Route>
               </Route>
 

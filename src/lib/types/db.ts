@@ -8,7 +8,10 @@ export interface Pricing {
   name: string;
   description: string | null;
   price: number;
+  /** Per-person price for groups of >= group_min_size. null = no group rate. */
   price_group: number | null;
+  /** Party size from which price_group applies instead of price (Phase 6). */
+  group_min_size: number;
   currency: string;
   duration: string | null;
   difficulty: number | null;
@@ -18,6 +21,19 @@ export interface Pricing {
   created_at: string;
   updated_at: string;
 }
+
+/**
+ * Per-person rate for a party size, applying the group rate once the party
+ * reaches `group_min_size`. Single source of truth for booking price maths.
+ */
+export const perPersonPrice = (tour: Pricing, participants: number): number =>
+  tour.price_group != null && participants >= (tour.group_min_size ?? 4)
+    ? Number(tour.price_group)
+    : Number(tour.price);
+
+/** True when the group rate is what `perPersonPrice` would return. */
+export const isGroupRate = (tour: Pricing, participants: number): boolean =>
+  tour.price_group != null && participants >= (tour.group_min_size ?? 4);
 
 export interface Special {
   id: string;
@@ -44,11 +60,45 @@ export interface Guide {
   created_at: string;
 }
 
+/** A one-off dated group adventure (Phase 6). */
+export interface EventItem {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  /** ISO date, e.g. "2026-08-14". */
+  event_date: string;
+  /** "HH:MM:SS" (plain time, SAST) or null. */
+  start_time: string | null;
+  duration_hours: number | null;
+  capacity: number;
+  price_per_person: number;
+  image_url: string | null;
+  is_published: boolean;
+  guide_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Row of the public `event_availability` view. */
+export interface EventAvailability {
+  id: string;
+  capacity: number;
+  spots_left: number;
+}
+
+/** Event plus its remaining spots (joined client-side from the view). */
+export interface EventWithSpots extends EventItem {
+  spots_left: number | null;
+}
+
 export interface Booking {
   id: string;
   booking_ref: string | null;
   user_id: string | null;
   pricing_id: string | null;
+  /** Set when this booking is for a group event instead of a private tour. */
+  event_id: string | null;
   guide_id: string | null;
   booking_date: string;
   time_slot: string | null;
