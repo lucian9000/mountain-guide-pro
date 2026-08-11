@@ -253,6 +253,60 @@ In rough priority order:
    reminders, collect a deposit/payment at booking, and opt into the React Router v7 future
    flags to clear the console warnings.
 
+## Phase 6 — Email auth, group events & group pricing
+
+Phase 6 adds a second way to sign in, one-off **group events** with capacity
+tracking, group pricing on private tours, a mobile-first admin, and event
+visibility across the public site.
+
+### One-time setup
+
+1. **Run the SQL.** Apply `supabase/schema-phase6.sql` (Supabase Dashboard → SQL
+   Editor, or as a migration). It is additive and idempotent — safe to re-run.
+   It creates `events`, adds `pricing.group_min_size` and `bookings.event_id`,
+   creates the `event_availability` view and the overbooking guard, and extends
+   `handle_new_user()` to carry `marketing_opt_in` from email sign-ups.
+
+2. **Enable the Email provider.** Supabase Dashboard → **Authentication →
+   Providers → Email** → enable.
+   - **Confirm email: OFF is recommended initially** — the lowest-friction path
+     from "I want to book" to a booking. Turn it ON later if you start seeing
+     junk sign-ups; the code already handles both (with confirmation on, sign-up
+     shows "Check your inbox to confirm your email" instead of signing straight in).
+   - Password minimum is Supabase's default of 6 characters; the form validates
+     to match.
+
+3. **Set the redirect allow-list.** Supabase Dashboard → Authentication → URL
+   Configuration → add `https://summitfitadventures.com/reset-password` (and
+   `http://localhost:8080/reset-password` for local work) so the password-reset
+   link is accepted.
+
+**No new environment variables.** Phase 6 uses the existing `VITE_SUPABASE_URL`,
+`VITE_SUPABASE_ANON_KEY` and `VITE_SITE_URL` (the latter builds the reset-password
+redirect). As always, everything degrades gracefully: with no Supabase config the
+marketing site works fully and the event sections simply don't render.
+
+### What's new
+
+| Area | Change |
+|---|---|
+| Auth | Email/password sign-in + sign-up alongside Google SSO; "Keep me posted" opt-in stored on the profile; `/reset-password` flow |
+| Events | `events` table, admin 3-step creation wizard, publish/draft, duplicate |
+| Capacity | `event_availability` view + a DB trigger that refuses overbooking (`EVENT_FULL`) |
+| Group pricing | `pricing.price_group` now pairs with `group_min_size`; the booking page applies the group rate automatically and shows "Group rate applied ✓" |
+| Admin | Action-first dashboard, pricing as cards + a simple edit dialog, events manager, per-event attendance register with CSV export |
+| Public | "Book Now" FAB, bottom slide-in event banner, "Upcoming Adventures" homepage section, group-event booking mode, prices on route cards |
+
+### Schema notes (why the code may differ from an older spec)
+
+- The party-size column is **`bookings.participants`** (not `participant_count`).
+- The group rate is the pre-existing **`pricing.price_group`**; Phase 6 only added
+  the `group_min_size` threshold. There is no `group_price` column.
+- `events.start_time` is a plain `time` (the business is single-timezone).
+- A booking may reference a tour **or** an event, never both — enforced by the
+  `bookings_single_subject` check. It is deliberately permissive about *neither*,
+  because calendar-synced bookings can have no matched tour.
+
 ## Contact
 
 - **WhatsApp / Phone:** +27 67 130 1536

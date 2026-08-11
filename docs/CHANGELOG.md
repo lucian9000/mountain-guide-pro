@@ -12,6 +12,42 @@ retroactively; numbering starts for real at 3.0.0.
 
 ---
 
+## Unreleased (Phase 6) — Email auth, group events, admin redesign (2026-07-10)
+
+Local branch `v4/phase-6`. DB migration `phase6_events_and_group_pricing`
+applied and verified (see `supabase/schema-phase6.sql`).
+
+- **Email/password auth alongside Google SSO.** Sign in / sign up with Full Name
+  and a "Keep me posted" marketing opt-in (carried through auth metadata so it
+  survives email confirmation being on), friendly error mapping, "Forgot
+  password?" and a new `/reset-password` page. Google SSO is untouched.
+- **Group events.** New `events` table (title, date, start time, location,
+  capacity, price per person, image, guide, publish/draft) with RLS: the public
+  sees only published, upcoming events; admins see everything.
+- **Capacity that can't be oversold.** An `event_availability` view exposes
+  `spots_left`, and a `BEFORE INSERT/UPDATE` trigger on `bookings` raises
+  `EVENT_FULL` — locking the event row so two people can't take the last spot
+  at once. Verified live: a 5-capacity event accepted 3 + 2 and rejected a 3rd.
+- **Group pricing on private tours.** `pricing.group_min_size` joins the
+  existing `price_group`; the booking page applies the group rate at the
+  threshold and shows "Group rate applied ✓" with the single rate struck through.
+- **Admin, rebuilt for a phone.** Action-first dashboard (Change a price /
+  Create an event / View bookings), pricing as cards with a minimal edit dialog
+  (advanced fields tucked away), an events manager with a 3-step creation wizard
+  + duplicate, and an Events tab in Bookings doubling as an attendance register
+  with CSV export.
+- **Public site.** Chat launcher becomes a "Book Now" FAB; a bottom slide-in
+  banner promotes the next event (falling back to the active special); an
+  "Upcoming Adventures" homepage section; group-event booking mode on `/booking`
+  with `?event=<id>` deep links; "From R… pp" on route cards.
+- Everything still degrades gracefully with no Supabase config — the marketing
+  site works and the dynamic sections simply don't render.
+- Schema notes: the party-size column is `bookings.participants` (not
+  `participant_count`); the group rate reuses the existing `pricing.price_group`
+  (no `group_price` column was added); `events.start_time` is a plain `time`;
+  and the tour-or-event constraint is permissive about *neither* so
+  calendar-synced bookings with no matched tour still insert.
+
 ## Unreleased — Google OAuth + favicon fixes (2026-07-10)
 
 - **Added a static `/privacy` page** (`src/pages/Privacy.tsx`), required by
