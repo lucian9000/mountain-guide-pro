@@ -1,15 +1,18 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   CalendarPlus,
   Copy,
   Mountain,
   Pencil,
+  Share2,
   Trash2,
 } from "lucide-react";
 import type { EventItem } from "@/lib/types/db";
 import { useAdminEvents, useDeleteEvent } from "@/lib/queries/events";
 import { useToast } from "@/hooks/use-toast";
 import DataState from "@/components/admin/DataState";
+import ShareEventDialog from "@/components/admin/ShareEventDialog";
 import { formatEventDate } from "@/components/admin/eventFormat";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,9 +42,11 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 const EventCard = ({
   event,
   onDelete,
+  onShare,
 }: {
   event: EventRow;
   onDelete: (e: EventRow) => void;
+  onShare: (e: EventRow) => void;
 }) => {
   const navigate = useNavigate();
   const pct = event.capacity > 0 ? Math.min(100, (event.booked / event.capacity) * 100) : 0;
@@ -95,6 +100,15 @@ const EventCard = ({
           </Button>
           <Button
             variant="ghost"
+            aria-label={`Share ${event.title}`}
+            title="Share to Facebook / Instagram"
+            onClick={() => onShare(event)}
+            className="h-11 w-11 p-0 focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <Share2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
             aria-label={`Duplicate ${event.title}`}
             onClick={() => navigate(`/admin/events/new?duplicate=${event.id}`)}
             className="h-11 w-11 p-0 focus-visible:ring-2 focus-visible:ring-accent"
@@ -135,6 +149,7 @@ const AdminEvents = () => {
   const { data, isLoading, error } = useAdminEvents();
   const del = useDeleteEvent();
   const { toast } = useToast();
+  const [shareEvent, setShareEvent] = useState<EventRow | null>(null);
 
   const events = data ?? [];
   const today = todayISO();
@@ -202,7 +217,7 @@ const AdminEvents = () => {
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {upcoming.map((e) => (
-            <EventCard key={e.id} event={e} onDelete={onDelete} />
+            <EventCard key={e.id} event={e} onDelete={onDelete} onShare={setShareEvent} />
           ))}
         </div>
 
@@ -215,7 +230,7 @@ const AdminEvents = () => {
               <AccordionContent>
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 pt-2">
                   {past.map((e) => (
-                    <EventCard key={e.id} event={e} onDelete={onDelete} />
+                    <EventCard key={e.id} event={e} onDelete={onDelete} onShare={setShareEvent} />
                   ))}
                 </div>
               </AccordionContent>
@@ -223,6 +238,12 @@ const AdminEvents = () => {
           </Accordion>
         ) : null}
       </DataState>
+
+      <ShareEventDialog
+        event={shareEvent}
+        open={shareEvent !== null}
+        onOpenChange={(o) => !o && setShareEvent(null)}
+      />
     </div>
   );
 };

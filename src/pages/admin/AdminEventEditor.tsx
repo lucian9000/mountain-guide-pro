@@ -7,7 +7,9 @@ import {
   useUpdateEvent,
   type EventDraft,
 } from "@/lib/queries/events";
+import type { EventItem } from "@/lib/types/db";
 import { useGuides } from "@/lib/queries/admin";
+import ShareEventDialog from "@/components/admin/ShareEventDialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import EventPreviewCard from "@/components/admin/EventPreviewCard";
@@ -27,6 +29,9 @@ import {
 const STEPS = ["The basics", "Spots & price", "Make it look good"] as const;
 
 const NO_GUIDE = "none";
+
+/** Guide picked automatically for a new event when nothing else is chosen. */
+const DEFAULT_GUIDE_RE = /ernest/i;
 
 const emptyDraft = (): EventDraft => ({
   title: "",
@@ -56,6 +61,7 @@ const AdminEventEditor = () => {
   const update = useUpdateEvent();
 
   const [step, setStep] = useState(0);
+  const [shared, setShared] = useState<EventItem | null>(null);
   const [draft, setDraft] = useState<EventDraft>(emptyDraft);
   const [loaded, setLoaded] = useState(false);
 
@@ -81,11 +87,14 @@ const AdminEventEditor = () => {
     setLoaded(true);
   }, [loaded, sourceId, source.data, duplicateOf]);
 
-  // Default a brand-new event to the first active guide, when there is one.
+  // Default a brand-new event to the house guide: Ernest when he exists,
+  // otherwise the longest-standing active guide (the list arrives newest-first).
   useEffect(() => {
     if (sourceId || draft.guide_id) return;
-    const first = (guides.data ?? []).find((g) => g.active);
-    if (first) setDraft((d) => ({ ...d, guide_id: first.id }));
+    const active = (guides.data ?? []).filter((g) => g.active);
+    const preferred =
+      active.find((g) => DEFAULT_GUIDE_RE.test(g.display_name)) ?? active[active.length - 1];
+    if (preferred) setDraft((d) => ({ ...d, guide_id: preferred.id }));
   }, [guides.data, sourceId, draft.guide_id]);
 
   const set = <K extends keyof EventDraft>(field: K, value: EventDraft[K]) =>
@@ -138,18 +147,24 @@ const AdminEventEditor = () => {
     };
 
     try {
+      let saved: EventItem;
       if (isEditing && id) {
-        await update.mutateAsync({ id, ...payload });
+        saved = await update.mutateAsync({ id, ...payload });
         toast({
           title: publish ? "Event published ✓" : "Changes saved ✓",
           description: payload.title,
         });
       } else {
-        await create.mutateAsync(payload);
+        saved = await create.mutateAsync(payload);
         toast({
           title: publish ? "Event published ✓" : "Saved as draft ✓",
           description: payload.title,
         });
+      }
+      // Published events get the share step; drafts just go back to the list.
+      if (publish) {
+        setShared(saved);
+        return;
       }
       navigate("/admin/events");
     } catch (e) {
@@ -431,6 +446,18 @@ const AdminEventEditor = () => {
           </Button>
         </div>
       ) : null}
+
+      {/* After publishing: offer the social share, then return to the list. */}
+      <ShareEventDialog
+        event={shared}
+        open={shared !== null}
+        onOpenChange={(o) => {
+          if (!o) {
+            setShared(null);
+            navigate("/admin/events");
+          }
+        }}
+      />
     </div>
   );
 };
