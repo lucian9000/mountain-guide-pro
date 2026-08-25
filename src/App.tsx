@@ -20,6 +20,7 @@ const BookingConfirmed = lazy(() => import("./pages/BookingConfirmed"));
 const RoutesIndex = lazy(() => import("./pages/RoutesIndex"));
 const RouteDetail = lazy(() => import("./pages/RouteDetail"));
 const News = lazy(() => import("./pages/News"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const DashboardLayout = lazy(() => import("./pages/dashboard/DashboardLayout"));
@@ -81,6 +82,7 @@ const App = () => (
               <Route path="/routes" element={<RoutesIndex />} />
               <Route path="/routes/:slug" element={<RouteDetail />} />
               <Route path="/news" element={<News />} />
+              <Route path="/events/:id" element={<EventDetail />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 

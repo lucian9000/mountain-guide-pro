@@ -16,11 +16,22 @@ import { formatEventDate, formatEventTime } from "@/components/admin/eventFormat
 
 const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, "");
 
-/** Public link for an event. Events render on the homepage, so we deep-link there. */
-export const eventShareUrl = (): string => {
-  const origin = SITE_URL || (typeof window !== "undefined" ? window.location.origin : "");
-  return `${origin}/#upcoming`;
-};
+const siteOrigin = (): string =>
+  SITE_URL || (typeof window !== "undefined" ? window.location.origin : "");
+
+/**
+ * Public link for one event.
+ *
+ * `/e/<id>` is the share endpoint: social crawlers get that event's own image
+ * and title as Open Graph tags (see `api/e/[id].js`), and real visitors are
+ * forwarded to the event page at `/events/<id>`.
+ */
+export const eventShareUrl = (event: Pick<EventItem, "id">): string =>
+  `${siteOrigin()}/e/${event.id}`;
+
+/** The page a shared link lands on — used when we link internally. */
+export const eventPageUrl = (event: Pick<EventItem, "id">): string =>
+  `${siteOrigin()}/events/${event.id}`;
 
 const rand = (n: number) => n.toFixed(0);
 
@@ -40,7 +51,7 @@ export const buildEventCaption = (event: EventItem): string => {
       ? `💰 R${rand(Number(event.price_per_person))} per person`
       : "💰 Free",
     "",
-    `Book your spot: ${eventShareUrl()}`,
+    `Book your spot: ${eventShareUrl(event)}`,
     "",
     "#SummitFitAdventures #Hiking #Mountains #CapeTown #Adventure #Outdoors",
   ];
@@ -49,7 +60,7 @@ export const buildEventCaption = (event: EventItem): string => {
 
 /** Facebook's public share dialog — no app or token required. */
 export const facebookShareUrl = (event: EventItem): string =>
-  `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventShareUrl())}`;
+  `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventShareUrl(event))}`;
 
 /** Copy text to the clipboard, with a textarea fallback for older browsers. */
 export const copyText = async (text: string): Promise<boolean> => {
@@ -84,7 +95,7 @@ export const nativeShareEvent = async (event: EventItem): Promise<boolean> => {
     await navigator.share({
       title: event.title,
       text: buildEventCaption(event),
-      url: eventShareUrl(),
+      url: eventShareUrl(event),
     });
     return true;
   } catch {
