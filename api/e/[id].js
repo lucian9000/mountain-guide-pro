@@ -72,9 +72,14 @@ export default async function handler(req, res) {
 
   const isCrawler = CRAWLER.test(req.headers["user-agent"] || "");
 
+  // This endpoint answers differently per user-agent, so the CDN must key its
+  // cache on it — otherwise a crawler can be served a cached redirect (and
+  // then reads the SPA's generic tags), or a visitor gets the preview stub.
+  res.setHeader("Vary", "User-Agent");
+
   // Real visitors never need the preview document — send them to the page.
   if (!isCrawler) {
-    res.setHeader("Cache-Control", "public, max-age=0, s-maxage=60");
+    res.setHeader("Cache-Control", "no-store");
     res.writeHead(302, { Location: target });
     res.end();
     return;
