@@ -87,6 +87,7 @@ export default async function handler(req, res) {
     event = null;
   }
 
+  const shareUrl = `${origin}/e/${encodeURIComponent(id)}`;
   const title = event ? `${event.title} — SummitFit Adventures` : "SummitFit Adventures";
   const description = event
     ? describe(event)
@@ -108,11 +109,11 @@ export default async function handler(req, res) {
     <meta charset="utf-8" />
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}" />
-    <link rel="canonical" href="${escapeHtml(target)}" />
+    <link rel="canonical" href="${escapeHtml(shareUrl)}" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SummitFit Adventures" />
-    <meta property="og:url" content="${escapeHtml(target)}" />
+    <meta property="og:url" content="${escapeHtml(shareUrl)}" />
     <meta property="og:title" content="${escapeHtml(title)}" />
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta property="og:image" content="${escapeHtml(image)}" />
@@ -122,11 +123,10 @@ export default async function handler(req, res) {
     <meta name="twitter:title" content="${escapeHtml(title)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${escapeHtml(image)}" />
-
-    <meta http-equiv="refresh" content="0; url=${escapeHtml(target)}" />
   </head>
   <body>
     <p><a href="${escapeHtml(target)}">${escapeHtml(title)}</a></p>
+    <script>window.location.replace(${JSON.stringify(target)});</script>
   </body>
 </html>`);
 }
