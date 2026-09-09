@@ -33,10 +33,29 @@ Use the same environment variable names as the existing application. Follow the
 preserved `.env.example` and backend setup documentation. Never put a service-role
 key into a `VITE_` variable. No credentials were copied into this folder.
 
-For a Vercel preview, select this directory as the project root, use the Vite
-build and `dist` output, and retain `vercel.json` plus `api/e/[id].js`. The `/e/:id`
-function handles event-specific social metadata and sends human visitors to
-`/events/:id`. It must be tested on Vercel, not the Vite development server.
+### How this is deployed (set up 2026-09-10)
+
+This site lives on the **`experience` branch** of `lucian9000/mountain-guide-pro`,
+built on top of the live `main` so `git diff main..experience` shows exactly what
+changed. `main` remains the live line and still deploys to production.
+
+- **Vercel project:** `summitfit-experience` (separate from `summitfit-v2`,
+  which serves summitfitadventures.com). Framework Vite, repo root, `dist` output.
+- **Production branch must be `experience`** — Vercel defaults a new project to
+  `main`, which would deploy the *live* code here instead.
+- Env vars mirror `summitfit-v2`, except `VITE_SITE_URL`, which points at this
+  deployment's own URL. It drives OAuth redirects and event share links, so it
+  must never be left pointing at the live domain.
+- `vercel.json` and `api/e/[id].js` are retained. The `/e/:id` function handles
+  event-specific social metadata and sends human visitors to `/events/:id`. It
+  must be tested on Vercel, not the Vite development server.
+
+**Sign-in on this deployment needs its URL added to Supabase → Authentication →
+URL Configuration → Redirect URLs.** Without that, Google login bounces back to
+the live site instead of here.
+
+To promote: either move the domain to this Vercel project (instant, and
+reversible by moving it back), or merge `experience` into `main`.
 
 Use a separate Supabase test project for admin/booking tests. A preview connected
 to production Supabase still writes to the live database. Do not replay schema,
