@@ -43,9 +43,12 @@ changed. `main` remains the live line and still deploys to production.
   which serves summitfitadventures.com). Framework Vite, repo root, `dist` output.
 - **Production branch must be `experience`** — Vercel defaults a new project to
   `main`, which would deploy the *live* code here instead.
-- Env vars mirror `summitfit-v2`, except `VITE_SITE_URL`, which points at this
-  deployment's own URL. It drives OAuth redirects and event share links, so it
-  must never be left pointing at the live domain.
+- Env vars mirror `summitfit-v2` except `VITE_SITE_URL`, which is deliberately
+  **left unset here**. Auth redirects and event share links fall back to
+  `window.location.origin`, so this deployment adapts to whatever URL serves it
+  — the vercel.app alias now, a custom domain later, or the live domain after
+  promotion. Setting it would pin the preview to one hostname and, if copied
+  from production, would bounce sign-in to the live site.
 - `vercel.json` and `api/e/[id].js` are retained. The `/e/:id` function handles
   event-specific social metadata and sends human visitors to `/events/:id`. It
   must be tested on Vercel, not the Vite development server.
