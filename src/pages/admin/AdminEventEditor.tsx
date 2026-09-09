@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, Minus, Plus, Send } from "lucide-react";
 import {
@@ -64,6 +64,7 @@ const AdminEventEditor = () => {
   const [shared, setShared] = useState<EventItem | null>(null);
   const [draft, setDraft] = useState<EventDraft>(emptyDraft);
   const [loaded, setLoaded] = useState(false);
+  const guideInitialized = useRef(false);
 
   const isEditing = Boolean(id);
 
@@ -90,15 +91,18 @@ const AdminEventEditor = () => {
   // Default a brand-new event to the house guide: Ernest when he exists,
   // otherwise the longest-standing active guide (the list arrives newest-first).
   useEffect(() => {
-    if (sourceId || draft.guide_id) return;
+    if (sourceId || guideInitialized.current || !guides.data) return;
+    guideInitialized.current = true;
     const active = (guides.data ?? []).filter((g) => g.active);
     const preferred =
       active.find((g) => DEFAULT_GUIDE_RE.test(g.display_name)) ?? active[active.length - 1];
-    if (preferred) setDraft((d) => ({ ...d, guide_id: preferred.id }));
-  }, [guides.data, sourceId, draft.guide_id]);
+    if (preferred) setDraft((d) => d.guide_id ? d : ({ ...d, guide_id: preferred.id }));
+  }, [guides.data, sourceId]);
 
-  const set = <K extends keyof EventDraft>(field: K, value: EventDraft[K]) =>
+  const set = <K extends keyof EventDraft>(field: K, value: EventDraft[K]) => {
+    if (field === "guide_id") guideInitialized.current = true;
     setDraft((d) => ({ ...d, [field]: value }));
+  };
 
   const stepError = (index: number): string | null => {
     if (index === 0) {

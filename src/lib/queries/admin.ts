@@ -17,6 +17,14 @@ const unwrap = <T>(res: { data: T | null; error: { message: string } | null }): 
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
+const invalidatePricing = (qc: ReturnType<typeof useQueryClient>) => Promise.all(
+  [["admin", "pricing"], ["public", "pricing"], ["public", "tour-prices"], ["public", "tour-price-rows"]]
+    .map((queryKey) => qc.invalidateQueries({ queryKey }))
+);
+const invalidateSpecials = (qc: ReturnType<typeof useQueryClient>) => Promise.all(
+  [["admin", "specials"], ["public", "special"], ["public", "specials"], ["admin", "stats"]]
+    .map((queryKey) => qc.invalidateQueries({ queryKey }))
+);
 const startOfMonthISO = () => {
   const d = new Date();
   return new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
@@ -135,7 +143,7 @@ export const useUpsertPricing = () => {
   return useMutation({
     mutationFn: async (row: Partial<Pricing>) =>
       unwrap(await supabase.from("pricing").upsert(row).select().single()),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "pricing"] }),
+    onSuccess: () => invalidatePricing(qc),
   });
 };
 
@@ -146,7 +154,7 @@ export const useDeletePricing = () => {
       const { error } = await supabase.from("pricing").delete().eq("id", id);
       if (error) throw new Error(error.message);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "pricing"] }),
+    onSuccess: () => invalidatePricing(qc),
   });
 };
 
@@ -169,7 +177,7 @@ export const useUpsertSpecial = () => {
   return useMutation({
     mutationFn: async (row: Partial<Special>) =>
       unwrap(await supabase.from("specials").upsert(row).select().single()),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "specials"] }),
+    onSuccess: () => invalidateSpecials(qc),
   });
 };
 
@@ -180,7 +188,7 @@ export const useDeleteSpecial = () => {
       const { error } = await supabase.from("specials").delete().eq("id", id);
       if (error) throw new Error(error.message);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "specials"] }),
+    onSuccess: () => invalidateSpecials(qc),
   });
 };
 
@@ -192,7 +200,7 @@ export const useActivateSpecial = () => {
       const { error } = await supabase.rpc("set_single_active_special", { target: id });
       if (error) throw new Error(error.message);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "specials"] }),
+    onSuccess: () => invalidateSpecials(qc),
   });
 };
 
@@ -203,7 +211,7 @@ export const useDeactivateSpecial = () => {
       unwrap(
         await supabase.from("specials").update({ active: false }).eq("id", id).select().single()
       ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "specials"] }),
+    onSuccess: () => invalidateSpecials(qc),
   });
 };
 

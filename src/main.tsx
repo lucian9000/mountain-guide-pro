@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import ErrorBoundary from "./components/ErrorBoundary.tsx";
 import { printSignature } from "./lib/signature.ts";
 import "./index.css";
+import "./styles/experience.css";
 
 printSignature();
 

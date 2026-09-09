@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase/client";
 import { removeStorageImage } from "@/lib/images";
+import { toast } from "sonner";
 import type {
   ContentVersion,
   PriceItem,
@@ -138,12 +139,16 @@ export const useUpsertRoute = () => {
       try {
         await syncBookableTour(saved);
       } catch (e) {
-        console.error("[routes] could not sync the bookable tour", e);
+        toast.warning("Route saved, but booking pricing could not be synced", {
+          description: `${e instanceof Error ? e.message : "Please check Pricing."} Your route is saved. Check its Pricing entry before accepting bookings.`,
+          duration: Infinity,
+          closeButton: true,
+        });
       }
       return saved;
     },
     onSuccess: () =>
-      invalidate(qc, [["admin", "routes"], ["admin", "route"], ["public", "routes"], ["public", "route"], ["preview", "route"], ["public", "pricing"], ["admin", "pricing"]]),
+      invalidate(qc, [["admin", "routes"], ["admin", "route"], ["public", "routes"], ["public", "route"], ["preview", "route"], ["public", "pricing"], ["public", "tour-prices"], ["public", "tour-price-rows"], ["admin", "pricing"]]),
   });
 };
 
@@ -187,7 +192,8 @@ export const useUpdateRouteImages = () => {
         unwrap(await supabase.from("route_images").update(fields).eq("id", id).select());
       }
     },
-    onSuccess: () => invalidate(qc, [["admin", "route"], ["public", "routes"], ["public", "route"], ["preview", "route"]]),
+    // Updates are sequential; refetch even on failure to reveal partial writes.
+    onSettled: () => invalidate(qc, [["admin", "route"], ["admin", "routes"], ["public", "routes"], ["public", "route"], ["preview", "route"]]),
   });
 };
 

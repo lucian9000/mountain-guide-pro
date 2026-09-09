@@ -58,7 +58,8 @@ export const usePublicEvent = (id: string | null) =>
     enabled: isSupabaseConfigured && Boolean(id),
     queryFn: async () => {
       const event = unwrap<EventItem | null>(
-        await supabase.from("events").select("*").eq("id", id!).maybeSingle()
+        await supabase.from("events").select("*").eq("id", id!)
+          .eq("is_published", true).gte("event_date", todayISO()).maybeSingle()
       );
       if (!event) return null;
       const availability = unwrap<EventAvailability[]>(
@@ -116,6 +117,7 @@ export type EventDraft = Omit<EventItem, "id" | "created_at" | "updated_at">;
 const invalidateEvents = (qc: ReturnType<typeof useQueryClient>) => {
   qc.invalidateQueries({ queryKey: ["admin", "events"] });
   qc.invalidateQueries({ queryKey: ["public", "events"] });
+  qc.invalidateQueries({ queryKey: ["public", "event"] });
   qc.invalidateQueries({ queryKey: ["admin", "stats"] });
 };
 

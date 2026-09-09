@@ -31,6 +31,8 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
   const [uploading, setUploading] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [altDrafts, setAltDrafts] = useState<Record<string, string>>({});
+  const [reorderError, setReorderError] = useState<string | null>(null);
+  const reordering = useRef(false);
 
   const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
 
@@ -67,13 +69,21 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
   };
 
   const reorder = async (from: number, to: number) => {
-    if (from === to) return;
+    if (reordering.current || patchImages.isPending || from === to || from < 0 || to < 0 || from >= sorted.length || to >= sorted.length) return;
+    reordering.current = true;
+    setReorderError(null);
     const next = [...sorted];
     const [moved] = next.splice(from, 1);
     next.splice(to, 0, moved);
-    await patchImages.mutateAsync(
-      next.map((img, i) => ({ id: img.id, sort_order: (i + 1) * 10 }))
-    );
+    try {
+      await patchImages.mutateAsync(
+        next.map((img, i) => ({ id: img.id, sort_order: (i + 1) * 10 }))
+      );
+    } catch (e) {
+      setReorderError(`Could not finish reordering images. Some positions may have saved; check the refreshed order and try again. ${e instanceof Error ? e.message : ""}`);
+    } finally {
+      reordering.current = false;
+    }
   };
 
   const setCover = async (id: string) => {
@@ -120,6 +130,7 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
         />
       </div>
 
+      {reorderError && <p role="alert" className="text-destructive text-sm">{reorderError}</p>}
       {sorted.length === 0 ? (
         <p className="text-muted-foreground text-sm py-6 text-center border border-dashed border-border/60 rounded-lg">
           No images yet. Uploads are compressed in your browser (max 1600px,
@@ -130,7 +141,7 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
           {sorted.map((img, i) => (
             <li
               key={img.id}
-              draggable
+              draggable={!patchImages.isPending}
               onDragStart={() => setDragIndex(i)}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => {
@@ -164,6 +175,10 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
                 <div className="text-muted-foreground/60 text-xs">
                   {img.width && img.height ? `${img.width}×${img.height} · ` : ""}
                   drag to reorder
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" aria-label={`Move image ${i + 1} earlier`} disabled={i === 0 || patchImages.isPending} onClick={() => void reorder(i, i - 1)} className="min-h-11 px-2 text-xs text-accent disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-accent">Move earlier</button>
+                  <button type="button" aria-label={`Move image ${i + 1} later`} disabled={i === sorted.length - 1 || patchImages.isPending} onClick={() => void reorder(i, i + 1)} className="min-h-11 px-2 text-xs text-accent disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-accent">Move later</button>
                 </div>
               </div>
               <button

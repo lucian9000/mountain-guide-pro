@@ -67,7 +67,8 @@ export const uploadUpdateImage = async (file: File): Promise<UploadedImage> => {
 
 /** Public CDN URL for a storage path in the route-images bucket. */
 export const publicImageUrl = (path: string): string =>
-  supabase.storage.from(ROUTE_IMAGES_BUCKET).getPublicUrl(path).data.publicUrl;
+  path.startsWith('/') || /^https?:\/\//.test(path) ? path :
+    supabase.storage.from(ROUTE_IMAGES_BUCKET).getPublicUrl(path).data.publicUrl;
 
 /** Best-effort storage cleanup (row deletes should not fail on missing files). */
 export const removeStorageImage = async (path: string): Promise<void> => {

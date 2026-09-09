@@ -1,4 +1,7 @@
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
+
+window.scrollTo = vi.fn();
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,

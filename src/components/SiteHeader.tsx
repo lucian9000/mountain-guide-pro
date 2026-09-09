@@ -114,7 +114,7 @@ const SiteHeader = ({ variant, onOpenBooking }: SiteHeaderProps) => {
     setIsMobileOpen(false);
     // Defer to next tick so the overlay close transition doesn't fight the scroll
     requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById(id)?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
     });
   };
 
@@ -146,12 +146,12 @@ const SiteHeader = ({ variant, onOpenBooking }: SiteHeaderProps) => {
   return (
     <>
       <nav
-        className={`${navPositionClass} top-0 left-0 right-0 z-50 transition duration-300 ${navBgClass}`}
+        className={`ex-site-header ${navPositionClass} top-0 left-0 right-0 z-50 transition duration-300 ${navBgClass}`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {isOverlay ? (
             <button
-              onClick={() => scrollTo("services")}
+              onClick={() => scrollTo("top")}
               className="flex items-center gap-3 group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               aria-label="SummitFit Adventures home"
             >

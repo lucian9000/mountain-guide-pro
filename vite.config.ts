@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       host: "::",
-      port: 8080,
+      port: 8086,
       hmr: {
         overlay: false,
       },
@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             "react-vendor": ["react", "react-dom", "react-router-dom"],
             "data-vendor": ["@tanstack/react-query", "@supabase/supabase-js"],
+            "motion-vendor": ["gsap", "@gsap/react", "framer-motion"],
           },
         },
       },

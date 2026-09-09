@@ -17,7 +17,7 @@ const EventDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="ex-inner min-h-screen flex flex-col bg-background">
         <SiteHeader variant="solid" />
         <main id="main" className="flex-1 container mx-auto px-4 py-10 space-y-6">
           <Skeleton className="w-full aspect-[16/9] rounded-xl" />
@@ -31,7 +31,7 @@ const EventDetail = () => {
 
   if (!event) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="ex-inner min-h-screen flex flex-col bg-background">
         <SiteHeader variant="solid" />
         <main id="main" className="flex-1 container mx-auto px-4 py-24 text-center">
           <h1 className="font-heading text-3xl md:text-4xl font-black text-foreground tracking-wider uppercase mb-4">
@@ -68,7 +68,7 @@ const EventDetail = () => {
   ].filter(Boolean) as { icon: typeof Users; label: string }[];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="ex-inner min-h-screen flex flex-col bg-background">
       <SiteHeader variant="solid" />
 
       <main id="main" className="flex-1">

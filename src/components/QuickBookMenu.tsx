@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   X,
   Phone,
@@ -15,6 +15,7 @@ import logo from "@/assets/logo-small.webp";
 import { routes, type Route } from "@/data/routes";
 import { trainingProgrammes, type TrainingProgramme } from "@/data/training";
 import { usePublicPricing } from "@/lib/queries/booking";
+import { usePublishedRoutes } from "@/lib/queries/content";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Pricing } from "@/lib/types/db";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -230,6 +231,38 @@ const CardSkeleton = () => (
   </div>
 );
 
+/** Mounted only with a configured backend: empty/error results stay managed. */
+const ManagedRoutes = ({ rows, onBook, onClose }: {
+  rows: Pricing[] | undefined;
+  onBook: (id: string) => void;
+  onClose: () => void;
+}) => {
+  const routesQuery = usePublishedRoutes();
+  if (routesQuery.isLoading) return <CardSkeleton />;
+  if (routesQuery.isError) return <p role="alert">Routes could not be loaded. Please try again or contact Ernest.</p>;
+  if (!routesQuery.data?.length) return <p>No routes are currently published. Contact Ernest to plan an adventure.</p>;
+  return <>{routesQuery.data.map((route) => {
+    const row = route.price_cents > 0 ? matchPricing({ id: route.slug, name: route.name }, rows) : undefined;
+    return (
+      <CardShell key={route.id} accent="accent">
+        <Link to={`/routes/${route.slug}`} onClick={onClose} className="font-heading text-sm font-bold text-accent underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-accent">
+          {route.name}
+        </Link>
+        <p className="text-xs text-muted-foreground mt-1">{route.description}</p>
+        <dl className="text-xs text-muted-foreground mt-2 space-y-1">
+          <div><dt className="inline">Difficulty: </dt><dd className="inline capitalize">{route.difficulty}</dd></div>
+          {route.duration_hours != null && <div><dt className="inline">Duration: </dt><dd className="inline">{route.duration_hours} hours</dd></div>}
+          {route.distance_km != null && <div><dt className="inline">Distance: </dt><dd className="inline">{route.distance_km} km</dd></div>}
+          {route.elevation_m != null && <div><dt className="inline">Elevation: </dt><dd className="inline">{route.elevation_m} m</dd></div>}
+          {route.meeting_point && <div><dt className="inline">Meeting point: </dt><dd className="inline">{route.meeting_point}</dd></div>}
+        </dl>
+        <p className="text-accent text-xs mt-2">{isBookable(row) ? `From R${row.price} pp` : route.price_cents > 0 ? `From R${route.price_cents / 100} pp · Enquire to book` : "Contact for pricing"}</p>
+        <ActionButton row={row} enquiryMessage={`Hi Ernest! I'd like to enquire about the ${route.name} route.`} onBook={onBook} />
+      </CardShell>
+    );
+  })}</>;
+};
+
 /**
  * Quick-book menu — an honest list of what you can book, not a chatbot. Two
  * always-visible tabs swap between routes and training; nothing is gated
@@ -324,7 +357,7 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
           </>
         ) : tab === "routes" ? (
           <div id="qb-panel-routes" role="tabpanel" className="space-y-2">
-            {routes.map((route) => (
+            {isSupabaseConfigured ? <ManagedRoutes rows={rows} onBook={book} onClose={onClose} /> : routes.map((route) => (
               <RouteCard
                 key={route.id}
                 route={route}

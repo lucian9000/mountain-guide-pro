@@ -8,9 +8,20 @@ import { routes } from "@/data/routes";
 // Emoji ranges: symbols/pictographs, misc symbols & dingbats, misc technical
 // (covers stopwatch U+23F1), and supplemental arrows/symbols.
 const EMOJI_RE =
-  /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE0F}]/u;
+  /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}]|\u{FE0F}/u;
 
 const navigate = vi.hoisted(() => vi.fn());
+const backend = vi.hoisted(() => ({ configured: false }));
+vi.mock("@/lib/supabase/client", () => ({
+  get isSupabaseConfigured() { return backend.configured; },
+}));
+vi.mock("@/lib/queries/content", () => ({
+  usePublishedRoutes: () => ({
+    data: [{ id: "managed-lion", slug: "lions-head", name: "Lion's Head Sunrise Summit", description: "A managed route", difficulty: "moderate", price_cents: 120000 }],
+    isLoading: false,
+    isError: false,
+  }),
+}));
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
   return { ...actual, useNavigate: () => navigate };
@@ -69,6 +80,7 @@ describe("QuickBookPanel", () => {
   beforeEach(() => {
     navigate.mockClear();
     pricingState.isLoading = false;
+    backend.configured = false;
   });
 
   it("renders the Book Now FAB synchronously (no lazy chunk needed)", () => {
@@ -108,6 +120,7 @@ describe("QuickBookPanel", () => {
   });
 
   it("a priced route shows Book Now and deep-links to /booking?tour=<pricing id>", async () => {
+    backend.configured = true;
     await openMenu();
     const card = screen.getByText("Lion's Head Sunrise Summit").closest("div");
     const bookBtn = screen.getAllByRole("button", { name: /^book now$/i })[0];
@@ -136,6 +149,7 @@ describe("QuickBookPanel", () => {
   });
 
   it("shows skeletons while pricing is loading", async () => {
+    backend.configured = true;
     pricingState.isLoading = true;
     await openMenu();
     expect(screen.queryByText(routes[0].name)).not.toBeInTheDocument();

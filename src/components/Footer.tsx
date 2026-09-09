@@ -1,103 +1,91 @@
-import { Phone, Mail, Instagram, Facebook, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Mountain, Instagram, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo-small.webp";
 import cttMember from "@/assets/cape-town-tourism-member.webp";
 
-const Footer = () => {
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
+export default function Footer() {
   return (
-    <footer id="contact" className="scroll-mt-20 bg-background py-12 md:py-16 border-t border-border/30">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8 md:gap-10 mb-8 md:mb-10">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="SummitFit Adventures" className="w-10 h-10 rounded-full object-cover ring-2 ring-accent/30" />
-              <span className="font-heading font-bold text-foreground text-lg tracking-wider uppercase">SummitFit</span>
-            </div>
-            <p className="text-muted-foreground text-sm">Professional mountain guiding & elite fitness training in South Africa.</p>
-
-            {/* Cape Town Tourism membership — a credential, so it sits quietly
-                under the blurb rather than competing with the brand mark. */}
-            <img
-              src={cttMember}
-              alt="Cape Town Tourism member"
-              width={179}
-              height={160}
-              loading="lazy"
-              className="mt-6 h-16 w-auto opacity-90"
-            />
-          </div>
-
-          <div>
-            <h3 className="font-heading text-sm font-bold text-foreground mb-4 tracking-wider uppercase">Quick Links</h3>
-            <div className="flex flex-col gap-2">
-              <Link
-                to="/routes"
-                className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
-              >
-                Routes
-              </Link>
-              <Link
-                to="/news"
-                className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
-              >
-                What's New
-              </Link>
-              {[["about", "The Guide"], ["fitness", "Training"]].map(([id, label]) => (
-                <button
-                  key={id}
-                  onClick={() => scrollTo(id)}
-                  className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
-                >
-                  {label}
-                </button>
-              ))}
-              <Link
-                to="/privacy"
-                className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
-              >
-                Privacy Policy
-              </Link>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="font-heading text-sm font-bold text-foreground mb-4 tracking-wider uppercase">Get in Touch</h3>
-            <div className="flex flex-col gap-3">
-              <a href="https://wa.me/27671301536?text=Hi!%20I'm%20interested%20in%20learning%20more%20about%20SummitFit%20Adventures." className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <MessageCircle className="w-4 h-4" /> WhatsApp
-              </a>
-              <a href="tel:+27671301536" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Phone className="w-4 h-4" /> +27 67 130 1536
-              </a>
-              <a href="mailto:info@summitfitadventures.com" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Mail className="w-4 h-4" /> info@summitfitadventures.com
-              </a>
-              <a href="mailto:bookings@summitfitadventures.com" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Mail className="w-4 h-4" /> bookings@summitfitadventures.com
-              </a>
-              <a href="https://www.instagram.com/summitfitadventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Instagram className="w-4 h-4" /> @summitfitadventures
-              </a>
-              <a href="https://www.facebook.com/carrickadventures" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-accent text-sm transition-colors">
-                <Facebook className="w-4 h-4" /> Follow us on Facebook
-              </a>
-            </div>
-          </div>
+    <footer id="contact" className="ex-footer">
+      <div className="ex-footer-invite">
+        <div>
+          <span className="ex-eyebrow">YOUR NEXT ADVENTURE STARTS HERE</span>
+          <h2>
+            See you
+            <br />
+            <em>out there.</em>
+          </h2>
         </div>
-
-        <div className="border-t border-border/30 pt-6 text-center">
-          <p className="text-muted-foreground text-sm">
-            &copy; 2026 SummitFit Adventures. Powered by{" "}
-            <span className="font-medium text-foreground">StateOfAshes</span>.
+        <a
+          className="ex-contact-circle"
+          href="https://wa.me/27671301536"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ArrowUpRight size={42} strokeWidth={1} />
+          <span>
+            LET’S TALK
+            <br />
+            ADVENTURE
+          </span>
+        </a>
+      </div>
+      <div className="ex-footer-grid">
+        <div>
+          <Link to="/" className="ex-footer-brand">
+            <Mountain size={28} />
+            <span>
+              SUMMITFIT<small>ADVENTURES</small>
+            </span>
+          </Link>
+          <p>
+            Professional mountain guiding &amp;
+            <br />
+            personal training. Cape Town &amp; beyond.
           </p>
+          <img
+            src={cttMember}
+            alt="Cape Town Tourism member"
+            width="179"
+            height="160"
+            className="ex-tourism"
+            loading="lazy"
+          />
         </div>
+        <div>
+          <h3>EXPLORE</h3>
+          <Link to="/routes">Our routes</Link>
+          <Link to="/#challenge">13 Peaks Challenge</Link>
+          <Link to="/#fitness">Personal training</Link>
+          <Link to="/news">What’s new</Link>
+          <Link to="/booking">Book an adventure</Link>
+        </div>
+        <div>
+          <h3>GET IN TOUCH</h3>
+          <a href="tel:+27671301536">+27 67 130 1536</a>
+          <a href="mailto:info@summitfitadventures.com">
+            info@summitfitadventures.com
+          </a>
+          <a
+            href="https://www.instagram.com/summitfitadventures"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Instagram size={15} /> Instagram <ArrowUpRight size={14} />
+          </a>
+          <a
+            href="https://www.facebook.com/carrickadventures"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Facebook size={15} /> Facebook <ArrowUpRight size={14} />
+          </a>
+          <Link to="/login">Sign in</Link>
+        </div>
+      </div>
+      <div className="ex-footer-bottom">
+        <span>© {new Date().getFullYear()} SUMMITFIT ADVENTURES</span>
+        <span>LEAVE ONLY FOOTPRINTS.</span>
+        <Link to="/privacy">Privacy policy</Link>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

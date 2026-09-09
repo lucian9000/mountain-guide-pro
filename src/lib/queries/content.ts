@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
+import { offlineRoutes } from "@/lib/offline-routes";
 import type {
   PriceItem,
   RouteWithImages,
@@ -17,10 +18,6 @@ const unwrap = <T>(res: { data: T | null; error: { message: string } | null }): 
   return res.data as T;
 };
 
-const publishedFilter = <T extends { or: (f: string) => T; eq: (c: string, v: string) => T }>(
-  q: T
-): T => q.eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`);
-
 const sortImages = (r: RouteWithImages): RouteWithImages => ({
   ...r,
   images: [...(r.images ?? [])].sort((a, b) => a.sort_order - b.sort_order),
@@ -31,10 +28,10 @@ export const usePublishedRoutes = () =>
   useQuery<RouteWithImages[]>({
     queryKey: ["public", "routes"],
     queryFn: async () => {
+      if (!isSupabaseConfigured) return offlineRoutes;
       const rows = unwrap<RouteWithImages[]>(
-        await publishedFilter(
-          supabase.from("routes").select("*, images:route_images(*)")
-        )
+        await supabase.from("routes").select("*, images:route_images(*)")
+          .eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`)
           .order("sort_order", { ascending: true })
           .order("name", { ascending: true })
       );
@@ -48,10 +45,10 @@ export const usePublishedRoute = (slug: string | undefined) =>
     queryKey: ["public", "route", slug],
     enabled: Boolean(slug),
     queryFn: async () => {
+      if (!isSupabaseConfigured) return offlineRoutes.find(r => r.slug === slug) ?? null;
       const rows = unwrap<RouteWithImages[]>(
-        await publishedFilter(
-          supabase.from("routes").select("*, images:route_images(*)").eq("slug", slug!)
-        ).limit(1)
+        await supabase.from("routes").select("*, images:route_images(*)").eq("slug", slug!)
+          .eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`).limit(1)
       );
       return rows.length ? sortImages(rows[0]) : null;
     },
@@ -81,10 +78,11 @@ export const usePreviewRoute = (slug: string | undefined, enabled: boolean) =>
 export const usePublishedUpdates = (limit?: number) =>
   useQuery<UpdateWithRoute[]>({
     queryKey: ["public", "updates", limit ?? "all"],
+    enabled: isSupabaseConfigured,
     queryFn: async () => {
-      let q = publishedFilter(
-        supabase.from("updates").select("*, route:routes(slug, name)")
-      ).order("created_at", { ascending: false });
+      let q = supabase.from("updates").select("*, route:routes(slug, name)")
+        .eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`)
+        .order("created_at", { ascending: false });
       if (limit) q = q.limit(limit);
       return unwrap<UpdateWithRoute[]>(await q);
     },
@@ -104,6 +102,7 @@ export interface TourPrice {
 export const useTourPrices = () =>
   useQuery<Record<string, TourPrice>>({
     queryKey: ["public", "tour-prices"],
+    enabled: isSupabaseConfigured,
     queryFn: async () => {
       const rows = unwrap<
         { id: string; tour_slug: string | null; price: number; price_group: number | null }[]
@@ -132,6 +131,7 @@ export const useTourPriceRows = () =>
     { id: string; tour_slug: string | null; name: string; price: number; price_group: number | null }[]
   >({
     queryKey: ["public", "tour-price-rows"],
+    enabled: isSupabaseConfigured,
     queryFn: async () =>
       unwrap(
         await supabase
@@ -145,6 +145,7 @@ export const useTourPriceRows = () =>
 export const usePriceItems = () =>
   useQuery<Record<string, PriceItem>>({
     queryKey: ["public", "price-items"],
+    enabled: isSupabaseConfigured,
     queryFn: async () => {
       const rows = unwrap<PriceItem[]>(
         await supabase.from("price_items").select("*").order("item_key")
