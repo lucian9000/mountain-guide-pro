@@ -1,6 +1,7 @@
 import { Phone, Mail, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo-small.webp";
+import cttMember from "@/assets/cape-town-tourism-member.webp";
 
 const Footer = () => {
   const scrollTo = (id: string) => {
@@ -17,6 +18,17 @@ const Footer = () => {
               <span className="font-heading font-bold text-foreground text-lg tracking-wider uppercase">SummitFit</span>
             </div>
             <p className="text-muted-foreground text-sm">Professional mountain guiding & elite fitness training in South Africa.</p>
+
+            {/* Cape Town Tourism membership — a credential, so it sits quietly
+                under the blurb rather than competing with the brand mark. */}
+            <img
+              src={cttMember}
+              alt="Cape Town Tourism member"
+              width={179}
+              height={160}
+              loading="lazy"
+              className="mt-6 h-16 w-auto opacity-90"
+            />
           </div>
 
           <div>
