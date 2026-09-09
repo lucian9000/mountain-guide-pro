@@ -5,6 +5,7 @@ import type {
   ContentVersion,
   PriceItem,
   RouteImage,
+  RouteDifficulty,
   RouteRow,
   RouteWithImages,
   UpdateWithRoute,
@@ -57,19 +58,92 @@ export type RoutePayload = Partial<Pick<RouteRow, (typeof ROUTE_EDITABLE_FIELDS)
   id?: string;
 };
 
+/* ───────────────── Routes → bookable tours ─────────────────
+ *
+ * `routes` are the content pages; `pricing` is the list the booking form
+ * offers. They were only ever joined by slug convention, so a route added in
+ * the admin was published to the site but stayed unbookable until someone
+ * remembered to hand-add a Pricing row. Saving a route now keeps its tour in
+ * step, which is what everyone already assumed happened.
+ *
+ * A route priced at 0 is "price on request" — it never becomes bookable, and
+ * an existing tour for it is deactivated rather than offered at R0.
+ */
+
+const DIFFICULTY_RANK: Record<RouteDifficulty, number> = {
+  easy: 1,
+  moderate: 2,
+  challenging: 3,
+  extreme: 4,
+};
+
+export const syncBookableTour = async (route: RouteRow): Promise<void> => {
+  const existing = unwrap<{ id: string }[]>(
+    await supabase.from("pricing").select("id").eq("tour_slug", route.slug).limit(1)
+  );
+  const current = existing[0];
+
+  // Enquiry-only routes must never appear as an R0 booking option.
+  if (!route.price_cents || route.price_cents <= 0) {
+    if (current) {
+      unwrap(await supabase.from("pricing").update({ active: false }).eq("id", current.id).select());
+    }
+    return;
+  }
+
+  const shared = {
+    name: route.name,
+    price: route.price_cents / 100,
+    duration: route.duration_hours ? `${route.duration_hours} hours` : null,
+    difficulty: DIFFICULTY_RANK[route.difficulty] ?? null,
+    // Only a published route is bookable — hiding a route pulls it from the
+    // booking form too.
+    active: route.status === "published",
+  };
+
+  if (current) {
+    // Deliberately narrow: `description`, `price_group` and `max_participants`
+    // are tuned on the Pricing page for the booking form's benefit, so a route
+    // edit must not overwrite them.
+    unwrap(await supabase.from("pricing").update(shared).eq("id", current.id).select());
+    return;
+  }
+
+  unwrap(
+    await supabase
+      .from("pricing")
+      .insert({
+        ...shared,
+        tour_slug: route.slug,
+        description: route.description,
+        display_order: route.sort_order,
+      })
+      .select()
+  );
+};
+
 export const useUpsertRoute = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...fields }: RoutePayload): Promise<RouteRow> => {
-      if (id) {
-        return unwrap<RouteRow>(
-          await supabase.from("routes").update(fields).eq("id", id).select().single()
-        );
+      const saved = id
+        ? unwrap<RouteRow>(
+            await supabase.from("routes").update(fields).eq("id", id).select().single()
+          )
+        : unwrap<RouteRow>(await supabase.from("routes").insert(fields).select().single());
+
+      // Keep the bookable tour in step. Never let this fail the save — the
+      // route itself is already stored, and an unbookable route beats losing
+      // the edit.
+      try {
+        await syncBookableTour(saved);
+      } catch (e) {
+        console.error("[routes] could not sync the bookable tour", e);
       }
-      return unwrap<RouteRow>(await supabase.from("routes").insert(fields).select().single());
+      return saved;
     },
     onSuccess: () =>
-      invalidate(qc, [["admin", "routes"], ["admin", "route"], ["public", "routes"], ["public", "route"], ["preview", "route"]]),
+      invalidate(qc, [["admin", "routes"], ["admin", "route"], ["public", "routes"], ["public", "route"], ["preview", "route"], ["public", "pricing"], ["admin", "pricing"]]),
   });
 };
 
