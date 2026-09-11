@@ -6,6 +6,7 @@ import { routes } from "@/data/routes";
 const state = vi.hoisted(() => ({ configured: true, data: [] as unknown[], isError: false, isLoading: false, navigate: vi.fn() }));
 vi.mock("@/lib/supabase/client", () => ({ get isSupabaseConfigured() { return state.configured; } }));
 vi.mock("@/lib/queries/content", () => ({ usePublishedRoutes: () => state }));
+vi.mock("@/lib/queries/events", () => ({ usePublicEvents: () => ({ data: [], isLoading: false, error: null }) }));
 vi.mock("@/lib/queries/booking", () => ({ usePublicPricing: () => ({ data: [{ id: "price-id", tour_slug: "fresh-route", name: "Other name", price: 750, active: true }], isLoading: false }) }));
 vi.mock("react-router-dom", async () => ({ ...await vi.importActual("react-router-dom"), useNavigate: () => state.navigate }));
 const draw = () => render(<MemoryRouter><QuickBookMenu onClose={vi.fn()} /></MemoryRouter>);
@@ -24,7 +25,7 @@ it.each([false, true])("never substitutes static routes for configured empty/err
   state.isError = error; draw();
   expect(screen.queryByText(routes[0].name)).not.toBeInTheDocument();
   expect(screen.getByText(error ? /Routes could not be loaded/ : /No routes are currently published/)).toBeInTheDocument();
-  fireEvent.click(screen.getByRole("tab", { name: /Personal Training/ }));
+  fireEvent.click(screen.getByRole("tab", { name: /^Training$/ }));
   expect(screen.getByText(/Strength Training/i)).toBeInTheDocument();
 });
 it("retains static routes when unconfigured", () => {

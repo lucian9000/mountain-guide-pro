@@ -13,6 +13,7 @@ import GuideStory from "@/components/experience/GuideStory";
 import PeaksStory from "@/components/experience/PeaksStory";
 import ExperienceEvents from "@/components/experience/ExperienceEvents";
 import TrainingSection from "@/components/experience/TrainingSection";
+import cttMember from "@/assets/cape-town-tourism-member.webp";
 
 export default function Index() {
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -41,6 +42,14 @@ export default function Index() {
         <main id="main">
           <CinematicHero />
           <div className="ex-credentials" id="services">
+            <img
+              className="ex-credentials-badge"
+              src={cttMember}
+              alt="Cape Town Tourism member"
+              width={179}
+              height={160}
+              loading="lazy"
+            />
             <span>
               <Mountain size={20} /> LOCALLY GUIDED
             </span>

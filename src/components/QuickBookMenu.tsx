@@ -10,14 +10,18 @@ import {
   TrendingUp,
   CloudSun,
   ChevronDown,
+  CalendarDays,
+  Users,
 } from "lucide-react";
 import logo from "@/assets/logo-small.webp";
 import { routes, type Route } from "@/data/routes";
 import { trainingProgrammes, type TrainingProgramme } from "@/data/training";
 import { usePublicPricing } from "@/lib/queries/booking";
+import { usePublicEvents } from "@/lib/queries/events";
 import { usePublishedRoutes } from "@/lib/queries/content";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Pricing } from "@/lib/types/db";
+import type { EventWithSpots } from "@/lib/types/db";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface QuickBookMenuProps {
@@ -222,6 +226,82 @@ const ProgrammeCard = ({
   );
 };
 
+/** Human date for an ISO "yyyy-mm-dd" (no Date parsing surprises). */
+const formatEventDate = (iso: string): string => {
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return iso;
+  return new Date(y, m - 1, d).toLocaleDateString("en-ZA", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+};
+
+/**
+ * A dated group adventure. Unlike routes and programmes these are one-off, so
+ * the date and remaining spots lead — and a full event says so instead of
+ * offering a booking that would be rejected.
+ */
+const EventCard = ({
+  event,
+  onBook,
+}: {
+  event: EventWithSpots;
+  onBook: (eventId: string) => void;
+}) => {
+  const spots = event.spots_left;
+  const soldOut = spots === 0;
+  const price = Number(event.price_per_person);
+
+  return (
+    <CardShell accent="gold">
+      <h4 className="font-heading text-sm font-bold text-foreground tracking-wider uppercase leading-tight">
+        {event.title}
+      </h4>
+
+      <p className="text-muted-foreground text-xs mt-1 flex items-center gap-2">
+        <CalendarDays className="w-4 h-4 text-gold shrink-0" aria-hidden="true" />
+        {formatEventDate(event.event_date)}
+      </p>
+
+      {event.location ? (
+        <p className="text-muted-foreground text-xs mt-1 flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-gold shrink-0" aria-hidden="true" />
+          {event.location}
+        </p>
+      ) : null}
+
+      <div className="flex items-center justify-between gap-2 mt-2">
+        <span className="text-muted-foreground text-xs flex items-center gap-1.5">
+          <Users className="w-4 h-4 text-gold shrink-0" aria-hidden="true" />
+          {soldOut
+            ? "Fully booked"
+            : spots != null
+            ? `${spots} spot${spots === 1 ? "" : "s"} left`
+            : `${event.capacity} spots`}
+        </span>
+        <span className="text-accent font-heading font-bold text-xs">
+          {price > 0 ? `R${price.toFixed(0)} pp` : "Free"}
+        </span>
+      </div>
+
+      {soldOut ? (
+        <p className="mt-2 w-full min-h-[44px] flex items-center justify-center rounded-lg border border-border text-muted-foreground text-xs font-heading font-bold tracking-wider uppercase">
+          Fully booked
+        </p>
+      ) : (
+        <button
+          type="button"
+          onClick={() => onBook(event.id)}
+          className="mt-2 w-full min-h-[44px] bg-accent hover:bg-cyan-hover text-accent-foreground text-xs font-heading font-bold py-3 rounded-lg transition-colors tracking-wider uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          Book This Date
+        </button>
+      )}
+    </CardShell>
+  );
+};
+
 const CardSkeleton = () => (
   <div className="bg-background rounded-xl p-3 border-l-4 border-border space-y-2">
     <Skeleton className="h-4 w-3/4" />
@@ -271,9 +351,15 @@ const ManagedRoutes = ({ rows, onBook, onClose }: {
  * a WhatsApp enquiry.
  */
 const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
-  const [tab, setTab] = useState<"routes" | "training">("routes");
+  // null = "not chosen yet", so the panel can open on Events when Ernest has
+  // dated adventures and fall back to Routes when he doesn't, without an
+  // effect that would flicker the tab after load.
+  const [picked, setPicked] = useState<"events" | "routes" | "training" | null>(null);
   const navigate = useNavigate();
   const pricing = usePublicPricing();
+  // Ernest's dated group adventures, straight from the admin — no code change
+  // is needed when he adds one.
+  const events = usePublicEvents();
 
   // Without Supabase there is nothing to price against — every card degrades
   // to "Enquire via WhatsApp" rather than showing a broken/blank price.
@@ -284,6 +370,15 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
     onClose();
     navigate(`/booking?tour=${pricingId}`);
   };
+
+  const bookEvent = (eventId: string) => {
+    onClose();
+    navigate(`/booking?event=${eventId}`);
+  };
+
+  const eventList = events.data ?? [];
+  const tab = picked ?? (events.isLoading || eventList.length > 0 ? "events" : "routes");
+  const setTab = setPicked;
 
   const tabClass = (active: boolean) =>
     `flex-1 min-h-[44px] rounded-lg border-2 text-xs font-heading font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
@@ -311,7 +406,7 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
               Book Your Adventure
             </div>
             <div className="text-muted-foreground text-xs">
-              Pick a route or programme to get started.
+              Pick a date, route or programme to get started.
             </div>
           </div>
         </div>
@@ -328,13 +423,28 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
       <div role="tablist" aria-label="What would you like to book?" className="flex gap-2 p-3 shrink-0">
         <button
           role="tab"
+          aria-selected={tab === "events"}
+          aria-controls="qb-panel-events"
+          onClick={() => setTab("events")}
+          className={tabClass(tab === "events")}
+        >
+          <CalendarDays className="w-4 h-4 shrink-0" aria-hidden="true" />
+          Events
+          {eventList.length > 0 && (
+            <span className="ml-0.5 rounded-full bg-gold/20 text-gold px-1.5 py-0.5 text-[10px] leading-none">
+              {eventList.length}
+            </span>
+          )}
+        </button>
+        <button
+          role="tab"
           aria-selected={tab === "routes"}
           aria-controls="qb-panel-routes"
           onClick={() => setTab("routes")}
           className={tabClass(tab === "routes")}
         >
           <Mountain className="w-4 h-4 shrink-0" aria-hidden="true" />
-          Mountain Routes
+          Routes
         </button>
         <button
           role="tab"
@@ -344,17 +454,42 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
           className={tabClass(tab === "training")}
         >
           <Dumbbell className="w-4 h-4 shrink-0" aria-hidden="true" />
-          Personal Training
+          Training
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-2">
-        {loading ? (
+        {loading || (tab === "events" && events.isLoading) ? (
           <>
             <CardSkeleton />
             <CardSkeleton />
             <CardSkeleton />
           </>
+        ) : tab === "events" ? (
+          <div id="qb-panel-events" role="tabpanel" className="space-y-2">
+            {eventList.length > 0 ? (
+              eventList.map((event) => (
+                <EventCard key={event.id} event={event} onBook={bookEvent} />
+              ))
+            ) : (
+              <div className="bg-background rounded-xl p-4 border-l-4 border-border text-center space-y-2">
+                <CalendarDays
+                  className="w-6 h-6 text-muted-foreground mx-auto"
+                  aria-hidden="true"
+                />
+                <p className="text-muted-foreground text-xs">
+                  No dated group adventures scheduled right now.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setTab("routes")}
+                  className="text-accent hover:text-cyan-hover text-xs font-heading font-bold tracking-wider uppercase underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
+                >
+                  Browse routes instead
+                </button>
+              </div>
+            )}
+          </div>
         ) : tab === "routes" ? (
           <div id="qb-panel-routes" role="tabpanel" className="space-y-2">
             {isSupabaseConfigured ? <ManagedRoutes rows={rows} onBook={book} onClose={onClose} /> : routes.map((route) => (

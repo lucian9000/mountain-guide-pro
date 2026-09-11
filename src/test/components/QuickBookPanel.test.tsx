@@ -45,6 +45,22 @@ const pricingState = vi.hoisted(() => ({
   isLoading: false,
 }));
 
+// Ernest's dated group adventures. Empty by default so the existing route and
+// training assertions keep describing the same starting tab; the events tests
+// populate it.
+const eventsState = vi.hoisted(() => ({
+  data: [] as unknown[],
+  isLoading: false,
+}));
+
+vi.mock("@/lib/queries/events", () => ({
+  usePublicEvents: () => ({
+    data: eventsState.data,
+    isLoading: eventsState.isLoading,
+    error: null,
+  }),
+}));
+
 vi.mock("@/lib/queries/booking", () => ({
   usePublicPricing: () => ({
     data: pricingState.data,
@@ -78,6 +94,8 @@ const UNPRICED = routes.find((r) => r.id === "13-peaks-48hr")!;
 
 describe("QuickBookPanel", () => {
   beforeEach(() => {
+    eventsState.data = [];
+    eventsState.isLoading = false;
     navigate.mockClear();
     pricingState.isLoading = false;
     backend.configured = false;
@@ -93,10 +111,10 @@ describe("QuickBookPanel", () => {
     expect(screen.getByText(/book your adventure/i)).toBeInTheDocument();
   });
 
-  it("shows both tabs at once and swaps the list when switching", async () => {
+  it("shows every tab at once and swaps the list when switching", async () => {
     await openMenu();
-    const routesTab = await screen.findByRole("tab", { name: /mountain routes/i });
-    const trainingTab = screen.getByRole("tab", { name: /personal training/i });
+    const routesTab = await screen.findByRole("tab", { name: /^routes$/i });
+    const trainingTab = screen.getByRole("tab", { name: /^training$/i });
 
     // Both are visible from the start — not sequential steps.
     expect(routesTab).toBeInTheDocument();
@@ -110,6 +128,71 @@ describe("QuickBookPanel", () => {
     expect(trainingTab).toHaveAttribute("aria-selected", "true");
     expect(screen.getByText(/strength training/i)).toBeInTheDocument();
     expect(screen.queryByText(routes[0].name)).not.toBeInTheDocument();
+  });
+
+  // Regression: Ernest's dated events were invisible in this menu, because it
+  // only ever listed the hardcoded routes and training programmes.
+  it("lists Ernest's upcoming events and opens the Events tab when there are any", async () => {
+    eventsState.data = [
+      {
+        id: "event-palmiet",
+        title: "Palmiet River Trail",
+        event_date: "2026-09-13",
+        location: "Kogelberg",
+        capacity: 12,
+        spots_left: 8,
+        price_per_person: 650,
+        image_url: null,
+      },
+    ];
+
+    await openMenu();
+
+    const eventsTab = await screen.findByRole("tab", { name: /events/i });
+    expect(eventsTab).toHaveAttribute("aria-selected", "true");
+
+    expect(screen.getByText("Palmiet River Trail")).toBeInTheDocument();
+    expect(screen.getByText(/8 spots left/i)).toBeInTheDocument();
+    expect(screen.getByText(/R650 pp/i)).toBeInTheDocument();
+  });
+
+  it("deep-links an event to /booking?event=<id>", async () => {
+    eventsState.data = [
+      {
+        id: "event-palmiet",
+        title: "Palmiet River Trail",
+        event_date: "2026-09-13",
+        location: null,
+        capacity: 12,
+        spots_left: 8,
+        price_per_person: 650,
+        image_url: null,
+      },
+    ];
+
+    await openMenu();
+    fireEvent.click(await screen.findByRole("button", { name: /book this date/i }));
+    expect(navigate).toHaveBeenCalledWith("/booking?event=event-palmiet");
+  });
+
+  it("shows a full event as fully booked instead of offering a booking", async () => {
+    eventsState.data = [
+      {
+        id: "event-full",
+        title: "Sold Out Summit",
+        event_date: "2026-10-01",
+        location: null,
+        capacity: 10,
+        spots_left: 0,
+        price_per_person: 900,
+        image_url: null,
+      },
+    ];
+
+    await openMenu();
+    expect(await screen.findByText("Sold Out Summit")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /book this date/i })).not.toBeInTheDocument();
+    expect(screen.getAllByText(/fully booked/i).length).toBeGreaterThan(0);
   });
 
   it("lists every route, never filtered by difficulty", async () => {
