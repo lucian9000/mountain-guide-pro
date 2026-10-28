@@ -17,10 +17,6 @@ const unwrap = <T>(res: { data: T | null; error: { message: string } | null }): 
   return res.data as T;
 };
 
-const publishedFilter = <T extends { or: (f: string) => T; eq: (c: string, v: string) => T }>(
-  q: T
-): T => q.eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`);
-
 const sortImages = (r: RouteWithImages): RouteWithImages => ({
   ...r,
   images: [...(r.images ?? [])].sort((a, b) => a.sort_order - b.sort_order),
@@ -32,9 +28,8 @@ export const usePublishedRoutes = () =>
     queryKey: ["public", "routes"],
     queryFn: async () => {
       const rows = unwrap<RouteWithImages[]>(
-        await publishedFilter(
-          supabase.from("routes").select("*, images:route_images(*)")
-        )
+        await supabase.from("routes").select("*, images:route_images(*)")
+          .eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`)
           .order("sort_order", { ascending: true })
           .order("name", { ascending: true })
       );
@@ -49,9 +44,8 @@ export const usePublishedRoute = (slug: string | undefined) =>
     enabled: Boolean(slug),
     queryFn: async () => {
       const rows = unwrap<RouteWithImages[]>(
-        await publishedFilter(
-          supabase.from("routes").select("*, images:route_images(*)").eq("slug", slug!)
-        ).limit(1)
+        await supabase.from("routes").select("*, images:route_images(*)").eq("slug", slug!)
+          .eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`).limit(1)
       );
       return rows.length ? sortImages(rows[0]) : null;
     },
@@ -82,9 +76,9 @@ export const usePublishedUpdates = (limit?: number) =>
   useQuery<UpdateWithRoute[]>({
     queryKey: ["public", "updates", limit ?? "all"],
     queryFn: async () => {
-      let q = publishedFilter(
-        supabase.from("updates").select("*, route:routes(slug, name)")
-      ).order("created_at", { ascending: false });
+      let q = supabase.from("updates").select("*, route:routes(slug, name)")
+        .eq("status", "published").or(`publish_at.is.null,publish_at.lte.${new Date().toISOString()}`)
+        .order("created_at", { ascending: false });
       if (limit) q = q.limit(limit);
       return unwrap<UpdateWithRoute[]>(await q);
     },

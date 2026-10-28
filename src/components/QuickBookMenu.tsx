@@ -18,7 +18,11 @@ import { routes, type Route } from "@/data/routes";
 import { trainingProgrammes, type TrainingProgramme } from "@/data/training";
 import { usePublicPricing } from "@/lib/queries/booking";
 import { usePublicEvents } from "@/lib/queries/events";
+import { usePublishedRoutes } from "@/lib/queries/content";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
+import type { RouteWithImages } from "@/lib/types/content";
+import { formatDuration } from "@/lib/format";
+import DifficultyBadge from "@/components/routes/DifficultyBadge";
 import type { Pricing } from "@/lib/types/db";
 import type { EventWithSpots } from "@/lib/types/db";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -60,7 +64,7 @@ export const matchPricing = (
 
 /** A priced, currently-sellable tour can be booked online; everything else asks. */
 const isBookable = (row: Pricing | undefined): row is Pricing =>
-  Boolean(row && row.active);
+  Boolean(row && row.active && Number(row.price) > 0);
 
 const CardShell = ({
   accent,
@@ -112,12 +116,21 @@ const RouteCard = ({
   row,
   onBook,
 }: {
-  route: Route;
+  route: Route | RouteWithImages;
   row: Pricing | undefined;
   onBook: (id: string) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const detailId = `qb-detail-${route.id}`;
+  const managed = "slug" in route ? route : undefined;
+  const bundled = "specs" in route ? route : undefined;
+  const location = managed ? managed.meeting_point : bundled?.location;
+  const duration = managed
+    ? managed.duration_hours != null ? formatDuration(managed.duration_hours) : null
+    : bundled?.specs.duration;
+  const elevation = managed
+    ? managed.elevation_m != null ? `${managed.elevation_m} m` : null
+    : bundled?.specs.elevation;
 
   return (
     <CardShell accent="accent">
@@ -139,28 +152,34 @@ const RouteCard = ({
           />
         </div>
 
-        <p className="text-muted-foreground text-xs mt-1 flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
-          {route.location}
-        </p>
+        {location && (
+          <p className="text-muted-foreground text-xs mt-1 flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+            {location}
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-1">
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
-            {route.specs.duration}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
-            {route.specs.elevation}
-          </span>
+          {duration && (
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+              {duration}
+            </span>
+          )}
+          {elevation && (
+            <span className="flex items-center gap-1.5">
+              <TrendingUp className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+              {elevation}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-2 mt-2">
-          <span
-            className={`inline-block ${difficultyTone(route.specs.difficulty)} text-xs px-2 py-0.5 rounded-full`}
-          >
-            {difficultyLabel(route.specs.difficulty)}
-          </span>
+          {managed ? <DifficultyBadge difficulty={managed.difficulty} /> : bundled && (
+            <span className={`inline-block ${difficultyTone(bundled.specs.difficulty)} text-xs px-2 py-0.5 rounded-full`}>
+              {difficultyLabel(bundled.specs.difficulty)}
+            </span>
+          )}
           <span className="text-accent font-heading font-bold text-xs">
             {isBookable(row) ? `From R${row.price} pp` : "Contact for pricing"}
           </span>
@@ -169,15 +188,28 @@ const RouteCard = ({
 
       {open && (
         <div id={detailId} className="mt-2 pt-2 border-t border-border/40 space-y-1">
-          <p className="text-xs text-muted-foreground">{route.specs.terrain}</p>
-          <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">Gear:</span>{" "}
-            {route.gear.mandatory.join(", ")}
-          </p>
-          <p className="text-xs text-muted-foreground italic flex items-start gap-2">
-            <CloudSun className="w-4 h-4 text-accent shrink-0 mt-0.5" aria-hidden="true" />
-            {route.weather.policy}
-          </p>
+          {managed ? (
+            <>
+              <p className="text-xs text-muted-foreground whitespace-pre-line">{managed.description}</p>
+              {managed.highlights.length > 0 && (
+                <ul className="text-xs text-muted-foreground list-disc pl-4">
+                  {managed.highlights.map((highlight, index) => <li key={index}>{highlight}</li>)}
+                </ul>
+              )}
+            </>
+          ) : bundled && (
+            <>
+              <p className="text-xs text-muted-foreground">{bundled.specs.terrain}</p>
+              <p className="text-xs text-muted-foreground">
+                <span className="font-semibold text-foreground">Gear:</span>{" "}
+                {bundled.gear.mandatory.join(", ")}
+              </p>
+              <p className="text-xs text-muted-foreground italic flex items-start gap-2">
+                <CloudSun className="w-4 h-4 text-accent shrink-0 mt-0.5" aria-hidden="true" />
+                {bundled.weather.policy}
+              </p>
+            </>
+          )}
         </div>
       )}
 
@@ -324,6 +356,7 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
   const [picked, setPicked] = useState<"events" | "routes" | "training" | null>(null);
   const navigate = useNavigate();
   const pricing = usePublicPricing();
+  const publishedRoutes = usePublishedRoutes();
   // Ernest's dated group adventures, straight from the admin — no code change
   // is needed when he adds one.
   const events = usePublicEvents();
@@ -332,6 +365,7 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
   // to "Enquire via WhatsApp" rather than showing a broken/blank price.
   const rows = isSupabaseConfigured ? pricing.data : undefined;
   const loading = isSupabaseConfigured && pricing.isLoading;
+  const routeList = isSupabaseConfigured ? publishedRoutes.data ?? [] : routes;
 
   const book = (pricingId: string) => {
     onClose();
@@ -426,8 +460,10 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-2">
-        {loading || (tab === "events" && events.isLoading) ? (
+        {loading || (tab === "events" && events.isLoading) ||
+          (tab === "routes" && isSupabaseConfigured && publishedRoutes.isLoading) ? (
           <>
+            {tab === "routes" && <p role="status" className="text-muted-foreground text-xs">Loading routes…</p>}
             <CardSkeleton />
             <CardSkeleton />
             <CardSkeleton />
@@ -459,11 +495,21 @@ const QuickBookMenu = ({ onClose }: QuickBookMenuProps) => {
           </div>
         ) : tab === "routes" ? (
           <div id="qb-panel-routes" role="tabpanel" className="space-y-2">
-            {routes.map((route) => (
+            {isSupabaseConfigured && publishedRoutes.error ? (
+              <p role="status" className="text-muted-foreground text-xs p-4">
+                Unable to load routes. Please try again later or WhatsApp Ernest below.
+              </p>
+            ) : routeList.length === 0 ? (
+              <p role="status" className="text-muted-foreground text-xs p-4">
+                No routes published yet — check back soon.
+              </p>
+            ) : routeList.map((route) => (
               <RouteCard
                 key={route.id}
                 route={route}
-                row={route.logistics.contactForPricing ? undefined : matchPricing(route, rows)}
+                row={"slug" in route
+                  ? route.price_cents > 0 ? matchPricing({ id: route.slug, name: route.name }, rows) : undefined
+                  : route.logistics.contactForPricing ? undefined : matchPricing(route, rows)}
                 onBook={book}
               />
             ))}

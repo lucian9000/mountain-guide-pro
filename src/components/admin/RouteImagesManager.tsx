@@ -37,7 +37,7 @@ const RouteImagesManager = ({ routeId, slug, images }: RouteImagesManagerProps) 
   const handleFiles = async (files: FileList | null) => {
     if (!files?.length) return;
     setUploading(true);
-    let nextSort = (sorted.at(-1)?.sort_order ?? 0) + 10;
+    let nextSort = (sorted[sorted.length - 1]?.sort_order ?? 0) + 10;
     // First image on a route with none yet becomes the cover automatically.
     let makeCover = sorted.length === 0;
     for (const file of Array.from(files)) {

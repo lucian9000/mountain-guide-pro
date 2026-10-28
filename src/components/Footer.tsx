@@ -4,10 +4,6 @@ import logo from "@/assets/logo-small.webp";
 import cttMember from "@/assets/cape-town-tourism-member.webp";
 
 const Footer = () => {
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <footer id="contact" className="scroll-mt-20 bg-background py-12 md:py-16 border-t border-border/30">
       <div className="container mx-auto px-4">
@@ -47,13 +43,13 @@ const Footer = () => {
                 What's New
               </Link>
               {[["about", "The Guide"], ["fitness", "Training"]].map(([id, label]) => (
-                <button
+                <Link
                   key={id}
-                  onClick={() => scrollTo(id)}
+                  to={`/#${id}`}
                   className="text-muted-foreground hover:text-accent text-sm text-left transition-colors"
                 >
                   {label}
-                </button>
+                </Link>
               ))}
               <Link
                 to="/privacy"

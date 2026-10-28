@@ -3,6 +3,7 @@ import { ArrowLeft, CalendarDays, Clock, MapPin, Mountain, Users } from "lucide-
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import { usePublicEvent } from "@/lib/queries/events";
+import { isPublicUpcomingEvent } from "@/lib/eventEligibility";
 import { formatEventDate, formatEventTime } from "@/components/admin/eventFormat";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -29,7 +30,7 @@ const EventDetail = () => {
     );
   }
 
-  if (!event) {
+  if (!event || !isPublicUpcomingEvent(event)) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <SiteHeader variant="solid" />

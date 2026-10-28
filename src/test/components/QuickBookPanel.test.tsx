@@ -4,11 +4,28 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import QuickBookPanel from "@/components/QuickBookPanel";
 import { routes } from "@/data/routes";
+import type { RouteWithImages } from "@/lib/types/content";
+
+// The menu now shares the published catalogue. Keep this interaction suite
+// offline with published equivalents of the bundled fixtures.
+const managedRoutes: RouteWithImages[] = routes.map((route) => ({
+  id: `managed-${route.id}`, slug: route.id, name: route.name,
+  description: route.specs.terrain, difficulty: "challenging",
+  duration_hours: 3, distance_km: 5, elevation_m: 500,
+  price_cents: route.logistics.price * 100, highlights: [],
+  meeting_point: route.logistics.meetingPoint, status: "published", publish_at: null,
+  sort_order: 0, latitude: null, longitude: null, map_zoom: 13,
+  meeting_latitude: null, meeting_longitude: null, created_at: "", updated_at: "", images: [],
+}));
+vi.mock("@/lib/queries/content", () => ({
+  usePublishedRoutes: () => ({ data: managedRoutes, isLoading: false, error: null }),
+}));
+vi.mock("@/lib/supabase/client", () => ({ isSupabaseConfigured: true }));
 
 // Emoji ranges: symbols/pictographs, misc symbols & dingbats, misc technical
 // (covers stopwatch U+23F1), and supplemental arrows/symbols.
 const EMOJI_RE =
-  /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}\u{FE0F}]/u;
+  /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2300}-\u{23FF}]|\u{FE0F}/u;
 
 const navigate = vi.hoisted(() => vi.fn());
 vi.mock("react-router-dom", async () => {
@@ -61,7 +78,7 @@ vi.mock("@/lib/queries/events", () => ({
 const Harness = () => {
   const [open, setOpen] = useState(false);
   return (
-    <MemoryRouter>
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <button onClick={() => setOpen(true)}>external cta</button>
       <QuickBookPanel
         isOpen={open}
@@ -76,7 +93,8 @@ const Harness = () => {
 const openMenu = async () => {
   render(<Harness />);
   fireEvent.click(screen.getByRole("button", { name: /book now/i }));
-  return screen.findByRole("dialog");
+  // The lazy chunk can take longer under parallel full-suite contention.
+  return screen.findByRole("dialog", {}, { timeout: 5000 });
 };
 
 const UNPRICED = routes.find((r) => r.id === "13-peaks-48hr")!;
@@ -210,13 +228,13 @@ describe("QuickBookPanel", () => {
     expect(screen.getByText(UNPRICED.name)).toBeInTheDocument();
   });
 
-  it("expands the route detail (gear, weather) when the card is tapped", async () => {
+  it("expands the managed route description when the card is tapped", async () => {
     await openMenu();
     const first = routes[0];
-    expect(screen.queryByText(new RegExp(first.weather.policy.slice(0, 25), "i"))).not.toBeInTheDocument();
+    expect(screen.queryByText(first.specs.terrain)).not.toBeInTheDocument();
     fireEvent.click(screen.getByText(first.name));
     expect(
-      screen.getByText(new RegExp(first.weather.policy.slice(0, 25), "i"))
+      screen.getByText(first.specs.terrain)
     ).toBeInTheDocument();
   });
 

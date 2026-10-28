@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { EventAvailability, EventItem, EventWithSpots } from "@/lib/types/db";
+import { eventTodayISO, isPublicUpcomingEvent } from "@/lib/eventEligibility";
 
 const unwrap = <T>(res: { data: T | null; error: { message: string } | null }): T => {
   if (res.error) throw new Error(res.error.message);
@@ -14,8 +15,6 @@ const unwrap = <T>(res: { data: T | null; error: { message: string } | null }): 
  */
 export const isEventFullError = (err: unknown): boolean =>
   err instanceof Error && /EVENT_FULL/i.test(err.message);
-
-const todayISO = () => new Date().toISOString().slice(0, 10);
 
 /** Attach spots_left from the availability view to a list of events. */
 const withSpots = (events: EventItem[], availability: EventAvailability[]): EventWithSpots[] => {
@@ -32,12 +31,13 @@ export const usePublicEvents = (limit?: number) =>
   useQuery<EventWithSpots[]>({
     queryKey: ["public", "events", limit ?? "all"],
     enabled: isSupabaseConfigured,
+    select: (events) => events.filter(isPublicUpcomingEvent),
     queryFn: async () => {
       let q = supabase
         .from("events")
         .select("*")
         .eq("is_published", true)
-        .gte("event_date", todayISO())
+        .gte("event_date", eventTodayISO())
         .order("event_date", { ascending: true });
       if (limit) q = q.limit(limit);
 
@@ -51,14 +51,22 @@ export const usePublicEvents = (limit?: number) =>
     },
   });
 
-/** A single published event (for ?event=<id> deep links). */
+/** A single published, upcoming event (including admin-session public browsing). */
 export const usePublicEvent = (id: string | null) =>
   useQuery<EventWithSpots | null>({
     queryKey: ["public", "event", id],
     enabled: isSupabaseConfigured && Boolean(id),
+    // Also reject stale cached rows before refetch, including booking deep links.
+    select: (event) => event && isPublicUpcomingEvent(event) ? event : null,
     queryFn: async () => {
       const event = unwrap<EventItem | null>(
-        await supabase.from("events").select("*").eq("id", id!).maybeSingle()
+        await supabase
+          .from("events")
+          .select("*")
+          .eq("id", id!)
+          .eq("is_published", true)
+          .gte("event_date", eventTodayISO())
+          .maybeSingle()
       );
       if (!event) return null;
       const availability = unwrap<EventAvailability[]>(

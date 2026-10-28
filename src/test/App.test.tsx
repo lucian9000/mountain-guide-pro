@@ -27,6 +27,9 @@ vi.mock("@/components/auth/UserMenu", () => ({ default: () => null }));
 // supabase; stub the query hook out like ChatWidget.test.tsx does.
 vi.mock("@/lib/queries/content", () => ({
   useTourPrices: () => ({ data: undefined }),
+  useTourPriceRows: () => ({ data: [] }),
+  usePublishedRoutes: () => ({ data: [], isLoading: false, error: null }),
+  usePublishedRoute: () => ({ data: null }),
 }));
 
 // Phase 6 homepage sections talk to supabase through react-query; the tests

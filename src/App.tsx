@@ -11,6 +11,7 @@ import AdminRoute from "@/components/auth/AdminRoute";
 import AuthLoading from "@/components/auth/AuthLoading";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import PageMetadata from "./components/PageMetadata";
 
 // Code-split everything behind auth so the public marketing page stays lean.
 const Login = lazy(() => import("./pages/Login"));
@@ -72,6 +73,7 @@ const App = () => (
           Skip to content
         </a>
         <ScrollToTop />
+        <PageMetadata />
         <AuthProvider>
           <Suspense fallback={<AuthLoading />}>
             <Routes>
